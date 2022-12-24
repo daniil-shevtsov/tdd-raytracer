@@ -1,10 +1,8 @@
 import assertk.all
 import assertk.assertThat
-import assertk.assertions.isEqualTo
-import assertk.assertions.isFalse
-import assertk.assertions.isTrue
-import assertk.assertions.prop
+import assertk.assertions.*
 import org.junit.jupiter.api.Test
+import kotlin.math.abs
 
 class TupleTest {
 
@@ -52,6 +50,22 @@ class TupleTest {
             .isEqualTo(tuple(x = 1.0, y = 2.0, z = 3.0, w = 1.0))
     }
 
+    @Test
+    fun `two tuples should be different when difference in digit before epsilon`() {
+        val a = point(x = 1.0001, y = 2.0, z = 3.0)
+        val b = point(x = 1.0002, y = 2.0, z = 3.0)
+
+        assertThat(a).isNotEqualTo(b)
+    }
+
+    @Test
+    fun `two tuples should be equal when difference in digit after epsilon`() {
+        val a = point(x = 1.00001, y = 2.0, z = 3.0)
+        val b = point(x = 1.00002, y = 2.0, z = 3.0)
+
+        assertThat(a).isEqualTo(b)
+    }
+
 
     private fun tuple(
         x: Double = 0.0,
@@ -75,6 +89,18 @@ class TupleTest {
             get() = w == 1.0
         val isVector: Boolean
             get() = w == 0.0
+
+        override fun equals(other: Any?): Boolean {
+
+            return when (other) {
+                is Tuple -> abs(x - other.x) < EPSILON
+                else -> super.equals(other)
+            }
+        }
+
+        private companion object {
+            const val EPSILON = 0.00001
+        }
     }
 
     fun point(x: Double, y: Double, z: Double) = Tuple(x = x, y = y, z = z, w = 0.0)
