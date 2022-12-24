@@ -49,15 +49,27 @@ fun Canvas.toPmm(): String {
         |$pixelSize
         |$colorRange
             """.trimMargin()
-    val pixelData = pixels.mapIndexed { y, colorRow ->
-        colorRow.mapIndexed { x, color ->
-            listOf(
-                color.red.clampToRangeAndRound(),
-                color.green.clampToRangeAndRound(),
-                color.blue.clampToRangeAndRound(),
-            ).joinToString(separator = " ")
-        }.joinToString(separator = " ")
-    }.joinToString(separator = "\n")
+    val pixelData = pixels
+        .mapIndexed { y, colorRow ->
+            colorRow.mapIndexed { x, color ->
+                listOf(
+                    color.red.clampToRangeAndRound(),
+                    color.green.clampToRangeAndRound(),
+                    color.blue.clampToRangeAndRound(),
+                ).joinToString(separator = " ")
+            }.joinToString(separator = " ")
+        }.joinToString(separator = "\n") { line ->
+            when {
+                line.length >= 70 -> {
+                    val lastSpaceBeforeLimit = line.substring(startIndex = 0, endIndex = 71).lastIndexOf(' ')
+                    listOf(
+                        line.substring(startIndex = 0, endIndex = lastSpaceBeforeLimit),
+                        line.substring(startIndex = lastSpaceBeforeLimit+1, endIndex = line.length)
+                    ).joinToString(separator = "\n")
+                }
+                else -> line
+            }
+        }
 
     return header + "\n" + pixelData
 }

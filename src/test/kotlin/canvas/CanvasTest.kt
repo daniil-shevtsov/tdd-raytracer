@@ -96,6 +96,28 @@ internal class CanvasTest {
             )
     }
 
+    @Test
+    fun `should split lines longer 70 chars when creating pmm`() {
+        val canvas = canvas(10, 2)
+            .let { canvas ->
+                canvas.copy(
+                    pixels = canvas.pixels.map { it.map { color(1.0, 0.8, 0.6) } }
+                )
+            }
+
+        val pmm = canvas.toPmm()
+
+        assertThat(pmm)
+            .transform { it.substringAfter("255") }
+            .lastLines(4)
+            .isEqualTo(
+                """255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
+                    |153 255 204 153 255 204 153 255 204 153 255 204 153
+                    |255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
+                    |153 255 204 153 255 204 153 255 204 153 255 204 153""".trimMargin()
+            )
+    }
+
     private fun Assert<String>.firstLines(n: Int) = transform {
         it.split("\n")
             .take(n)
