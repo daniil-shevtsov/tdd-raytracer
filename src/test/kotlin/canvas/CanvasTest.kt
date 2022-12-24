@@ -1,5 +1,6 @@
 package canvas
 
+import assertk.Assert
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.each
@@ -66,7 +67,7 @@ internal class CanvasTest {
         val pmm = canvas.toPmm()
 
         assertThat(pmm)
-            .transform { it.split("\n").take(3).joinToString(separator = "\n") }
+            .firstLines(3)
             .isEqualTo(
                 """
                 P3
@@ -87,11 +88,24 @@ internal class CanvasTest {
 
         assertThat(pmm)
             .transform { it.substringAfter("255") }
+            .lastLines(3)
             .isEqualTo(
                 """255 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-                    0 0 0 0 0 0 0 128 0 0 0 0 0 0 0
-                    0 0 0 0 0 0 0 0 0 0 0 0 0 0 255""".trimIndent()
+                    |0 0 0 0 0 0 0 128 0 0 0 0 0 0 0
+                    |0 0 0 0 0 0 0 0 0 0 0 0 0 0 255""".trimMargin()
             )
+    }
+
+    private fun Assert<String>.firstLines(n: Int) = transform {
+        it.split("\n")
+            .take(n)
+            .joinToString(separator = "\n")
+    }
+
+    private fun Assert<String>.lastLines(n: Int) = transform {
+        it.split("\n")
+            .takeLast(n)
+            .joinToString(separator = "\n")
     }
 
 }

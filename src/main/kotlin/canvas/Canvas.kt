@@ -2,6 +2,7 @@ package canvas
 
 import canvas.color.Color
 import canvas.color.color
+import kotlin.math.roundToInt
 
 data class Pixel(
     val x: Int,
@@ -48,10 +49,23 @@ fun Canvas.toPmm(): String {
         |$pixelSize
         |$colorRange
             """.trimMargin()
-    val pixelData = "\nlol"
+    val pixelData = pixels.mapIndexed { y, colorRow ->
+        colorRow.mapIndexed { x, color ->
+            listOf(
+                color.red.clampToRangeAndRound(),
+                color.green.clampToRangeAndRound(),
+                color.blue.clampToRangeAndRound(),
+            ).joinToString(separator = " ")
+        }.joinToString(separator = " ")
+    }.joinToString(separator = "\n")
 
-    return header + pixelData
+    return header + "\n" + pixelData
 }
+
+private fun Double.clampToRangeAndRound() = (this * 255)
+    .coerceAtLeast(0.0)
+    .coerceAtMost(255.0)
+    .roundToInt()
 
 fun canvas(
     width: Int,
