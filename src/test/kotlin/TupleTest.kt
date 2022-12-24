@@ -66,6 +66,16 @@ class TupleTest {
         assertThat(a).isEqualTo(b)
     }
 
+    @Test
+    fun `should add two tuples`() {
+        val a = tuple(x = 3.0, y = -2.0, z = 5.0, w = 1.0)
+        val b = tuple(x = -2.0, y = 3.0, z = 1.0, w = 0.0)
+
+        val sum = a + b
+
+        assertThat(sum).isEqualTo(tuple(x = 1.0, y = 1.0, z = 6.0, w = 1.0))
+    }
+
 
     private fun tuple(
         x: Double = 0.0,
@@ -96,6 +106,15 @@ class TupleTest {
                 is Tuple -> abs(x - other.x) < EPSILON
                 else -> super.equals(other)
             }
+        }
+
+        operator fun plus(other: Tuple): Tuple {
+            return Tuple(
+                x = x + other.x,
+                y = y + other.y,
+                z = z + other.z,
+                w = w + other.w,
+            )
         }
 
         private companion object {
