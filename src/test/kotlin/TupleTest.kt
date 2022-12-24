@@ -10,7 +10,7 @@ class TupleTest {
 
     @Test
     fun `tuple with w=1 is a point`() {
-        val tuple = tuple(4.3, -4.2, 3.1, 1.0)
+        val tuple = tuple(x = 4.3, y = -4.2, z = 3.1, w = 1.0)
 
         assertThat(tuple)
             .all {
@@ -25,7 +25,7 @@ class TupleTest {
 
     @Test
     fun `tuple with w=0 is a vector`() {
-        val tuple = tuple(4.3, -4.2, 3.1, 0.0)
+        val tuple = tuple(x = 4.3, y = -4.2, z = 3.1, w = 0.0)
 
         assertThat(tuple)
             .all {
@@ -37,6 +37,21 @@ class TupleTest {
                 prop(Tuple::isPoint).isFalse()
             }
     }
+
+    @Test
+    fun `should create point with factory function`() {
+        val point = point(x = 1.0, y = 2.0, z = 3.0)
+        assertThat(point)
+            .isEqualTo(tuple(x = 1.0, y = 2.0, z = 3.0, w = 0.0))
+    }
+
+    @Test
+    fun `should create vector with factory function`() {
+        val point = vector(x = 1.0, y = 2.0, z = 3.0)
+        assertThat(point)
+            .isEqualTo(tuple(x = 1.0, y = 2.0, z = 3.0, w = 1.0))
+    }
+
 
     private fun tuple(
         x: Double = 0.0,
@@ -61,5 +76,9 @@ class TupleTest {
         val isVector: Boolean
             get() = w == 0.0
     }
+
+    fun point(x: Double, y: Double, z: Double) = Tuple(x = x, y = y, z = z, w = 0.0)
+
+    fun vector(x: Double, y: Double, z: Double) = Tuple(x = x, y = y, z = z, w = 1.0)
 
 }
