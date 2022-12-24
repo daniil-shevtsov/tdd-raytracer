@@ -201,31 +201,15 @@ internal class MatrixTest {
                 row(4.0, 8.0, 16.0, 32.0),
             )
         )
-        val identityMatrix = matrix(
-            listOf(
-                row(1.0, 0.0, 0.0, 0.0),
-                row(0.0, 1.0, 0.0, 0.0),
-                row(0.0, 0.0, 1.0, 0.0),
-                row(0.0, 0.0, 0.0, 1.0),
-            )
-        )
 
-        assertThat(matrix * identityMatrix).isEqualTo(matrix)
+        assertThat(matrix * identityMatrix()).isEqualTo(matrix)
     }
 
     @Test
     fun `multiplying an identity matrix by the tuple gives the same tuple`() {
         val tuple = Tuple(1.0, 2.0, 3.0, 4.0)
-        val identityMatrix = matrix(
-            listOf(
-                row(1.0, 0.0, 0.0, 0.0),
-                row(0.0, 1.0, 0.0, 0.0),
-                row(0.0, 0.0, 1.0, 0.0),
-                row(0.0, 0.0, 0.0, 1.0),
-            )
-        )
 
-        assertThat(identityMatrix * tuple).isEqualTo(tuple)
+        assertThat(identityMatrix() * tuple).isEqualTo(tuple)
     }
 
     @Test
@@ -240,15 +224,20 @@ internal class MatrixTest {
         )
 
         assertThat(matrix.transposed()).isEqualTo(
-        matrix(
-            listOf(
-                row(0.0, 9.0, 1.0, 0.0),
-                row(9.0, 8.0, 8.0, 0.0),
-                row(3.0, 0.0, 5.0, 5.0),
-                row(0.0, 8.0, 3.0, 8.0),
+            matrix(
+                listOf(
+                    row(0.0, 9.0, 1.0, 0.0),
+                    row(9.0, 8.0, 8.0, 0.0),
+                    row(3.0, 0.0, 5.0, 5.0),
+                    row(0.0, 8.0, 3.0, 8.0),
+                )
             )
         )
-        )
+    }
+
+    @Test
+    fun `transposing identity matrix gives identity matrix`() {
+        assertThat(identityMatrix().transposed()).isEqualTo(identityMatrix())
     }
 
 }

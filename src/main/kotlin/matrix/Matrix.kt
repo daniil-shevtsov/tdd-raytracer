@@ -25,12 +25,11 @@ class Matrix(
 
     override fun equals(other: Any?): Boolean {
         return when (other) {
-            is Matrix -> values.size == other.values.size &&
-                    values.indices.all { row ->
-                        values.indices.all { column ->
-                            abs(values[row][column] - other.values[row][column]) < EPSILON
-                        }
-                    }
+            is Matrix -> values.size == other.values.size && values.indices.all { row ->
+                values.indices.all { column ->
+                    abs(values[row][column] - other.values[row][column]) < EPSILON
+                }
+            }
             else -> super.equals(other)
         }
     }
@@ -69,13 +68,11 @@ class Matrix(
     }
 
     fun transposed(): Matrix {
-        return Matrix(
-            (0 until rowCount).map { row ->
-                (0 until columnCount).map { column ->
-                    this[column][row]
-                }
+        return Matrix((0 until rowCount).map { row ->
+            (0 until columnCount).map { column ->
+                this[column][row]
             }
-        )
+        })
     }
 
     override fun toString(): String {
@@ -90,6 +87,15 @@ class Matrix(
         private const val EPSILON = 0.00001
     }
 }
+
+fun identityMatrix(size: Int = 4) = Matrix((0 until size).map { row ->
+    (0 until size).map { column ->
+        when (column) {
+            row -> 1.0
+            else -> 0.0
+        }
+    }
+})
 
 fun matrix(values: List<List<Double>>) = Matrix(values = values)
 fun row(vararg values: Double): List<Double> = values.toList()
