@@ -39,4 +39,12 @@ internal class ColorTest {
         assertThat(color * 2.0).isEqualTo(color(0.4, 0.6, 0.8))
     }
 
+    @Test
+    fun `should mltiply color by color`() {
+        val a = color(1.0, 0.2, 0.4)
+        val b = color(0.9, 1.0, 0.1)
+
+        assertThat(a * b).isEqualTo(color(0.9, 0.2, 0.04))
+    }
+
 }

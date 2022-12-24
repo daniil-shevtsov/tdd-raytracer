@@ -54,6 +54,14 @@ data class Color(
         )
     }
 
+    operator fun times(other: Color): Color {
+        return Color(
+            red = red * other.red,
+            green = green * other.green,
+            blue = blue * other.blue,
+        )
+    }
+
     private companion object {
         const val EPSILON = 0.00001
     }
