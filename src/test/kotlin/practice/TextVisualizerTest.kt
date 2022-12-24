@@ -14,7 +14,6 @@ class TextVisualizerTest {
             |**
         """.trimMargin()
         )
-
     }
 
     @Test
@@ -26,13 +25,22 @@ class TextVisualizerTest {
             |***
         """.trimMargin()
         )
+    }
 
+    @Test
+    fun `should draw different symbol`() {
+        val field = visualize(size = 2, default = '#')
+        assertThat(field).isEqualTo(
+            """##
+            |##
+        """.trimMargin()
+        )
     }
 
     private fun visualize(size: Int, default: Char): String {
         return (0 until size).joinToString(separator = "\n") {
             (0 until size).joinToString(separator = "") {
-                "*"
+                default.toString()
             }
         }
     }
