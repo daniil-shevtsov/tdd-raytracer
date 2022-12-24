@@ -76,6 +76,16 @@ class TupleTest {
         assertThat(sum).isEqualTo(tuple(x = 1.0, y = 1.0, z = 6.0, w = 1.0))
     }
 
+    @Test
+    fun `should subtract two tuples`() {
+        val a = point(x = 3.0, y = 2.0, z = 1.0)
+        val b = point(x = 5.0, y = 6.0, z = 7.0)
+
+        val difference = a - b
+
+        assertThat(difference).isEqualTo(vector(x = -2.0, y = -4.0, z = -6.0))
+    }
+
 
     private fun tuple(
         x: Double = 0.0,
@@ -114,6 +124,15 @@ class TupleTest {
                 y = y + other.y,
                 z = z + other.z,
                 w = w + other.w,
+            )
+        }
+
+        operator fun minus(other: Tuple): Tuple {
+            return Tuple(
+                x = x - other.x,
+                y = y - other.y,
+                z = z - other.z,
+                w = w - other.w,
             )
         }
 
