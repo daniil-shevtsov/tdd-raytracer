@@ -85,7 +85,17 @@ data class Tuple(
         const val EPSILON = 0.00001
     }
 }
+typealias Point = Tuple
+typealias Vector = Tuple
 
-fun point(x: Double, y: Double, z: Double) = Tuple(x = x, y = y, z = z, w = 1.0)
+fun point(
+    x: Double,
+    y: Double,
+    z: Double
+) = Tuple(x = x, y = y, z = z, w = 1.0)
 
-fun vector(x: Double, y: Double, z: Double) = Tuple(x = x, y = y, z = z, w = 0.0)
+fun vector(
+    x: Double,
+    y: Double,
+    z: Double
+) = Tuple(x = x, y = y, z = z, w = 0.0)
