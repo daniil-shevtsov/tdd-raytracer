@@ -141,4 +141,35 @@ internal class MatrixTest {
 
         assertThat(a).isNotEqualTo(b)
     }
+
+    @Test
+    fun `should multiply matrices`() {
+        val a = matrix(
+            listOf(
+                listOf(1.0, 2.0, 3.0, 4.0),
+                listOf(5.0, 6.0, 7.0, 8.0),
+                listOf(9.0, 8.0, 7.0, 6.0),
+                listOf(5.0, 4.0, 3.0, 2.0),
+            )
+        )
+        val b = matrix(
+            listOf(
+                listOf(-2.0, 1.0, 2.0, 3.0),
+                listOf(3.0, 2.0, 1.0, -1.0),
+                listOf(4.0, 3.0, 6.0, 5.0),
+                listOf(1.0, 2.0, 7.0, 8.0),
+            )
+        )
+
+        assertThat(a * b).isEqualTo(
+            matrix(
+                listOf(
+                    listOf(20.0, 22.0, 50.0, 48.0),
+                    listOf(44.0, 54.0, 114.0, 108.0),
+                    listOf(40.0, 58.0, 110.0, 102.0),
+                    listOf(16.0, 26.0, 46.0, 42.0),
+                )
+            )
+        )
+    }
 }
