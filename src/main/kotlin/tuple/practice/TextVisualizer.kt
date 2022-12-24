@@ -35,9 +35,10 @@ fun visualize(
 
 fun generateVisualizations(
     pointStates: List<List<Point>>,
+    size: Int,
 ): List<String> = pointStates.map { points ->
    "\r--\n" + visualize(
-        size = 2,
-        points = points.map { point -> point.copy(y = 1.0 - point.y) }
+        size = size,
+        points = points.map { point -> point.copy(y = size - 1 - point.y) }
    )
 }

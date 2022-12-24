@@ -4,6 +4,7 @@ import tuple.Point
 import tuple.Vector
 import tuple.point
 import tuple.vector
+import kotlin.math.max
 
 fun runTuplePractice() {
     generateTuplePracticeStates(
@@ -19,7 +20,14 @@ fun runTuplePractice() {
         ),
         numberOfTicks = 5,
     ).let { states ->
-        generateVisualizations(pointStates = states.map { state -> listOf(state.projectile.position) })
+        val positions = states.map { it.projectile.position }
+        generateVisualizations(
+            pointStates = states.map { state -> listOf(state.projectile.position) },
+            size = max(
+                positions.maxOf { it.x } - positions.minOf { it.x },
+                positions.maxOf { it.y } - positions.maxOf { it.y }
+            ).toInt()
+        )
     }.forEach { visualization ->
         Thread.sleep(500L)
         println(visualization)
