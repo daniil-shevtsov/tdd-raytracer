@@ -84,13 +84,11 @@ internal class CanvasTest {
         val pmm = canvas.toPmm()
 
         assertThat(pmm)
-            .transform { it.substringAfter("255") }
-            .lastLines(4)
+            .lines(from = 3, to = 6)
             .isEqualTo(
                 """255 0 0 0 0 0 0 0 0 0 0 0 0 0 0
                     |0 0 0 0 0 0 0 128 0 0 0 0 0 0 0
-                    |0 0 0 0 0 0 0 0 0 0 0 0 0 0 255
-                    |""".trimMargin()
+                    |0 0 0 0 0 0 0 0 0 0 0 0 0 0 255""".trimMargin()
             )
     }
 
@@ -106,14 +104,12 @@ internal class CanvasTest {
         val pmm = canvas.toPmm()
 
         assertThat(pmm)
-            .transform { it.substringAfter("255") }
-            .lastLines(5)
+            .lines(from = 3, to = 7)
             .isEqualTo(
                 """255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
                     |153 255 204 153 255 204 153 255 204 153 255 204 153
                     |255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
-                    |153 255 204 153 255 204 153 255 204 153 255 204 153
-                    |""".trimMargin()
+                    |153 255 204 153 255 204 153 255 204 153 255 204 153""".trimMargin()
             )
     }
 
@@ -129,7 +125,6 @@ internal class CanvasTest {
         val pmm = canvas.toPmm()
 
         assertThat(pmm)
-            .transform { it.substringAfter("255") }
             .lastLines(2)
             .endsWith("\n")
     }
