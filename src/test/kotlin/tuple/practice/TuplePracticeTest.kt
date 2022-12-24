@@ -1,14 +1,14 @@
-package practice
+package tuple.practice
 
-import Point
-import Vector
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.prop
 import org.junit.jupiter.api.Test
-import point
-import vector
+import tuple.Point
+import tuple.Vector
+import tuple.point
+import tuple.vector
 
 internal class TuplePracticeTest {
 
@@ -111,16 +111,6 @@ internal class TuplePracticeTest {
             }
     }
 
-    data class Projectile(
-        val position: Point,
-        val velocity: Vector,
-    )
-
-    data class Environment(
-        val gravity: Vector,
-        val wind: Vector,
-    )
-
     private fun projectile(
         position: Point = pointZero(),
         velocity: Vector = vectorZero(),
@@ -136,25 +126,6 @@ internal class TuplePracticeTest {
         gravity = gravity,
         wind = wind,
     )
-
-    fun tick(environment: Environment, projectile: Projectile): Projectile {
-        val aboutToHitGround = projectile.position.y + projectile.velocity.y <= 0.0
-        val newProjectile = projectile.copy(
-            position = projectile.position + projectile.velocity,
-            velocity = projectile.velocity + environment.gravity + environment.wind,
-        )
-        return when {
-            aboutToHitGround -> newProjectile.copy(
-                position = newProjectile.position.copy(
-                    y = 0.0
-                ),
-                velocity = newProjectile.velocity.copy(
-                    y = 0.0
-                )
-            )
-            else -> newProjectile
-        }
-    }
 
     private fun pointZero() = point(0.0, 0.0, 0.0)
     private fun vectorZero() = vector(0.0, 0.0, 0.0)
