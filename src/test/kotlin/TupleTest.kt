@@ -162,6 +162,19 @@ class TupleTest {
         assertThat(vector(-1.0, -2.0, -3.0).magnitude).isEqualTo(sqrt(14.0))
     }
 
+    fun `should normalize vectors`() {
+        assertThat(vector(4.0, 0.0, 0.0).normalized).isEqualTo(vector(1.0, 0.0, 0.0))
+        assertThat(vector(1.0, 2.0, 3.0).normalized).isEqualTo(vector(0.26726, 0.53452, 0.80178))
+    }
+
+    @Test
+    fun `magnitude of a normalized vector should be 1`() {
+        val normalized = vector(1.0, 2.0, 3.0).normalized
+        val magnitude = normalized.magnitude
+
+        assertThat(magnitude).isEqualTo(1.0)
+    }
+
     private fun tuple(
         x: Double = 0.0,
         y: Double = 0.0,
@@ -187,6 +200,9 @@ class TupleTest {
 
         val magnitude: Double
             get() = sqrt(x * x + y * y + z * z + w * w)
+
+        val normalized: Tuple
+            get() = this / magnitude
 
         override fun equals(other: Any?): Boolean {
 
