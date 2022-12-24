@@ -48,6 +48,45 @@ internal class TuplePracticeTest {
             .isEqualTo(vector(8.0, 10.0, 12.0))
     }
 
+    @Test
+    fun `should add wind to velocity after a tick`() {
+        val environment = environment(
+            wind = vector(6.0, 7.0, 8.0)
+        )
+        val initialProjectile = projectile(
+            velocity = vector(2.0, 3.0, 4.0),
+        )
+
+        val resultingProjectile = tick(
+            environment = environment,
+            projectile = initialProjectile,
+        )
+
+        assertThat(resultingProjectile)
+            .prop(Projectile::velocity)
+            .isEqualTo(vector(8.0, 10.0, 12.0))
+    }
+
+    @Test
+    fun `should add gravity and wind to velocity after a tick`() {
+        val environment = environment(
+            gravity = vector(1.0, 2.0, 3.0),
+            wind = vector(6.0, 7.0, 8.0),
+        )
+        val initialProjectile = projectile(
+            velocity = vector(2.0, 3.0, 4.0),
+        )
+
+        val resultingProjectile = tick(
+            environment = environment,
+            projectile = initialProjectile,
+        )
+
+        assertThat(resultingProjectile)
+            .prop(Projectile::velocity)
+            .isEqualTo(vector(9.0, 12.0, 15.0))
+    }
+
     data class Projectile(
         val position: Point,
         val velocity: Vector,
@@ -77,7 +116,7 @@ internal class TuplePracticeTest {
     fun tick(environment: Environment, projectile: Projectile): Projectile {
         return projectile.copy(
             position = projectile.position + projectile.velocity,
-            velocity = projectile.velocity + environment.gravity,
+            velocity = projectile.velocity + environment.gravity + environment.wind,
         )
     }
 
