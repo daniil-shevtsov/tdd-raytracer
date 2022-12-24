@@ -3,10 +3,7 @@ package canvas
 import assertk.Assert
 import assertk.all
 import assertk.assertThat
-import assertk.assertions.each
-import assertk.assertions.index
-import assertk.assertions.isEqualTo
-import assertk.assertions.prop
+import assertk.assertions.*
 import canvas.color.color
 import org.junit.jupiter.api.Test
 
@@ -88,11 +85,12 @@ internal class CanvasTest {
 
         assertThat(pmm)
             .transform { it.substringAfter("255") }
-            .lastLines(3)
+            .lastLines(4)
             .isEqualTo(
                 """255 0 0 0 0 0 0 0 0 0 0 0 0 0 0
                     |0 0 0 0 0 0 0 128 0 0 0 0 0 0 0
-                    |0 0 0 0 0 0 0 0 0 0 0 0 0 0 255""".trimMargin()
+                    |0 0 0 0 0 0 0 0 0 0 0 0 0 0 255
+                    |""".trimMargin()
             )
     }
 
@@ -109,18 +107,42 @@ internal class CanvasTest {
 
         assertThat(pmm)
             .transform { it.substringAfter("255") }
-            .lastLines(4)
+            .lastLines(5)
             .isEqualTo(
                 """255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
                     |153 255 204 153 255 204 153 255 204 153 255 204 153
                     |255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
-                    |153 255 204 153 255 204 153 255 204 153 255 204 153""".trimMargin()
+                    |153 255 204 153 255 204 153 255 204 153 255 204 153
+                    |""".trimMargin()
             )
+    }
+
+    @Test
+    fun `should add line break at the end of pmm file`() {
+        val canvas = canvas(10, 2)
+            .let { canvas ->
+                canvas.copy(
+                    pixels = canvas.pixels.map { it.map { color(1.0, 0.8, 0.6) } }
+                )
+            }
+
+        val pmm = canvas.toPmm()
+
+        assertThat(pmm)
+            .transform { it.substringAfter("255") }
+            .lastLines(2)
+            .endsWith("\n")
     }
 
     private fun Assert<String>.firstLines(n: Int) = transform {
         it.split("\n")
             .take(n)
+            .joinToString(separator = "\n")
+    }
+
+    private fun Assert<String>.lines(from: Int, to: Int) = transform {
+        it.split("\n")
+            .subList(from, to)
             .joinToString(separator = "\n")
     }
 

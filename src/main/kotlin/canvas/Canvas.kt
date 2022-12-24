@@ -71,7 +71,7 @@ fun Canvas.toPmm(): String {
             }
         }
 
-    return header + "\n" + pixelData
+    return header + "\n" + pixelData + "\n"
 }
 
 private fun Double.clampToRangeAndRound() = (this * 255)
