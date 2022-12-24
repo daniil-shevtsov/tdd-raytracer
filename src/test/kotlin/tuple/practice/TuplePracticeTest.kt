@@ -107,7 +107,7 @@ internal class TuplePracticeTest {
                     .isEqualTo(point(-3.0, 0.0, -10.0))
 
                 prop(Projectile::velocity)
-                    .isEqualTo(vector(-2.0, 0.0, -4.0))
+                    .isEqualTo(vector(0.0, 0.0, 0.0))
             }
     }
 
