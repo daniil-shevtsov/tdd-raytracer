@@ -134,6 +134,23 @@ class TupleTest {
         assertThat(scalarMultiplied).isEqualTo(tuple(x = 3.5, y = -7.0, z = 10.5, w = -14.0))
     }
 
+    @Test
+    fun `should multiply a tuple by a fraction`() {
+        val tuple = tuple(x = 1.0, y = -2.0, z = 3.0, w = -4.0)
+
+        val scalarMultiplied = tuple * 0.5
+
+        assertThat(scalarMultiplied).isEqualTo(tuple(x = 0.5, y = -1.0, z = 1.5, w = -2.0))
+    }
+
+    @Test
+    fun `should divide a tuple by a scalar`() {
+        val tuple = tuple(x = 1.0, y = -2.0, z = 3.0, w = -4.0)
+
+        val scalarMultiplied = tuple / 2.0
+
+        assertThat(scalarMultiplied).isEqualTo(tuple(x = 0.5, y = -1.0, z = 1.5, w = -2.0))
+    }
 
     private fun tuple(
         x: Double = 0.0,
@@ -203,6 +220,10 @@ class TupleTest {
                 z = z * other,
                 w = w * other,
             )
+        }
+
+        operator fun div(other: Double): Tuple {
+            return this * (1.0 / other)
         }
 
         private companion object {
