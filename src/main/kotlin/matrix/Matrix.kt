@@ -21,6 +21,14 @@ class Matrix(
         }
     }
 
+    override fun toString(): String {
+        return values.mapIndexed { column, row ->
+            row.joinToString(separator = " ") { value ->
+                value.toString()
+            }
+        }.joinToString(separator = "\n")
+    }
+
     private companion object {
         const val EPSILON = 0.00001
     }
