@@ -9,3 +9,4 @@
 .externalNativeBuild
 /lint
 /app/lint
+*.pmm
