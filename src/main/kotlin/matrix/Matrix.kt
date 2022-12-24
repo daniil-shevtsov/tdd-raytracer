@@ -68,6 +68,16 @@ class Matrix(
         }
     }
 
+    fun transposed(): Matrix {
+        return Matrix(
+            (0 until rowCount).map { row ->
+                (0 until columnCount).map { column ->
+                    this[column][row]
+                }
+            }
+        )
+    }
+
     override fun toString(): String {
         return values.mapIndexed { column, row ->
             row.joinToString(separator = " ") { value ->

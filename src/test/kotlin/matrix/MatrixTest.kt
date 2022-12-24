@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotEqualTo
 import org.junit.jupiter.api.Test
+import tuple.Tuple
 import tuple.point
 
 internal class MatrixTest {
@@ -211,4 +212,43 @@ internal class MatrixTest {
 
         assertThat(matrix * identityMatrix).isEqualTo(matrix)
     }
+
+    @Test
+    fun `multiplying an identity matrix by the tuple gives the same tuple`() {
+        val tuple = Tuple(1.0, 2.0, 3.0, 4.0)
+        val identityMatrix = matrix(
+            listOf(
+                row(1.0, 0.0, 0.0, 0.0),
+                row(0.0, 1.0, 0.0, 0.0),
+                row(0.0, 0.0, 1.0, 0.0),
+                row(0.0, 0.0, 0.0, 1.0),
+            )
+        )
+
+        assertThat(identityMatrix * tuple).isEqualTo(tuple)
+    }
+
+    @Test
+    fun `should transpose matrix`() {
+        val matrix = matrix(
+            listOf(
+                row(0.0, 9.0, 3.0, 0.0),
+                row(9.0, 8.0, 0.0, 8.0),
+                row(1.0, 8.0, 5.0, 3.0),
+                row(0.0, 0.0, 5.0, 8.0),
+            )
+        )
+
+        assertThat(matrix.transposed()).isEqualTo(
+        matrix(
+            listOf(
+                row(0.0, 9.0, 1.0, 0.0),
+                row(9.0, 8.0, 8.0, 0.0),
+                row(3.0, 0.0, 5.0, 5.0),
+                row(0.0, 8.0, 3.0, 8.0),
+            )
+        )
+        )
+    }
+
 }
