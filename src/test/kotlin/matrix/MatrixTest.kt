@@ -11,10 +11,10 @@ internal class MatrixTest {
     fun `should construct 4x4 matrix`() {
         val matrix = matrix(
             listOf(
-                listOf(1.0, 2.0, 3.0, 4.0),
-                listOf(5.5, 6.5, 7.5, 8.5),
-                listOf(9.0, 10.0, 11.0, 12.0),
-                listOf(13.5, 14.5, 15.5, 16.5)
+                row(1.0, 2.0, 3.0, 4.0),
+                row(5.5, 6.5, 7.5, 8.5),
+                row(9.0, 10.0, 11.0, 12.0),
+                row(13.5, 14.5, 15.5, 16.5)
             )
         )
         assertThat(matrix[0, 0]).isEqualTo(1.0)
@@ -30,8 +30,8 @@ internal class MatrixTest {
     fun `should create 2x2 matrix`() {
         val matrix = matrix(
             listOf(
-                listOf(-3.0, 5.0),
-                listOf(1.0, -2.0),
+                row(-3.0, 5.0),
+                row(1.0, -2.0),
             )
         )
         assertThat(matrix[0, 0]).isEqualTo(-3.0)
@@ -44,9 +44,9 @@ internal class MatrixTest {
     fun `should create 3x3 matrix`() {
         val matrix = matrix(
             listOf(
-                listOf(-3.0, 5.0, 0.0),
-                listOf(1.0, -2.0, -7.0),
-                listOf(0.0, 1.0, 1.0),
+                row(-3.0, 5.0, 0.0),
+                row(1.0, -2.0, -7.0),
+                row(0.0, 1.0, 1.0),
             )
         )
         assertThat(matrix[0, 0]).isEqualTo(-3.0)
@@ -58,18 +58,18 @@ internal class MatrixTest {
     fun `should compare equal matrices`() {
         val a = matrix(
             listOf(
-                listOf(1.0, 2.0, 3.0, 4.0),
-                listOf(5.5, 6.5, 7.5, 8.5),
-                listOf(9.0, 10.0, 11.0, 12.0),
-                listOf(13.5, 14.5, 15.5, 16.5)
+                row(1.0, 2.0, 3.0, 4.0),
+                row(5.5, 6.5, 7.5, 8.5),
+                row(9.0, 10.0, 11.0, 12.0),
+                row(13.5, 14.5, 15.5, 16.5)
             )
         )
         val b = matrix(
             listOf(
-                listOf(1.0, 2.0, 3.0, 4.0),
-                listOf(5.5, 6.5, 7.5, 8.5),
-                listOf(9.0, 10.0, 11.0, 12.0),
-                listOf(13.5, 14.5, 15.5, 16.5)
+                row(1.0, 2.0, 3.0, 4.0),
+                row(5.5, 6.5, 7.5, 8.5),
+                row(9.0, 10.0, 11.0, 12.0),
+                row(13.5, 14.5, 15.5, 16.5)
             )
         )
 
@@ -80,18 +80,18 @@ internal class MatrixTest {
     fun `should ignore epsilon when comparing matrices`() {
         val a = matrix(
             listOf(
-                listOf(1.00001, 2.0, 3.0, 4.0),
-                listOf(5.5, 6.5, 7.5, 8.5),
-                listOf(9.0, 10.0, 11.0, 12.0),
-                listOf(13.5, 14.5, 15.5, 16.5)
+                row(1.00001, 2.0, 3.0, 4.0),
+                row(5.5, 6.5, 7.5, 8.5),
+                row(9.0, 10.0, 11.0, 12.0),
+                row(13.5, 14.5, 15.5, 16.5)
             )
         )
         val b = matrix(
             listOf(
-                listOf(1.00002, 2.0, 3.0, 4.0),
-                listOf(5.5, 6.5, 7.5, 8.5),
-                listOf(9.0, 10.0, 11.0, 12.0),
-                listOf(13.5, 14.5, 15.5, 16.5)
+                row(1.00002, 2.0, 3.0, 4.0),
+                row(5.5, 6.5, 7.5, 8.5),
+                row(9.0, 10.0, 11.0, 12.0),
+                row(13.5, 14.5, 15.5, 16.5)
             )
         )
 
@@ -102,18 +102,18 @@ internal class MatrixTest {
     fun `should consider difference more than epsilon when comparing matrices`() {
         val a = matrix(
             listOf(
-                listOf(1.0001, 2.0, 3.0, 4.0),
-                listOf(5.5, 6.5, 7.5, 8.5),
-                listOf(9.0, 10.0, 11.0, 12.0),
-                listOf(13.5, 14.5, 15.5, 16.5)
+                row(1.0001, 2.0, 3.0, 4.0),
+                row(5.5, 6.5, 7.5, 8.5),
+                row(9.0, 10.0, 11.0, 12.0),
+                row(13.5, 14.5, 15.5, 16.5)
             )
         )
         val b = matrix(
             listOf(
-                listOf(1.0002, 2.0, 3.0, 4.0),
-                listOf(5.5, 6.5, 7.5, 8.5),
-                listOf(9.0, 10.0, 11.0, 12.0),
-                listOf(13.5, 14.5, 15.5, 16.5)
+                row(1.0002, 2.0, 3.0, 4.0),
+                row(5.5, 6.5, 7.5, 8.5),
+                row(9.0, 10.0, 11.0, 12.0),
+                row(13.5, 14.5, 15.5, 16.5)
             )
         )
 
@@ -124,18 +124,18 @@ internal class MatrixTest {
     fun `should compare not equal matrices`() {
         val a = matrix(
             listOf(
-                listOf(1.0, 2.0, 3.0, 4.0),
-                listOf(5.5, 6.5, 7.5, 8.5),
-                listOf(9.0, 10.0, 11.0, 12.0),
-                listOf(13.5, 14.5, 15.5, 16.5)
+                row(1.0, 2.0, 3.0, 4.0),
+                row(5.5, 6.5, 7.5, 8.5),
+                row(9.0, 10.0, 11.0, 12.0),
+                row(13.5, 14.5, 15.5, 16.5)
             )
         )
         val b = matrix(
             listOf(
-                listOf(1.0, 2.0, 3.0, 4.0),
-                listOf(4.5, 6.5, 7.5, 8.5),
-                listOf(9.0, 9.0, 11.0, 12.0),
-                listOf(13.5, 14.5, 11.5, 16.5)
+                row(1.0, 2.0, 3.0, 4.0),
+                row(4.5, 6.5, 7.5, 8.5),
+                row(9.0, 9.0, 11.0, 12.0),
+                row(13.5, 14.5, 11.5, 16.5)
             )
         )
 
@@ -146,28 +146,28 @@ internal class MatrixTest {
     fun `should multiply matrices`() {
         val a = matrix(
             listOf(
-                listOf(1.0, 2.0, 3.0, 4.0),
-                listOf(5.0, 6.0, 7.0, 8.0),
-                listOf(9.0, 8.0, 7.0, 6.0),
-                listOf(5.0, 4.0, 3.0, 2.0),
+                row(1.0, 2.0, 3.0, 4.0),
+                row(5.0, 6.0, 7.0, 8.0),
+                row(9.0, 8.0, 7.0, 6.0),
+                row(5.0, 4.0, 3.0, 2.0),
             )
         )
         val b = matrix(
             listOf(
-                listOf(-2.0, 1.0, 2.0, 3.0),
-                listOf(3.0, 2.0, 1.0, -1.0),
-                listOf(4.0, 3.0, 6.0, 5.0),
-                listOf(1.0, 2.0, 7.0, 8.0),
+                row(-2.0, 1.0, 2.0, 3.0),
+                row(3.0, 2.0, 1.0, -1.0),
+                row(4.0, 3.0, 6.0, 5.0),
+                row(1.0, 2.0, 7.0, 8.0),
             )
         )
 
         assertThat(a * b).isEqualTo(
             matrix(
                 listOf(
-                    listOf(20.0, 22.0, 50.0, 48.0),
-                    listOf(44.0, 54.0, 114.0, 108.0),
-                    listOf(40.0, 58.0, 110.0, 102.0),
-                    listOf(16.0, 26.0, 46.0, 42.0),
+                    row(20.0, 22.0, 50.0, 48.0),
+                    row(44.0, 54.0, 114.0, 108.0),
+                    row(40.0, 58.0, 110.0, 102.0),
+                    row(16.0, 26.0, 46.0, 42.0),
                 )
             )
         )

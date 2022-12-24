@@ -68,3 +68,4 @@ class Matrix(
 }
 
 fun matrix(values: List<List<Double>>) = Matrix(values = values)
+fun row(vararg values: Double): List<Double> = values.toList()
