@@ -1,5 +1,7 @@
 package matrix
 
+import tuple.Tuple
+import tuple.Vector
 import kotlin.math.abs
 
 class Matrix(
@@ -34,24 +36,36 @@ class Matrix(
     }
 
     operator fun times(other: Matrix): Matrix {
-        val a = this
-        val b = other
-
-        val aRows = a.values.indices
-        val bRows = a.values.indices
-        val rowsA = a.size
-        val colsA = a[0].size
-        val rowsB = b.size
-        val colsB = b[0].size
-        if (colsA != rowsB) {
+        if (columnCount != other.rowCount) {
             throw IllegalArgumentException("Incompatible matrices for multiplication")
         }
-        val result = (0 until a.rowCount).map { i ->
-            (0 until b.rowCount).map { j ->
-                (0 until a.columnCount).sumOf { k -> a[i][k] * b[k][j] }
+        val result = (0 until rowCount).map { i ->
+            (0 until other.rowCount).map { j ->
+                (0 until columnCount).sumOf { k -> this[i][k] * other[k][j] }
             }
         }
         return Matrix(result)
+    }
+
+    operator fun times(vector: Vector): Vector {
+        val vectorAsColumn = listOf(vector.x, vector.y, vector.z, vector.w)
+        if (columnCount != vectorAsColumn.size) {
+            throw IllegalArgumentException("Incompatible matrix and vector for multiplication")
+        }
+
+        val result = (vectorAsColumn.indices).map { row ->
+            (0 until columnCount).sumOf { column ->
+                this[row][column] * vectorAsColumn[column]
+            }
+        }
+        return result.let { vectorMatrix ->
+            Tuple(
+                x = vectorMatrix[0],
+                y = vectorMatrix[1],
+                z = vectorMatrix[2],
+                w = vectorMatrix[3],
+            )
+        }
     }
 
     override fun toString(): String {

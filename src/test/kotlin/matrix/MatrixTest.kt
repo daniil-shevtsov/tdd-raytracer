@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotEqualTo
 import org.junit.jupiter.api.Test
+import tuple.point
 
 internal class MatrixTest {
 
@@ -171,5 +172,21 @@ internal class MatrixTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `should multiple matrix by tuple`() {
+        val a = matrix(
+            listOf(
+                row(1.0, 2.0, 3.0, 4.0),
+                row(2.0, 4.0, 4.0, 2.0),
+                row(8.0, 6.0, 4.0, 1.0),
+                row(0.0, 0.0, 0.0, 1.0),
+            )
+        )
+
+        val b = point(1.0, 2.0, 3.0)
+
+        assertThat(a * b).isEqualTo(point(18.0, 24.0, 33.0))
     }
 }
