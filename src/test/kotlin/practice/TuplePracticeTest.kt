@@ -2,6 +2,7 @@ package practice
 
 import Point
 import Vector
+import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.prop
@@ -87,6 +88,29 @@ internal class TuplePracticeTest {
             .isEqualTo(vector(9.0, 12.0, 15.0))
     }
 
+    @Test
+    fun `projectile should stop when hit the ground after a tick`() {
+        val environment = environment()
+        val initialProjectile = projectile(
+            position = point(-1.0, 1.0, -6.0),
+            velocity = vector(-2.0, -3.0, -4.0),
+        )
+
+        val resultingProjectile = tick(
+            environment = environment,
+            projectile = initialProjectile,
+        )
+
+        assertThat(resultingProjectile)
+            .all {
+                prop(Projectile::position)
+                    .isEqualTo(point(-3.0, 0.0, -10.0))
+
+                prop(Projectile::velocity)
+                    .isEqualTo(vector(-2.0, 0.0, -4.0))
+            }
+    }
+
     data class Projectile(
         val position: Point,
         val velocity: Vector,
@@ -114,10 +138,22 @@ internal class TuplePracticeTest {
     )
 
     fun tick(environment: Environment, projectile: Projectile): Projectile {
-        return projectile.copy(
+        val aboutToHitGround = projectile.position.y + projectile.velocity.y <= 0.0
+        val newProjectile = projectile.copy(
             position = projectile.position + projectile.velocity,
             velocity = projectile.velocity + environment.gravity + environment.wind,
         )
+        return when {
+            aboutToHitGround -> newProjectile.copy(
+                position = newProjectile.position.copy(
+                    y = 0.0
+                ),
+                velocity = newProjectile.velocity.copy(
+                    y = 0.0
+                )
+            )
+            else -> newProjectile
+        }
     }
 
     private fun pointZero() = point(0.0, 0.0, 0.0)
