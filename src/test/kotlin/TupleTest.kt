@@ -40,14 +40,14 @@ class TupleTest {
     fun `should create point with factory function`() {
         val point = point(x = 1.0, y = 2.0, z = 3.0)
         assertThat(point)
-            .isEqualTo(tuple(x = 1.0, y = 2.0, z = 3.0, w = 0.0))
+            .isEqualTo(tuple(x = 1.0, y = 2.0, z = 3.0, w = 1.0))
     }
 
     @Test
     fun `should create vector with factory function`() {
         val point = vector(x = 1.0, y = 2.0, z = 3.0)
         assertThat(point)
-            .isEqualTo(tuple(x = 1.0, y = 2.0, z = 3.0, w = 1.0))
+            .isEqualTo(tuple(x = 1.0, y = 2.0, z = 3.0, w = 0.0))
     }
 
     @Test
@@ -114,6 +114,9 @@ class TupleTest {
 
             return when (other) {
                 is Tuple -> abs(x - other.x) < EPSILON
+                        && abs(y - other.y) < EPSILON
+                        && abs(z - other.z) < EPSILON
+                        && abs(w - other.w) < EPSILON
                 else -> super.equals(other)
             }
         }
@@ -141,8 +144,8 @@ class TupleTest {
         }
     }
 
-    fun point(x: Double, y: Double, z: Double) = Tuple(x = x, y = y, z = z, w = 0.0)
+    fun point(x: Double, y: Double, z: Double) = Tuple(x = x, y = y, z = z, w = 1.0)
 
-    fun vector(x: Double, y: Double, z: Double) = Tuple(x = x, y = y, z = z, w = 1.0)
+    fun vector(x: Double, y: Double, z: Double) = Tuple(x = x, y = y, z = z, w = 0.0)
 
 }
