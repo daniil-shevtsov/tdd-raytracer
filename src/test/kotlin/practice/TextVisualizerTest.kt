@@ -52,6 +52,19 @@ class TextVisualizerTest {
         )
     }
 
+    @Test
+    fun `should draw two points`() {
+        val field = visualize(
+            size = 2,
+            points = listOf(point(0.0, 0.0, 0.0),point(1.0, 1.0, 0.0))
+        )
+        assertThat(field).isEqualTo(
+            """*#
+            |#*
+        """.trimMargin()
+        )
+    }
+
     private fun visualize(
         size: Int,
         default: Char = '#',
