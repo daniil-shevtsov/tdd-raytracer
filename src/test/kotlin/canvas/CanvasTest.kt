@@ -66,6 +66,7 @@ internal class CanvasTest {
         val pmm = canvas.toPmm()
 
         assertThat(pmm)
+            .transform { it.split("\n").take(3).joinToString(separator = "\n") }
             .isEqualTo(
                 """
                 P3

@@ -43,10 +43,14 @@ fun Canvas.toPmm(): String {
     val prefix = "P3"
     val pixelSize = "$width $height"
     val colorRange = 255
-    return """$prefix
+
+    val header = """$prefix
         |$pixelSize
         |$colorRange
             """.trimMargin()
+    val pixelData = "\nlol"
+
+    return header + pixelData
 }
 
 fun canvas(
