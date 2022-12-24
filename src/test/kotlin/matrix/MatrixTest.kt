@@ -189,4 +189,26 @@ internal class MatrixTest {
 
         assertThat(a * b).isEqualTo(point(18.0, 24.0, 33.0))
     }
+
+    @Test
+    fun `multiplying a matrix by the identity matrix gives the same matrix`() {
+        val matrix = matrix(
+            listOf(
+                row(0.0, 1.0, 2.0, 4.0),
+                row(1.0, 2.0, 4.0, 8.0),
+                row(2.0, 4.0, 8.0, 16.0),
+                row(4.0, 8.0, 16.0, 32.0),
+            )
+        )
+        val identityMatrix = matrix(
+            listOf(
+                row(1.0, 0.0, 0.0, 0.0),
+                row(0.0, 1.0, 0.0, 0.0),
+                row(0.0, 0.0, 1.0, 0.0),
+                row(0.0, 0.0, 0.0, 1.0),
+            )
+        )
+
+        assertThat(matrix * identityMatrix).isEqualTo(matrix)
+    }
 }

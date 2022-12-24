@@ -76,8 +76,8 @@ class Matrix(
         }.joinToString(separator = "\n")
     }
 
-    private companion object {
-        const val EPSILON = 0.00001
+    companion object {
+        private const val EPSILON = 0.00001
     }
 }
 
