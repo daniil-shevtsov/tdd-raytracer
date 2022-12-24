@@ -77,9 +77,29 @@ class TupleTest {
     }
 
     @Test
-    fun `should subtract two tuples`() {
+    fun `should subtract two points`() {
         val a = point(x = 3.0, y = 2.0, z = 1.0)
         val b = point(x = 5.0, y = 6.0, z = 7.0)
+
+        val difference = a - b
+
+        assertThat(difference).isEqualTo(vector(x = -2.0, y = -4.0, z = -6.0))
+    }
+
+    @Test
+    fun `should subtract vector from a point`() {
+        val a = point(x = 3.0, y = 2.0, z = 1.0)
+        val b = vector(x = 5.0, y = 6.0, z = 7.0)
+
+        val difference = a - b
+
+        assertThat(difference).isEqualTo(point(x = -2.0, y = -4.0, z = -6.0))
+    }
+
+    @Test
+    fun `should subtract two vectors`() {
+        val a = vector(x = 3.0, y = 2.0, z = 1.0)
+        val b = vector(x = 5.0, y = 6.0, z = 7.0)
 
         val difference = a - b
 
