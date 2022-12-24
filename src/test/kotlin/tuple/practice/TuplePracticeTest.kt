@@ -2,6 +2,8 @@ package tuple.practice
 
 import assertk.all
 import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.extracting
 import assertk.assertions.isEqualTo
 import assertk.assertions.prop
 import org.junit.jupiter.api.Test
@@ -109,6 +111,47 @@ internal class TuplePracticeTest {
                 prop(Projectile::velocity)
                     .isEqualTo(vector(0.0, 0.0, 0.0))
             }
+    }
+
+    @Test
+    fun `should generate given number of states`() {
+        val states = generateTuplePracticeStates(
+            initial = TuplePracticeState(
+                projectile = projectile(
+                    position = point(0.0, 0.0, 0.0),
+                    velocity = vector(1.0, 1.0, 1.0),
+                ),
+                environment = environment(),
+            ), numberOfTicks = 3
+        )
+
+        assertThat(states)
+            .extracting(TuplePracticeState::projectile)
+            .extracting(Projectile::position)
+            .containsExactly(
+                point(0.0, 0.0, 0.0),
+                point(1.0, 1.0, 1.0),
+                point(2.0, 2.0, 2.0),
+                point(3.0, 3.0, 3.0),
+            )
+    }
+
+    @Test
+    fun `should visualize point states`() {
+        val points = listOf(
+            listOf(point(0.0, 0.0, 0.0)),
+            listOf(point(0.0, 1.0, 0.0)),
+            listOf(point(1.0, 0.0, 0.0)),
+        )
+
+        val visualizations = generateVisualizations(points)
+
+        assertThat(visualizations)
+            .containsExactly(
+                "\r--\n##\n*#",
+                "\r--\n*#\n##",
+                "\r--\n##\n#*",
+            )
     }
 
     private fun projectile(

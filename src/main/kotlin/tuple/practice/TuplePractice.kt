@@ -6,26 +6,36 @@ import tuple.point
 import tuple.vector
 
 fun runTuplePractice() {
-    val environment = Environment(
-        gravity = vector(0.0, -0.1, 0.0),
-        wind = vector(0.0, 0.0, 0.0),
-    )
-    var projectile = Projectile(
-        position = point(0.0, 0.0, 0.0),
-        velocity = vector(0.5, 1.0, 0.0).normalized
-    )
-
-    while (true) {
+    generateTuplePracticeStates(
+        initial = TuplePracticeState(
+            environment = Environment(
+                gravity = vector(0.0, -0.1, 0.0),
+                wind = vector(0.0, 0.0, 0.0),
+            ),
+            projectile = Projectile(
+                position = point(0.0, 0.0, 0.0),
+                velocity = vector(0.5, 1.0, 0.0).normalized
+            )
+        ),
+        numberOfTicks = 5,
+    ).let { states ->
+        generateVisualizations(pointStates = states.map { state -> listOf(state.projectile.position) })
+    }.forEach { visualization ->
         Thread.sleep(500L)
-        projectile = tick(environment = environment, projectile = projectile)
-        println(projectile.position)
-        val field = visualize(
-            size = 11,
-            points = listOf(projectile.position.copy(y = 10.0 - projectile.position.y))
-        )
-        println("\r---------------")
-        println(field)
+        println(visualization)
     }
+}
+
+fun generateTuplePracticeStates(initial: TuplePracticeState, numberOfTicks: Int): List<TuplePracticeState> {
+    return (0 until numberOfTicks)
+        .fold(initial = listOf(initial)) { previousStates, _ ->
+            val previousState = previousStates.last()
+
+            previousStates + TuplePracticeState(
+                projectile = tick(environment = previousState.environment, projectile = previousState.projectile),
+                environment = previousState.environment,
+            )
+        }
 }
 
 fun tick(environment: Environment, projectile: Projectile): Projectile {
@@ -53,4 +63,9 @@ data class Projectile(
 data class Environment(
     val gravity: Vector,
     val wind: Vector,
+)
+
+data class TuplePracticeState(
+    val projectile: Projectile,
+    val environment: Environment,
 )
