@@ -3,6 +3,7 @@ import assertk.assertThat
 import assertk.assertions.*
 import org.junit.jupiter.api.Test
 import kotlin.math.abs
+import kotlin.math.sqrt
 
 class TupleTest {
 
@@ -152,6 +153,15 @@ class TupleTest {
         assertThat(scalarMultiplied).isEqualTo(tuple(x = 0.5, y = -1.0, z = 1.5, w = -2.0))
     }
 
+    @Test
+    fun `should compute magnitude`() {
+        assertThat(vector(1.0, 0.0, 0.0).magnitude).isEqualTo(1.0)
+        assertThat(vector(0.0, 1.0, 0.0).magnitude).isEqualTo(1.0)
+        assertThat(vector(0.0, 0.0, 1.0).magnitude).isEqualTo(1.0)
+        assertThat(vector(1.0, 2.0, 3.0).magnitude).isEqualTo(sqrt(14.0))
+        assertThat(vector(-1.0, -2.0, -3.0).magnitude).isEqualTo(sqrt(14.0))
+    }
+
     private fun tuple(
         x: Double = 0.0,
         y: Double = 0.0,
@@ -174,6 +184,9 @@ class TupleTest {
             get() = w == 1.0
         val isVector: Boolean
             get() = w == 0.0
+
+        val magnitude: Double
+            get() = sqrt(x * x + y * y + z * z + w * w)
 
         override fun equals(other: Any?): Boolean {
 
