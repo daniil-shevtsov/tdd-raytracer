@@ -39,6 +39,16 @@ fun Canvas.pixelAt(x: Int, y: Int): Color {
     return pixels[y][x]
 }
 
+fun Canvas.toPmm(): String {
+    val prefix = "P3"
+    val pixelSize = "$width $height"
+    val colorRange = 255
+    return """$prefix
+        |$pixelSize
+        |$colorRange
+            """.trimMargin()
+}
+
 fun canvas(
     width: Int,
     height: Int,

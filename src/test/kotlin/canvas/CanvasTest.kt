@@ -59,4 +59,38 @@ internal class CanvasTest {
             .isEqualTo(red)
     }
 
+    @Test
+    fun `creates PMM header`() {
+        val canvas = canvas(5, 3)
+
+        val pmm = canvas.toPmm()
+
+        assertThat(pmm)
+            .isEqualTo(
+                """
+                P3
+                5 3
+                255
+            """.trimIndent()
+            )
+    }
+
+    @Test
+    fun `creates PMM pixel data`() {
+        val canvas = canvas(5, 3)
+            .let { it.writePixel(x = 0, y = 0, color = color(1.5, 0.0, 0.0)) }
+            .let { it.writePixel(x = 2, y = 1, color = color(0.0, 0.5, 0.0)) }
+            .let { it.writePixel(x = 4, y = 2, color = color(-0.5, 0.0, 1.0)) }
+
+        val pmm = canvas.toPmm()
+
+        assertThat(pmm)
+            .transform { it.substringAfter("255") }
+            .isEqualTo(
+                """255 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+                    0 0 0 0 0 0 0 128 0 0 0 0 0 0 0
+                    0 0 0 0 0 0 0 0 0 0 0 0 0 0 255""".trimIndent()
+            )
+    }
+
 }
