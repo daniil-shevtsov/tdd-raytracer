@@ -144,9 +144,7 @@ internal class TuplePracticeTest {
             listOf(point(1.0, 0.0, 0.0)),
         )
 
-        val visualizations = generateVisualizations(points, size = 2)
-
-        assertThat(visualizations)
+        assertThat(generateVisualizations(points))
             .containsExactly(
                 "\r--\n##\n*#",
                 "\r--\n*#\n##",
@@ -155,18 +153,18 @@ internal class TuplePracticeTest {
     }
 
     @Test
-    fun `should visualize 1x1 point states`() {
+    fun `should visualize negative positions`() {
         val points = listOf(
-            listOf(point(0.0, 0.0, 0.0)),
-            listOf(point(1.0, 0.0, 0.0)),
+            listOf(point(-1.0, 0.0, 0.0)),
+            listOf(point(-2.0, 0.0, 0.0)),
         )
 
-        val visualizations = generateVisualizations(points, size = 1)
+        val visualizations = generateVisualizations(points)
 
         assertThat(visualizations)
             .containsExactly(
-                "\r--\n*",
-                "\r--\n#",
+                "\r--\n##\n#*",
+                "\r--\n##\n*#",
             )
     }
 

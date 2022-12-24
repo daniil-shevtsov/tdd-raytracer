@@ -1,6 +1,8 @@
 package tuple.practice
 
 import tuple.Point
+import tuple.point
+import kotlin.math.max
 
 fun visualize(
     size: Int,
@@ -35,10 +37,36 @@ fun visualize(
 
 fun generateVisualizations(
     pointStates: List<List<Point>>,
-    size: Int,
-): List<String> = pointStates.map { points ->
-   "\r--\n" + visualize(
-        size = size,
-        points = points.map { point -> point.copy(y = size - 1 - point.y) }
-   )
+): List<String> {
+    val positions = pointStates.flatten()
+    val min = point(
+        x = positions.minOf { it.x },
+        y = positions.minOf { it.y },
+        z = positions.minOf { it.z }
+    )
+    val max = point(
+        x = positions.maxOf { it.x },
+        y = positions.maxOf { it.y },
+        z = positions.maxOf { it.z }
+    )
+    val size = max(
+        max.x - min.x,
+        max.y - min.y,
+    ).toInt() + 1
+    val origin = min
+
+    return pointStates.map { points ->
+        "\r--\n" + visualize(
+            size = size,
+            points = points
+                .map { point ->
+                    point.copy(
+                        x = point.x - origin.x,
+                        y = point.y - origin.y,
+                    )
+                }
+                .map { point -> point.copy(y = size - 1 - point.y) }
+
+        )
+    }
 }

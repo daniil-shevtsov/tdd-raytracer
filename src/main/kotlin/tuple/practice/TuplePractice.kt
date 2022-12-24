@@ -4,32 +4,27 @@ import tuple.Point
 import tuple.Vector
 import tuple.point
 import tuple.vector
-import kotlin.math.max
 
 fun runTuplePractice() {
     generateTuplePracticeStates(
         initial = TuplePracticeState(
             environment = Environment(
-                gravity = vector(0.0, -0.1, 0.0),
+                gravity = vector(0.0, -0.2, 0.0),
                 wind = vector(0.0, 0.0, 0.0),
             ),
             projectile = Projectile(
-                position = point(0.0, 0.0, 0.0),
+                position = point(-10.0, 0.0, 0.0),
                 velocity = vector(0.5, 1.0, 0.0).normalized
             )
         ),
-        numberOfTicks = 5,
+        numberOfTicks = 15,
     ).let { states ->
         val positions = states.map { it.projectile.position }
         generateVisualizations(
             pointStates = states.map { state -> listOf(state.projectile.position) },
-            size = max(
-                positions.maxOf { it.x } - positions.minOf { it.x },
-                positions.maxOf { it.y } - positions.maxOf { it.y }
-            ).toInt()
         )
     }.forEach { visualization ->
-        Thread.sleep(500L)
+        Thread.sleep(300L)
         println(visualization)
     }
 }
