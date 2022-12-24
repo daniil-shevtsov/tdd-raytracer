@@ -106,6 +106,25 @@ class TupleTest {
         assertThat(difference).isEqualTo(vector(x = -2.0, y = -4.0, z = -6.0))
     }
 
+    @Test
+    fun `should subtract vector from a zero vector`() {
+        val a = vector(x = 0.0, y = 0.0, z = 0.0)
+        val b = vector(x = 1.0, y = -2.0, z = 3.0)
+
+        val difference = a - b
+
+        assertThat(difference).isEqualTo(vector(x = -1.0, y = 2.0, z = -3.0))
+    }
+
+    @Test
+    fun `should negate a tuple`() {
+        val tuple = tuple(x = 1.0, y = -2.0, z = 3.0, w = -4.0)
+
+        val negated = -tuple
+
+        assertThat(negated).isEqualTo(tuple(x = -1.0, y = 2.0, z = -3.0, w = 4.0))
+    }
+
 
     private fun tuple(
         x: Double = 0.0,
@@ -156,6 +175,15 @@ class TupleTest {
                 y = y - other.y,
                 z = z - other.z,
                 w = w - other.w,
+            )
+        }
+
+        operator fun unaryMinus(): Tuple {
+            return Tuple(
+                x = -x,
+                y = -y,
+                z = -z,
+                w = -w,
             )
         }
 
