@@ -240,4 +240,16 @@ internal class MatrixTest {
         assertThat(identityMatrix().transposed()).isEqualTo(identityMatrix())
     }
 
+    @Test
+    fun `should calculate determinant of 2x2`() {
+        val matrix = matrix(
+            listOf(
+                row(1.0, 5.0),
+                row(-3.0, 2.0),
+            )
+        )
+        assertThat(matrix.determinant())
+            .isEqualTo(17.0)
+    }
+
 }

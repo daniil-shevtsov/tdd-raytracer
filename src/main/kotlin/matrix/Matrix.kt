@@ -75,6 +75,10 @@ class Matrix(
         })
     }
 
+    fun determinant(): Double {
+        return values[0][0] * values[1][1] - values[0][1]*values[1][0]
+    }
+
     override fun toString(): String {
         return values.mapIndexed { column, row ->
             row.joinToString(separator = " ") { value ->
