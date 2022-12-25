@@ -39,7 +39,7 @@ internal class RayTest {
     }
 
     @Test
-    fun `a ray intersects a spehere at two points`() {
+    fun `a ray intersects a sphere at two points`() {
         val ray = ray(
             origin = point(0.0, 0.0, -5.0),
             direction = vector(0.0, 0.0, 1.0)
@@ -50,6 +50,21 @@ internal class RayTest {
             size().isEqualTo(2)
             index(0).isEqualTo(4.0)
             index(1).isEqualTo(6.0)
+        }
+    }
+
+    @Test
+    fun `a ray intersects a sphere at tangent`() {
+        val ray = ray(
+            origin = point(0.0, 1.0, -5.0),
+            direction = vector(0.0, 0.0, 1.0)
+        )
+        val sphere = randomSphere()
+        val xs = intersection(sphere, ray)
+        assertThat(xs).all {
+            size().isEqualTo(2)
+            index(0).isEqualTo(5.0)
+            index(1).isEqualTo(5.0)
         }
     }
 

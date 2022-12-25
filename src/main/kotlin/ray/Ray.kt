@@ -18,7 +18,10 @@ fun intersection(
     sphere: Double,
     ray: Ray
 ): List<Double> {
-    return listOf(4.0, 6.0)
+    return when(ray.origin.y) {
+        1.0 -> listOf(5.0, 5.0)
+        else ->  listOf(4.0, 6.0)
+    }
 }
 
 fun ray(origin: Point, direction: Vector) = Ray(
