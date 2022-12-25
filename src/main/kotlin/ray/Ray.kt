@@ -17,7 +17,7 @@ data class Ray(
 }
 
 fun intersection(
-    sphere: Double,
+    sphere: Intersectable,
     ray: Ray
 ): List<Double> {
     val sphereToRay = ray.origin - point(0.0, 0.0, 0.0) // sphere at world origin right now
@@ -31,7 +31,7 @@ fun intersection(
     }
     val t1 = (-b - sqrt(discriminant)) / (2 * a)
     val t2 = (-b + sqrt(discriminant)) / (2 * a)
-    
+
     return listOf(t1, t2)
 }
 

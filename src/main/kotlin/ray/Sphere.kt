@@ -1,3 +1,6 @@
 package ray
 
-fun randomSphere() = 0.0
+data class Sphere(val garage: String = "") : Intersectable
+sealed interface Intersectable
+
+fun randomSphere() = Sphere()

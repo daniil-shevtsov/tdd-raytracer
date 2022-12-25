@@ -105,4 +105,15 @@ internal class RayTest {
             index(1).isEqualTo(-4.0)
         }
     }
+
+    @Test
+    fun `an intersection encapsulates t and object`() {
+        val sphere = randomSphere()
+        val intersection = intersection(t = 3.5, intersected = sphere)
+
+        assertThat(intersection).all {
+            prop(Intersection::t).isEqualTo(3.5)
+            prop(Intersection::intersected).isEqualTo(sphere)
+        }
+    }
 }
