@@ -19,6 +19,16 @@ data class Canvas(
     },
 )
 
+fun Canvas.applyToEveryPixel(operation: (x: Int, y: Int) -> Color): Canvas {
+    return copy(
+        pixels = pixels.mapIndexed { y, row ->
+            row.mapIndexed { x, color ->
+                operation(x, y)
+            }
+        }
+    )
+}
+
 fun Canvas.writePixel(
     x: Int,
     y: Int,
@@ -64,7 +74,7 @@ fun Canvas.toPmm(): String {
                     val lastSpaceBeforeLimit = line.substring(startIndex = 0, endIndex = 71).lastIndexOf(' ')
                     listOf(
                         line.substring(startIndex = 0, endIndex = lastSpaceBeforeLimit),
-                        line.substring(startIndex = lastSpaceBeforeLimit+1, endIndex = line.length)
+                        line.substring(startIndex = lastSpaceBeforeLimit + 1, endIndex = line.length)
                     ).joinToString(separator = "\n")
                 }
                 else -> line
