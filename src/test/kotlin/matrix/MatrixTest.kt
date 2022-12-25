@@ -325,4 +325,36 @@ internal class MatrixTest {
         assertThat(matrix.cofactor(1, 0)).isEqualTo(-25.0)
     }
 
+    @Test
+    fun `should calculate determinant of a 3x3 matrix`() {
+        val matrix = matrix(
+            listOf(
+                row(1.0, 2.0, 6.0),
+                row(-5.0, 8.0, -4.0),
+                row(2.0, 6.0, 4.0),
+            )
+        )
+        assertThat(matrix.cofactor(0, 0)).isEqualTo(56.0)
+        assertThat(matrix.cofactor(0, 1)).isEqualTo(12.0)
+        assertThat(matrix.cofactor(0, 2)).isEqualTo(-46.0)
+        assertThat(matrix.determinant()).isEqualTo(-196.0)
+    }
+
+    @Test
+    fun `should calculate the determinant of a 4x4 matrix`() {
+        val matrix = matrix(
+            listOf(
+                row(-2.0, -8.0, 3.0, 5.0),
+                row(-3.0, 1.0, 7.0, 3.0),
+                row(1.0, 2.0, -9.0, 6.0),
+                row(-6.0, 7.0, 7.0, -9.0),
+            )
+        )
+        assertThat(matrix.cofactor(0, 0)).isEqualTo(690.0)
+        assertThat(matrix.cofactor(0, 1)).isEqualTo(447.0)
+        assertThat(matrix.cofactor(0, 2)).isEqualTo(210.0)
+        assertThat(matrix.cofactor(0, 3)).isEqualTo(51.0)
+        assertThat(matrix.determinant()).isEqualTo(-4071.0)
+
+    }
 }

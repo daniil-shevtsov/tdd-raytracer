@@ -75,9 +75,14 @@ class Matrix(
         })
     }
 
-    //TODO: Currently only for 2x2
     fun determinant(): Double {
-        return values[0][0] * values[1][1] - values[0][1] * values[1][0]
+        return if (size == 2) {
+            values[0][0] * values[1][1] - values[0][1] * values[1][0]
+        } else {
+            (0 until columnCount).fold(initial = 0.0) { determinant, column ->
+                determinant + this[0, column] * cofactor(0, column)
+            }
+        }
     }
 
     fun submatrix(withoutRow: Int, withoutColumn: Int): Matrix {
