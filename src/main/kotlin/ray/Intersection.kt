@@ -14,3 +14,9 @@ fun intersection(
 )
 typealias Intersections = List<Intersection>
 fun intersections(vararg intersections: Intersection): Intersections = intersections.toList()
+
+fun hit(intersections: Intersections): Intersection? {
+    return intersections
+        .sortedBy { it.t }
+        .firstOrNull { it.t > 0 }
+}

@@ -120,6 +120,88 @@ internal class RayTest {
         }
     }
 
+    @Test
+    fun `intersect sets the object on the intersection`() {
+        val ray = ray(
+            origin = point(0.0,0.0,-5.0),
+            direction = vector(0.0,0.0,1.0)
+        )
+        val sphere = sphere()
+
+        val xs = intersection(sphere, ray)
+
+        assertThat(xs)
+            .extracting(Intersection::intersected)
+            .containsExactly(
+                sphere,
+                sphere,
+            )
+    }
+
+    @Test
+    fun `the hit when all intersections have positive t`() {
+        val sphere = sphere()
+        val i1 = intersection(1.0, sphere)
+        val i2 = intersection(2.0, sphere)
+        val xs = intersections(i2, i1)
+
+        val hit = hit(xs)
+
+        assertThat(hit).isEqualTo(i1)
+    }
+
+    @Test
+    fun `the hit when some intersections have negative t`() {
+        val sphere = sphere()
+        val i1 = intersection(-1.0, sphere)
+        val i2 = intersection(1.0, sphere)
+        val xs = intersections(i2, i1)
+
+        val hit = hit(xs)
+
+        assertThat(hit).isEqualTo(i2)
+    }
+
+    @Test
+    fun `the hit when all intersections have negative t`() {
+        val sphere = sphere()
+        val i1 = intersection(-2.0, sphere)
+        val i2 = intersection(-1.0, sphere)
+        val xs = intersections(i2, i1)
+
+        val hit = hit(xs)
+
+        assertThat(hit).isNull()
+    }
+
+    @Test
+    fun `the hit is always the lowest non-negative intersection`() {
+        val sphere = sphere()
+        val i1 = intersection(5.0, sphere)
+        val i2 = intersection(7.0, sphere)
+        val i3 = intersection(-3.0, sphere)
+        val i4 = intersection(2.0, sphere)
+        val xs = intersections(i1, i2, i3, i4)
+
+        val hit = hit(xs)
+
+        assertThat(hit).isEqualTo(i4)
+    }
+
+    @Test
+    fun `the hit is always the lowest non-negative intersection with other order`() {
+        val sphere = sphere()
+        val i1 = intersection(5.0, sphere)
+        val i2 = intersection(7.0, sphere)
+        val i3 = intersection(-3.0, sphere)
+        val i4 = intersection(2.0, sphere)
+        val xs = intersections(i1, i4, i2, i3 )
+
+        val hit = hit(xs)
+
+        assertThat(hit).isEqualTo(i4)
+    }
+
     private fun Assert<Intersections>.hasTs(t1: Double, t2: Double) = all {
         size().isEqualTo(2)
         extracting(Intersection::t)
