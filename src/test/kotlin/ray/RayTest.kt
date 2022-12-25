@@ -1,0 +1,39 @@
+package ray
+
+import assertk.all
+import assertk.assertThat
+import assertk.assertions.isEqualTo
+import assertk.assertions.prop
+import org.junit.jupiter.api.Test
+import tuple.point
+import tuple.vector
+
+internal class RayTest {
+
+    @Test
+    fun `should create ray`() {
+        val origin = point(1.0, 2.0, 3.0)
+        val direction = vector(4.0,5.0,6.0)
+
+        val ray = ray(origin, direction)
+
+        assertThat(ray).all {
+            prop(Ray::origin).isEqualTo(origin)
+            prop(Ray::direction).isEqualTo(direction)
+        }
+    }
+
+    @Test
+    fun `should compute a point from a distance`() {
+        val ray = ray(
+            origin = point(2.0,3.0,4.0),
+            direction = vector(1.0, 0.0,0.0)
+        )
+
+        assertThat(ray.position(at = 0.0)).isEqualTo(point(2.0,3.0,4.0))
+        assertThat(ray.position(at = 1.0)).isEqualTo(point(3.0,3.0,4.0))
+        assertThat(ray.position(at = -1.0)).isEqualTo(point(1.0,3.0,4.0))
+        assertThat(ray.position(at = 2.5)).isEqualTo(point(4.5,3.0,4.0))
+    }
+
+}
