@@ -90,4 +90,14 @@ internal class TransformationKtTest {
         assertThat(fullQuarter * point).isEqualTo(point(1.0, 0.0, 0.0))
     }
 
+    @Test
+    fun `rotating a point around z axis`() {
+        val point = point(0.0, 1.0, 0.0)
+        val halfQuarter = rotationZ(Math.PI / 4)
+        val fullQuarter = rotationZ(Math.PI / 2)
+
+        assertThat(halfQuarter * point).isEqualTo(point(-sqrt(2.0) / 2.0, sqrt(2.0) / 2.0, 0.0))
+        assertThat(fullQuarter * point).isEqualTo(point(-1.0, 0.0, 0.0))
+    }
+
 }

@@ -71,3 +71,18 @@ fun rotationY(angle: Double): Matrix = identityMatrix(size = 4).let { matrix ->
         }
     )
 }
+
+fun rotationZ(angle: Double): Matrix = identityMatrix(size = 4).let { matrix ->
+    matrix(
+        (0 until matrix.rowCount).map { row ->
+            (0 until matrix.columnCount).map { column ->
+                when {
+                    row == 0 && column == 0 || row == 1 && column == 1 -> cos(angle)
+                    row == 0 && column == 1-> -sin(angle)
+                    row == 1 && column == 0 -> sin(angle)
+                    else -> matrix[row][column]
+                }
+            }
+        }
+    )
+}
