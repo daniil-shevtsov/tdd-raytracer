@@ -394,7 +394,7 @@ internal class MatrixTest {
                 row(1.0, -3.0, 7.0, 4.0),
             )
         )
-        val inversed = matrix.inversed()
+        val inversed = matrix.inversedOrNull()
         assertThat(inversed).isNotNull()
         inversed!!
         assertThat(matrix.determinant()).isEqualTo(532.0)
@@ -425,7 +425,7 @@ internal class MatrixTest {
             )
         )
 
-        assertThat(matrix.inversed())
+        assertThat(matrix.inversedOrNull())
             .isEqualTo(
                 matrix(
                     listOf(
@@ -448,7 +448,7 @@ internal class MatrixTest {
             )
         )
 
-        assertThat(matrix.inversed())
+        assertThat(matrix.inversedOrNull())
             .isEqualTo(
                 matrix(
                     listOf(
@@ -480,6 +480,6 @@ internal class MatrixTest {
         )
         val c = a * b
 
-        assertThat(c * b.inversed()!!).isEqualTo(a)
+        assertThat(c * b.inversedOrNull()!!).isEqualTo(a)
     }
 }

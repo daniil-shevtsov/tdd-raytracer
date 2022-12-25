@@ -3,6 +3,8 @@ package transformation
 import matrix.Matrix
 import matrix.identityMatrix
 import matrix.matrix
+import kotlin.math.cos
+import kotlin.math.sin
 
 fun translation(x: Double, y: Double, z: Double): Matrix = identityMatrix(size = 4).let { matrix ->
     matrix(
@@ -33,6 +35,21 @@ fun scaling(x: Double, y: Double, z: Double): Matrix = identityMatrix(size = 4).
                         2 -> z
                         else -> matrix[row][column]
                     }
+                    else -> matrix[row][column]
+                }
+            }
+        }
+    )
+}
+
+fun rotationX(angle: Double): Matrix = identityMatrix(size = 4).let { matrix ->
+    matrix(
+        (0 until matrix.rowCount).map { row ->
+            (0 until matrix.columnCount).map { column ->
+                when {
+                    row == 1 && column == 1 || row == 2 && column == 2 -> cos(angle)
+                    row == 2 && column == 1 -> sin(angle)
+                    row == 1 && column == 2 -> -sin(angle)
                     else -> matrix[row][column]
                 }
             }

@@ -116,7 +116,14 @@ class Matrix(
         return sign * minor(row, column)
     }
 
-    fun inversed(): Matrix? {
+    fun inversed(): Matrix {
+        if (!isInvertible) {
+            throw IllegalArgumentException("Can't give inversed for not invertible matrix")
+        }
+        return inversedOrNull()!!
+    }
+
+    fun inversedOrNull(): Matrix? {
         //TODO: Can practice type-driven design instead of this
         if (!isInvertible) {
             return null
