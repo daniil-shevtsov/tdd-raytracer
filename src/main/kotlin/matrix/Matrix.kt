@@ -14,6 +14,8 @@ class Matrix(
         get() = values.size
     val columnCount: Int
         get() = values[0].size
+    val isInvertible: Boolean
+        get() = determinant() != 0.0
 
     operator fun get(row: Int, column: Int): Double {
         return values[row][column]

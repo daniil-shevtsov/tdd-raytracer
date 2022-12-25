@@ -2,7 +2,9 @@ package matrix
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isFalse
 import assertk.assertions.isNotEqualTo
+import assertk.assertions.isTrue
 import org.junit.jupiter.api.Test
 import tuple.Tuple
 import tuple.point
@@ -355,6 +357,33 @@ internal class MatrixTest {
         assertThat(matrix.cofactor(0, 2)).isEqualTo(210.0)
         assertThat(matrix.cofactor(0, 3)).isEqualTo(51.0)
         assertThat(matrix.determinant()).isEqualTo(-4071.0)
+    }
 
+    @Test
+    fun `should indicate invertibility of an invertible matrix`() {
+        val matrix = matrix(
+            listOf(
+                row(6.0, 4.0, 4.0, 4.0),
+                row(5.0, 5.0, 7.0, 6.0),
+                row(4.0, -9.0, 3.0, -7.0),
+                row(9.0, 1.0, 7.0, -6.0),
+            )
+        )
+        assertThat(matrix.determinant()).isEqualTo(-2120.0)
+        assertThat(matrix.isInvertible).isTrue()
+    }
+
+    @Test
+    fun `should indicate non-invertibility of an non-invertible matrix`() {
+        val matrix = matrix(
+            listOf(
+                row(-4.0, 2.0, -2.0, -3.0),
+                row(9.0, 6.0, 2.0, 6.0),
+                row(0.0, -5.0, 1.0, -5.0),
+                row(0.0, 0.0, 0.0, 0.0),
+            )
+        )
+        assertThat(matrix.determinant()).isEqualTo(0.0)
+        assertThat(matrix.isInvertible).isFalse()
     }
 }
