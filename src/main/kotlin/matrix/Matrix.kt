@@ -116,6 +116,21 @@ class Matrix(
         return sign * minor(row, column)
     }
 
+    fun inversed(): Matrix? {
+        //TODO: Can practice type-driven design instead of this
+        if (!isInvertible) {
+            return null
+        }
+
+        var matrixNewValues = this.values.toMutableList().map { it.toMutableList() }.toMutableList()
+        (0 until size).map { row ->
+            (0 until size).map { column ->
+                matrixNewValues[column][row] = cofactor(row, column) / determinant()
+            }
+        }
+        return matrix(matrixNewValues)
+    }
+
     override fun toString(): String {
         return values.mapIndexed { column, row ->
             row.joinToString(separator = " ") { value ->

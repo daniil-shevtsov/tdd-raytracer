@@ -1,10 +1,7 @@
 package matrix
 
 import assertk.assertThat
-import assertk.assertions.isEqualTo
-import assertk.assertions.isFalse
-import assertk.assertions.isNotEqualTo
-import assertk.assertions.isTrue
+import assertk.assertions.*
 import org.junit.jupiter.api.Test
 import tuple.Tuple
 import tuple.point
@@ -385,5 +382,35 @@ internal class MatrixTest {
         )
         assertThat(matrix.determinant()).isEqualTo(0.0)
         assertThat(matrix.isInvertible).isFalse()
+    }
+
+    @Test
+    fun `should calculate inverse of a matrix`() {
+        val matrix = matrix(
+            listOf(
+                row(-5.0, 2.0, 6.0, -8.0),
+                row(1.0, -5.0, 1.0, 8.0),
+                row(7.0, 7.0, -6.0, -7.0),
+                row(1.0, -3.0, 7.0, 4.0),
+            )
+        )
+        val inversed = matrix.inversed()
+        assertThat(inversed).isNotNull()
+        inversed!!
+        assertThat(matrix.determinant()).isEqualTo(532.0)
+        assertThat(matrix.cofactor(2, 3)).isEqualTo(-160.0)
+        assertThat(inversed[3][2]).isEqualTo(-160.0 / 532.0)
+        assertThat(matrix.cofactor(3, 2)).isEqualTo(105.0)
+        assertThat(inversed[2][3]).isEqualTo(105.0 / 532.0)
+        assertThat(inversed).isEqualTo(
+            matrix(
+                listOf(
+                    row(0.21805, 0.45113, 0.24060, -0.04511),
+                    row(-0.80827, -1.45677, -0.44361, 0.52068),
+                    row(-0.07895, -0.22368, -0.05263, 0.19737),
+                    row(-0.52256, -0.81391, -0.30075, 0.30639),
+                )
+            )
+        )
     }
 }
