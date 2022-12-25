@@ -56,3 +56,18 @@ fun rotationX(angle: Double): Matrix = identityMatrix(size = 4).let { matrix ->
         }
     )
 }
+
+fun rotationY(angle: Double): Matrix = identityMatrix(size = 4).let { matrix ->
+    matrix(
+        (0 until matrix.rowCount).map { row ->
+            (0 until matrix.columnCount).map { column ->
+                when {
+                    row == 0 && column == 0 || row == 2 && column == 2 -> cos(angle)
+                    row == 2 && column == 0 -> -sin(angle)
+                    row == 0 && column == 2 -> sin(angle)
+                    else -> matrix[row][column]
+                }
+            }
+        }
+    )
+}
