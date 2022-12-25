@@ -82,12 +82,6 @@ internal class RayTest {
         assertThat(xs).hasTs(t1 = -1.0, t2 = 1.0)
     }
 
-    private fun Assert<List<Double>>.hasTs(t1: Double, t2: Double) = all {
-        size().isEqualTo(2)
-        index(0).isEqualTo(t1)
-        index(1).isEqualTo(t2)
-    }
-
     @Test
     fun `a sphere is behind ray`() {
         val ray = ray(
@@ -96,11 +90,7 @@ internal class RayTest {
         )
         val sphere = sphere()
         val xs = intersection(sphere, ray)
-        assertThat(xs).all {
-            size().isEqualTo(2)
-            index(0).isEqualTo(-6.0)
-            index(1).isEqualTo(-4.0)
-        }
+
         assertThat(xs).hasTs(t1 = -6.0, t2 = -4.0)
     }
 
@@ -128,5 +118,14 @@ internal class RayTest {
             index(0).prop(Intersection::t).isEqualTo(1.0)
             index(1).prop(Intersection::t).isEqualTo(2.0)
         }
+    }
+
+    private fun Assert<Intersections>.hasTs(t1: Double, t2: Double) = all {
+        size().isEqualTo(2)
+        extracting(Intersection::t)
+            .all {
+                index(0).isEqualTo(t1)
+                index(1).isEqualTo(t2)
+            }
     }
 }
