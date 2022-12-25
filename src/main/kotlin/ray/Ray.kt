@@ -1,5 +1,6 @@
 package ray
 
+import matrix.Matrix
 import tuple.Point
 import tuple.Vector
 import tuple.point
@@ -14,12 +15,20 @@ data class Ray(
         return origin + direction * at
     }
 
+    fun transformBy(translation: Matrix): Ray {
+        return copy(
+            origin = translation * origin,
+            direction = translation * direction,
+        )
+    }
+
 }
 
 fun intersection(
     sphere: Intersectable,
     ray: Ray
 ): Intersections {
+    val ray = ray.transformBy(sphere.transform.inversed())
     val sphereToRay = ray.origin - point(0.0, 0.0, 0.0) // sphere at world origin right now
     val a = ray.direction dot ray.direction
     val b = 2 * (ray.direction dot sphereToRay)

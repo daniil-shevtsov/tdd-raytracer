@@ -1,6 +1,18 @@
 package ray
 
-data class Sphere(val garage: String = "") : Intersectable
-sealed interface Intersectable
+import matrix.Matrix
+import matrix.identityMatrix
+
+data class Sphere(override val transform: Matrix = identityMatrix()) : Intersectable {
+    fun transformBy(transform: Matrix): Sphere {
+        return copy(
+            transform = transform
+        )
+    }
+}
+
+sealed interface Intersectable {
+    val transform: Matrix
+}
 
 fun sphere() = Sphere()

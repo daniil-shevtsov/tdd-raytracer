@@ -5,6 +5,8 @@ import assertk.all
 import assertk.assertThat
 import assertk.assertions.*
 import org.junit.jupiter.api.Test
+import transformation.scaling
+import transformation.translation
 import tuple.point
 import tuple.vector
 
@@ -123,8 +125,8 @@ internal class RayTest {
     @Test
     fun `intersect sets the object on the intersection`() {
         val ray = ray(
-            origin = point(0.0,0.0,-5.0),
-            direction = vector(0.0,0.0,1.0)
+            origin = point(0.0, 0.0, -5.0),
+            direction = vector(0.0, 0.0, 1.0)
         )
         val sphere = sphere()
 
@@ -195,19 +197,49 @@ internal class RayTest {
         val i2 = intersection(7.0, sphere)
         val i3 = intersection(-3.0, sphere)
         val i4 = intersection(2.0, sphere)
-        val xs = intersections(i1, i4, i2, i3 )
+        val xs = intersections(i1, i4, i2, i3)
 
         val hit = hit(xs)
 
         assertThat(hit).isEqualTo(i4)
     }
 
-    private fun Assert<Intersections>.hasTs(t1: Double, t2: Double) = all {
-        size().isEqualTo(2)
-        extracting(Intersection::t)
-            .all {
-                index(0).isEqualTo(t1)
-                index(1).isEqualTo(t2)
-            }
+    @Test
+    fun `should translate a ray`() {
+        val ray = ray(
+            origin = point(1.0, 2.0, 3.0),
+            direction = vector(0.0, 1.0, 0.0)
+        )
+        val newRay = ray.transformBy(translation(3.0, 4.0, 5.0))
+
+        assertThat(newRay).all {
+            prop(Ray::origin).isEqualTo(point(4.0, 6.0, 8.0))
+            prop(Ray::direction).isEqualTo(vector(0.0, 1.0, 0.0))
+        }
     }
+
+    @Test
+    fun `should scale a ray`() {
+        val ray = ray(
+            origin = point(1.0, 2.0, 3.0),
+            direction = vector(0.0, 1.0, 0.0)
+        )
+        val newRay = ray.transformBy(scaling(2.0, 3.0, 4.0))
+
+        assertThat(newRay).all {
+            prop(Ray::origin).isEqualTo(point(2.0, 6.0, 12.0))
+            prop(Ray::direction).isEqualTo(vector(0.0, 3.0, 0.0))
+        }
+    }
+
+
+}
+
+fun Assert<Intersections>.hasTs(t1: Double, t2: Double) = all {
+    size().isEqualTo(2)
+    extracting(Intersection::t)
+        .all {
+            index(0).isEqualTo(t1)
+            index(1).isEqualTo(t2)
+        }
 }
