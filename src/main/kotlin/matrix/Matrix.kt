@@ -96,6 +96,11 @@ class Matrix(
         )
     }
 
+    fun minor(row: Int, column: Int): Double {
+        return submatrix(withoutRow = row, withoutColumn = column)
+            .determinant()
+    }
+
     override fun toString(): String {
         return values.mapIndexed { column, row ->
             row.joinToString(separator = " ") { value ->

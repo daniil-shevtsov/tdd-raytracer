@@ -272,4 +272,41 @@ internal class MatrixTest {
             )
     }
 
+    @Test
+    fun `submatrix of 4x4 is 3x3`() {
+        val matrix = matrix(
+            listOf(
+                row(-6.0, 1.0, 1.0, 6.0),
+                row(-8.0, 5.0, 8.0, 6.0),
+                row(-1.0, 0.0, 8.0, 2.0),
+                row(-7.0, 1.0, -1.0, 1.0),
+            )
+        )
+
+        assertThat(matrix.submatrix(2, 1))
+            .isEqualTo(
+                matrix(
+                    listOf(
+                        row(-6.0, 1.0, 6.0),
+                        row(-8.0, 8.0, 6.0),
+                        row(-7.0, -1.0, 1.0),
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun `should calculate minor of a 3x3 matrix`() {
+        val matrix = matrix(
+            listOf(
+                row(3.0, 5.0, 0.0),
+                row(2.0, -1.0, -7.0),
+                row(6.0, -1.0, 5.0),
+            )
+        )
+        assertThat(matrix.submatrix(1, 0).determinant())
+            .isEqualTo(25.0)
+        assertThat(matrix.minor(1, 0)).isEqualTo(25.0)
+    }
+
 }
