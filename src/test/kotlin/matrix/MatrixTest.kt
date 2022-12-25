@@ -438,7 +438,7 @@ internal class MatrixTest {
             )
     }
 
-    fun `calculate unverse of a third matrix`() {
+    fun `calculate inverse of a third matrix`() {
         val matrix = matrix(
             listOf(
                 row(9.0, 3.0, 0.0, 9.0),
@@ -459,5 +459,27 @@ internal class MatrixTest {
                     )
                 )
             )
+    }
+
+    fun `should get orignial matrix when multiplying product by its inverse`() {
+        val a = matrix(
+            listOf(
+                row(3.0, -9.0, 7.0, 3.0),
+                row(3.0, -8.0, 2.0, -9.0),
+                row(-4.0, 4.0, 4.0, 1.0),
+                row(-6.0, 5.0, -1.0, 1.0),
+            )
+        )
+        val b = matrix(
+            listOf(
+                row(8.0, 2.0, 2.0, 2.0),
+                row(3.0, -1.0, 7.0, 0.0),
+                row(7.0, 0.0, 5.0, 4.0),
+                row(6.0, -2.0, 0.0, 5.0),
+            )
+        )
+        val c = a * b
+
+        assertThat(c * b.inversed()!!).isEqualTo(a)
     }
 }
