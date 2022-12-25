@@ -121,14 +121,12 @@ class Matrix(
         if (!isInvertible) {
             return null
         }
-
-        var matrixNewValues = this.values.toMutableList().map { it.toMutableList() }.toMutableList()
-        (0 until size).map { row ->
-            (0 until size).map { column ->
-                matrixNewValues[column][row] = cofactor(row, column) / determinant()
+        val determinant = determinant()
+        return matrix((0 until size).map { column ->
+            (0 until size).map { row ->
+                cofactor(row, column) / determinant
             }
-        }
-        return matrix(matrixNewValues)
+        })
     }
 
     override fun toString(): String {
