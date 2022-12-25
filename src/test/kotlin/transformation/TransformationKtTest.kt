@@ -3,6 +3,7 @@ package transformation
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.junit.jupiter.api.Test
+import tuple.Point
 import tuple.point
 import tuple.vector
 import kotlin.math.sqrt
@@ -98,6 +99,70 @@ internal class TransformationKtTest {
 
         assertThat(halfQuarter * point).isEqualTo(point(-sqrt(2.0) / 2.0, sqrt(2.0) / 2.0, 0.0))
         assertThat(fullQuarter * point).isEqualTo(point(-1.0, 0.0, 0.0))
+    }
+
+    @Test
+    fun `shearing transformation x to y`() {
+        testShearing(
+            shearingIndex = 0,
+            expected = point(5.0, 3.0, 4.0)
+        )
+    }
+
+    @Test
+    fun `shearing transformation x to z`() {
+        testShearing(
+            shearingIndex = 1,
+            expected = point(6.0, 3.0, 4.0)
+        )
+    }
+
+    @Test
+    fun `shearing transformation y to x`() {
+        testShearing(
+            shearingIndex = 2,
+            expected = point(2.0, 5.0, 4.0)
+        )
+    }
+
+    @Test
+    fun `shearing transformation y to z`() {
+        testShearing(
+            shearingIndex = 3,
+            expected = point(2.0, 7.0, 4.0)
+        )
+    }
+
+    @Test
+    fun `shearing transformation z to x`() {
+        testShearing(
+            shearingIndex = 4,
+            expected = point(2.0, 3.0, 6.0)
+        )
+    }
+
+    @Test
+    fun `shearing transformation z to y`() {
+        testShearing(
+            shearingIndex = 5,
+            expected = point(2.0, 3.0, 7.0)
+        )
+    }
+
+    private fun testShearing(
+        shearingIndex: Int,
+        expected: Point,
+    ) {
+        val transform = shearing(
+            xy = 1.0.takeIf { shearingIndex == 0 } ?: 0.0,
+            xz = 1.0.takeIf { shearingIndex == 1 } ?: 0.0,
+            yx = 1.0.takeIf { shearingIndex == 2 } ?: 0.0,
+            yz = 1.0.takeIf { shearingIndex == 3 } ?: 0.0,
+            zx = 1.0.takeIf { shearingIndex == 4 } ?: 0.0,
+            zy = 1.0.takeIf { shearingIndex == 5 } ?: 0.0,
+        )
+        val point = point(2.0, 3.0, 4.0)
+        assertThat(transform * point).isEqualTo(expected)
     }
 
 }
