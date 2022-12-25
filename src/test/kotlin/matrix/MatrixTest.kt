@@ -413,4 +413,51 @@ internal class MatrixTest {
             )
         )
     }
+
+    @Test
+    fun `calculate unverse of another matrix`() {
+        val matrix = matrix(
+            listOf(
+                row(8.0, -5.0, 9.0, 2.0),
+                row(7.0, 5.0, 6.0, 1.0),
+                row(-6.0, 0.0, 9.0, 6.0),
+                row(-3.0, 0.0, -9.0, -4.0),
+            )
+        )
+
+        assertThat(matrix.inversed())
+            .isEqualTo(
+                matrix(
+                    listOf(
+                        row(-0.15385, -0.15385, -0.28205, -0.53846),
+                        row(-0.07692, 0.12308, 0.02564, 0.03077),
+                        row(0.35897, 0.35897, 0.43590, 0.92308),
+                        row(-0.69231, -0.69231, -0.76923, -1.92308),
+                    )
+                )
+            )
+    }
+
+    fun `calculate unverse of a third matrix`() {
+        val matrix = matrix(
+            listOf(
+                row(9.0, 3.0, 0.0, 9.0),
+                row(-5.0, -2.0, -6.0, -3.0),
+                row(-4.0, 9.0, 6.0, 4.0),
+                row(-7.0, 6.0, 6.0, 2.0),
+            )
+        )
+
+        assertThat(matrix.inversed())
+            .isEqualTo(
+                matrix(
+                    listOf(
+                        row(-0.04074, -0.07778, 0.14444, -0.22222),
+                        row(-0.07778, 0.03333, 0.36667, -0.33333),
+                        row(-0.02901, -0.14630, -0.10926, 0.12963),
+                        row(0.17778, 0.06667, -0.26667, 0.33333),
+                    )
+                )
+            )
+    }
 }
