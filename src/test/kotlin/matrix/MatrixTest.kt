@@ -252,4 +252,24 @@ internal class MatrixTest {
             .isEqualTo(17.0)
     }
 
+    @Test
+    fun `submatrix of a 3x3 matrix gives 2x2 matrix`() {
+        val matrix = matrix(
+            listOf(
+                row(1.0, 5.0, 0.0),
+                row(-3.0, 2.0, 7.0),
+                row(0.0, 6.0, -3.0),
+            )
+        )
+        assertThat(matrix.submatrix(0, 2))
+            .isEqualTo(
+                matrix(
+                    listOf(
+                        row(-3.0, 2.0),
+                        row(0.0, 6.0),
+                    )
+                )
+            )
+    }
+
 }

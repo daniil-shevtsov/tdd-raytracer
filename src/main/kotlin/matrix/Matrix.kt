@@ -75,8 +75,25 @@ class Matrix(
         })
     }
 
+    //TODO: Currently only for 2x2
     fun determinant(): Double {
-        return values[0][0] * values[1][1] - values[0][1]*values[1][0]
+        return values[0][0] * values[1][1] - values[0][1] * values[1][0]
+    }
+
+    fun submatrix(withoutRow: Int, withoutColumn: Int): Matrix {
+        return matrix(
+            values.mapIndexedNotNull { row, rowValues ->
+                when (row) {
+                    withoutRow -> null
+                    else -> rowValues.mapIndexedNotNull { column, value ->
+                        when (column) {
+                            withoutColumn -> null
+                            else -> value
+                        }
+                    }
+                }
+            }
+        )
     }
 
     override fun toString(): String {
