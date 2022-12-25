@@ -31,8 +31,11 @@ fun intersection(
     }
     val t1 = (-b - sqrt(discriminant)) / (2 * a)
     val t2 = (-b + sqrt(discriminant)) / (2 * a)
-
-    return listOf(t1, t2)
+    return listOf(t1,t2)
+//    return intersections(
+//        intersection(t = t1, intersected = sphere),
+//        intersection(t = t2, intersected = sphere),
+//    )
 }
 
 fun ray(origin: Point, direction: Vector) = Ray(

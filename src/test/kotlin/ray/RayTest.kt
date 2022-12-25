@@ -1,5 +1,6 @@
 package ray
 
+import assertk.Assert
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.*
@@ -41,13 +42,10 @@ internal class RayTest {
             origin = point(0.0, 0.0, -5.0),
             direction = vector(0.0, 0.0, 1.0)
         )
-        val sphere = randomSphere()
+        val sphere = sphere()
         val xs = intersection(sphere, ray)
-        assertThat(xs).all {
-            size().isEqualTo(2)
-            index(0).isEqualTo(4.0)
-            index(1).isEqualTo(6.0)
-        }
+
+        assertThat(xs).hasTs(t1 = 4.0, t2 = 6.0)
     }
 
     @Test
@@ -56,13 +54,10 @@ internal class RayTest {
             origin = point(0.0, 1.0, -5.0),
             direction = vector(0.0, 0.0, 1.0)
         )
-        val sphere = randomSphere()
+        val sphere = sphere()
         val xs = intersection(sphere, ray)
-        assertThat(xs).all {
-            size().isEqualTo(2)
-            index(0).isEqualTo(5.0)
-            index(1).isEqualTo(5.0)
-        }
+
+        assertThat(xs).hasTs(t1 = 5.0, t2 = 5.0)
     }
 
     @Test
@@ -71,7 +66,7 @@ internal class RayTest {
             origin = point(0.0, 2.0, -5.0),
             direction = vector(0.0, 0.0, 1.0)
         )
-        val sphere = randomSphere()
+        val sphere = sphere()
         val xs = intersection(sphere, ray)
         assertThat(xs).isEmpty()
     }
@@ -82,13 +77,15 @@ internal class RayTest {
             origin = point(0.0, 0.0, 0.0),
             direction = vector(0.0, 0.0, 1.0)
         )
-        val sphere = randomSphere()
+        val sphere = sphere()
         val xs = intersection(sphere, ray)
-        assertThat(xs).all {
-            size().isEqualTo(2)
-            index(0).isEqualTo(-1.0)
-            index(1).isEqualTo(1.0)
-        }
+        assertThat(xs).hasTs(t1 = -1.0, t2 = 1.0)
+    }
+
+    private fun Assert<List<Double>>.hasTs(t1: Double, t2: Double) = all {
+        size().isEqualTo(2)
+        index(0).isEqualTo(t1)
+        index(1).isEqualTo(t2)
     }
 
     @Test
@@ -97,23 +94,39 @@ internal class RayTest {
             origin = point(0.0, 0.0, 5.0),
             direction = vector(0.0, 0.0, 1.0)
         )
-        val sphere = randomSphere()
+        val sphere = sphere()
         val xs = intersection(sphere, ray)
         assertThat(xs).all {
             size().isEqualTo(2)
             index(0).isEqualTo(-6.0)
             index(1).isEqualTo(-4.0)
         }
+        assertThat(xs).hasTs(t1 = -6.0, t2 = -4.0)
     }
 
     @Test
     fun `an intersection encapsulates t and object`() {
-        val sphere = randomSphere()
+        val sphere = sphere()
         val intersection = intersection(t = 3.5, intersected = sphere)
 
         assertThat(intersection).all {
             prop(Intersection::t).isEqualTo(3.5)
             prop(Intersection::intersected).isEqualTo(sphere)
+        }
+    }
+
+    @Test
+    fun `aggregating intersections`() {
+        val sphere = sphere()
+        val xs = intersections(
+            intersection(1.0, sphere),
+            intersection(2.0, sphere),
+        )
+
+        assertThat(xs).all {
+            size().isEqualTo(2)
+            index(0).prop(Intersection::t).isEqualTo(1.0)
+            index(1).prop(Intersection::t).isEqualTo(2.0)
         }
     }
 }

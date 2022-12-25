@@ -12,3 +12,5 @@ fun intersection(
     t = t,
     intersected = intersected,
 )
+typealias Intersections = List<Intersection>
+fun intersections(vararg intersections: Intersection): Intersections = intersections.toList()

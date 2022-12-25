@@ -3,4 +3,4 @@ package ray
 data class Sphere(val garage: String = "") : Intersectable
 sealed interface Intersectable
 
-fun randomSphere() = Sphere()
+fun sphere() = Sphere()
