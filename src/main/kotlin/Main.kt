@@ -1,5 +1,7 @@
-import tuple.practice.runTuplePractice
+import canvas.practice.canvasPractice
+import file.createPmm
+
 
 fun main(args: Array<String>) {
-    runTuplePractice()
+    createPmm(name = "canvas-practice.pmm", content = canvasPractice())
 }
