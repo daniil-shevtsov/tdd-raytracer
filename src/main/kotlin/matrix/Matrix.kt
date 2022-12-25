@@ -101,6 +101,14 @@ class Matrix(
             .determinant()
     }
 
+    fun cofactor(row: Int, column: Int): Double {
+        val sign = when {
+            (row + column) % 2 == 0 -> 1
+            else -> -1
+        }
+        return sign * minor(row, column)
+    }
+
     override fun toString(): String {
         return values.mapIndexed { column, row ->
             row.joinToString(separator = " ") { value ->

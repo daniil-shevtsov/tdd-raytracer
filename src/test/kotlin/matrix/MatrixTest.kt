@@ -309,4 +309,20 @@ internal class MatrixTest {
         assertThat(matrix.minor(1, 0)).isEqualTo(25.0)
     }
 
+    @Test
+    fun `should calculate cofactor`() {
+        val matrix = matrix(
+            listOf(
+                row(3.0, 5.0, 0.0),
+                row(2.0, -1.0, -7.0),
+                row(6.0, -1.0, 5.0),
+            )
+        )
+
+        assertThat(matrix.minor(0, 0)).isEqualTo(-12.0)
+        assertThat(matrix.cofactor(0, 0)).isEqualTo(-12.0)
+        assertThat(matrix.minor(1, 0)).isEqualTo(25.0)
+        assertThat(matrix.cofactor(1, 0)).isEqualTo(-25.0)
+    }
+
 }
