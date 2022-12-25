@@ -29,4 +29,27 @@ internal class TransformationKtTest {
         assertThat(transform * vector).isEqualTo(vector)
     }
 
+    @Test
+    fun `scaling matrix applied to a point`() {
+        val transform = scaling(2.0, 3.0, 4.0)
+        val point = point(-4.0, 6.0, 8.0)
+        assertThat(transform * point).isEqualTo(point(-8.0, 18.0, 32.0))
+    }
+
+    @Test
+    fun `scaling matrix applied to a vector`() {
+        val transform = scaling(2.0, 3.0, 4.0)
+        val vector = vector(-4.0, 6.0, 8.0)
+        assertThat(transform * vector).isEqualTo(vector(-8.0, 18.0, 32.0))
+
+    }
+
+    @Test
+    fun `multiplying by the inverse of a scaling matrix`() {
+        val inversedTransform = scaling(2.0, 3.0, 4.0).inversed()!!
+        val vector = vector(-4.0, 6.0, 8.0)
+
+        assertThat(inversedTransform * vector).isEqualTo(vector(-2.0, 2.0, 2.0))
+    }
+
 }
