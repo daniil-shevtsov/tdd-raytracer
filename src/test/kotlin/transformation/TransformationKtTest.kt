@@ -149,6 +149,26 @@ internal class TransformationKtTest {
         )
     }
 
+    @Test
+    fun `individual transformation applied in sequence`() {
+        val point = point(1.0, 0.0, 1.0)
+        val rotation = rotationX(Math.PI / 2)
+        val scaling = scaling(5.0, 5.0, 5.0)
+        val translation = translation(10.0, 5.0, 7.0)
+        val point2 = rotation * point
+        assertThat(point2).isEqualTo(point(1.0, -1.0, 0.0))
+        val point3 = scaling * point2
+        assertThat(point3).isEqualTo(point(5.0, -5.0, 0.0))
+        val point4 = translation * point3
+        assertThat(point4).isEqualTo(point(15.0, 0.0, 7.0))
+    }
+
+    @Test
+    fun `chained transformations must be applied in reverse order`() {
+        val chainedTransformation = translation(10.0, 5.0, 7.0) * scaling(5.0, 5.0, 5.0) * rotationX(Math.PI / 2)
+        assertThat(chainedTransformation * point(1.0, 0.0, 1.0)).isEqualTo(point(15.0, 0.0, 7.0))
+    }
+
     private fun testShearing(
         shearingIndex: Int,
         expected: Point,
