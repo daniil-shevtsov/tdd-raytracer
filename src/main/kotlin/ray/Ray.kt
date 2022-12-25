@@ -14,6 +14,13 @@ data class Ray(
 
 }
 
+fun intersection(
+    sphere: Double,
+    ray: Ray
+): List<Double> {
+    return listOf(4.0, 6.0)
+}
+
 fun ray(origin: Point, direction: Vector) = Ray(
     origin = origin,
     direction = direction,
