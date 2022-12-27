@@ -81,6 +81,7 @@ internal class SphereTest {
         val fraction = sqrt(3.0) / 3.0
         val normal = sphere().normalAt(point(fraction, fraction, fraction))
         assertThat(normal).isEqualTo(vector(fraction, fraction, fraction))
+        assertThat(normal).isEqualTo(vector(fraction, fraction, fraction))
     }
 
     @Test
@@ -104,5 +105,12 @@ internal class SphereTest {
         val transformed = sphere.transformBy(scaling(1.0, 0.5, 1.0) * rotationZ(Math.PI / 5))
         assertThat(transformed.normalAt(point(0.0, sqrt(2.0)/2, -sqrt(2.0)/2)))
             .isEqualTo(vector(0.0, 0.97014, -0.24254))
+    }
+
+    @Test
+    fun `sphere has a default material`() {
+        val sphere = sphere()
+        assertThat(sphere.material)
+            .isEqualTo(material())
     }
 }

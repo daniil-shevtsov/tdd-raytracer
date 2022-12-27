@@ -1,5 +1,8 @@
 package tuple
 
+import ray.Degrees
+import ray.Radians
+import ray.toRadians
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -83,6 +86,10 @@ data class Tuple(
         )
     }
 
+    fun reflectFrom(normal: Tuple): Vector {
+        return this - normal * 2.0 * dot(normal)
+    }
+
     private companion object {
         const val EPSILON = 0.00001
     }
@@ -99,5 +106,17 @@ fun point(
 fun vector(
     x: Double,
     y: Double,
-    z: Double
+    z: Double,
 ) = Tuple(x = x, y = y, z = z, w = 0.0)
+
+fun vector(
+    x: Radians,
+    y: Radians,
+    z: Radians,
+) = Tuple(x = x.raw, y = y.raw, z = z.raw, w = 0.0)
+
+fun vector(
+    x: Degrees,
+    y: Degrees,
+    z: Degrees,
+) = Tuple(x = x.toRadians().raw, y = y.toRadians().raw, z = z.toRadians().raw, w = 0.0)

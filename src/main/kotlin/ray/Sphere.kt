@@ -6,7 +6,10 @@ import tuple.Point
 import tuple.Vector
 import tuple.point
 
-data class Sphere(override val transform: Matrix = identityMatrix()) : Intersectable {
+data class Sphere(
+    override val transform: Matrix = identityMatrix(),
+    val material: Material,
+) : Intersectable {
     fun transformBy(transform: Matrix): Sphere {
         return copy(
             transform = transform
@@ -27,4 +30,6 @@ sealed interface Intersectable {
     val transform: Matrix
 }
 
-fun sphere() = Sphere()
+fun sphere(
+    material: Material = material(),
+) = Sphere(material =material)
