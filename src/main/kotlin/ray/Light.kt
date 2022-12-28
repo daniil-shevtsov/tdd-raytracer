@@ -23,8 +23,9 @@ data class Material(
         light: Light,
         eye: Vector,
         normal: Vector,
+        point: Point = point(0,0,0),
     ): Color {
-        val lightVector = (light.position - point(0, 0, 0)).normalized
+        val lightVector = (light.position - point).normalized
         val angleBetweenLightAndNormal = normal.normalized.angleBetween(lightVector).toDegrees()
         val angleBetweenLightAndEye = eye.normalized.angleBetween(lightVector).toDegrees()
 

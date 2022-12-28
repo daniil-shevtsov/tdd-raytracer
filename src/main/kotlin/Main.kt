@@ -1,7 +1,7 @@
-import canvas.practice.canvasPractice
 import file.createPmm
+import ray.practice.litSphereOnCanvas
 
 
 fun main(args: Array<String>) {
-    createPmm(name = "canvas-practice.pmm", content = canvasPractice())
+    createPmm(name = "lit-sphere.pmm", content = litSphereOnCanvas())
 }
