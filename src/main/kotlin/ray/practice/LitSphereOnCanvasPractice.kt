@@ -23,16 +23,14 @@ fun litSphereOnCanvas(): Canvas {
     return canvas(width = canvasPixels, height = canvasPixels).applyToEveryPixel { x, y ->
         val worldY = half - pixelSize * y
         val worldX = -half + pixelSize * x
-        val wallColor = color(1.0, 0.0, 0.0)
-        val shadowColor = color(0.0, 0.0, 0.0)
+        val wallColor = color(0.2, 0.2, 0.2)
         val position = point(worldX, worldY, wallZ)
-        val shape = sphere()
         val rayOrigin = point(0.0, 0.0, -5.0)
         val ray = ray(
             origin = rayOrigin,
             direction = (position - rayOrigin).normalized,
         )
-        val xs = intersection(shape, ray)
+        val xs = intersection(sphere, ray)
 
         val hit = hit(xs)
 
