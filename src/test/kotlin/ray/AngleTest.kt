@@ -3,6 +3,7 @@ package ray
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.junit.jupiter.api.Test
+import tuple.vector
 
 class AngleTest {
 
@@ -36,4 +37,22 @@ class AngleTest {
         assertThat(radians(Math.PI).toDegrees()).isEqualTo(degrees(180.0))
     }
 
+    @Test
+    fun `should give 0 for same vector`() {
+        assertThat(vector(1,2,3).angleBetween(vector(1,2,3)))
+            .isEqualTo(degrees(0.0).toRadians())
+    }
+
+    @Test
+    fun `should give 180 for opposite vectors`() {
+        assertThat(vector(1,0,0).angleBetween(vector(-1,0,0)))
+            .isEqualTo(degrees(180.0).toRadians())
+    }
+
+    @Test
+    fun `should give 90 for orthogonal vectors`() {
+        assertThat(vector(1,0,0).angleBetween(vector(0,1,0)))
+            .isEqualTo(degrees(90.0).toRadians())
+    }
+    
 }
