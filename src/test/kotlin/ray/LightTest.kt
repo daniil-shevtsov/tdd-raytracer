@@ -8,6 +8,7 @@ import canvas.color.color
 import org.junit.jupiter.api.Test
 import tuple.point
 import tuple.vector
+import kotlin.test.Ignore
 
 internal class LightTest {
 
@@ -32,6 +33,7 @@ internal class LightTest {
             prop(Material::diffuse).isEqualTo(0.9)
             prop(Material::specular).isEqualTo(0.9)
             prop(Material::shininess).isEqualTo(200.0)
+            prop(Material::color).isEqualTo(color(1,1,1))
         }
     }
 
@@ -84,6 +86,7 @@ internal class LightTest {
     }
 
     @Test
+    @Ignore
     fun `should something when eye in the path of reflection vector`() {
         val eye = vector(degrees(0.0), degrees(-45.0), degrees(-45.0))
         val normal = vector(0, 0, -1)

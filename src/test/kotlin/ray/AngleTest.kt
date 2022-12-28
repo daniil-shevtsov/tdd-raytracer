@@ -54,5 +54,5 @@ class AngleTest {
         assertThat(vector(1,0,0).angleBetween(vector(0,1,0)))
             .isEqualTo(degrees(90.0).toRadians())
     }
-    
+
 }
