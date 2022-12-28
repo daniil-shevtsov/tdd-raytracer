@@ -9,6 +9,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import ray.practice.MyCanvas
+import ray.practice.litSphereOnCanvas
 
 
 fun main(args: Array<String>) =  application {
@@ -24,5 +26,6 @@ fun main(args: Array<String>) =  application {
                 modifier = Modifier.align(Alignment.Center)
             )
         }
+        MyCanvas(canvas = litSphereOnCanvas())
     }
 }

@@ -1,13 +1,13 @@
 package ray.practice
 
+import canvas.Canvas
 import canvas.applyToEveryPixel
 import canvas.canvas
 import canvas.color.color
-import canvas.toPmm
 import ray.*
 import tuple.point
 
-fun litSphereOnCanvas(): String {
+fun litSphereOnCanvas(): Canvas {
     val canvasPixels = 100
     val wallZ = 10.0
     val wallSize = 7.0
@@ -53,5 +53,5 @@ fun litSphereOnCanvas(): String {
                 color
             }
         }
-    }.toPmm()
+    }
 }
