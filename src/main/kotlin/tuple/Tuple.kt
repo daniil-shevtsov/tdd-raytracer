@@ -21,6 +21,8 @@ data class Tuple(
 
     val normalized: Tuple
         get() = this / magnitude
+    val components: List<Double>
+        get() = listOf(x, y, z, w)
 
     override fun equals(other: Any?): Boolean {
 

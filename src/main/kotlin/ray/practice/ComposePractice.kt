@@ -1,14 +1,19 @@
 package ray.practice
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import canvas.Canvas
 import canvas.applyToEveryPixel
 import canvas.canvas
@@ -17,37 +22,52 @@ import canvas.color.color
 import ray.*
 import tuple.Point
 import tuple.point
+import tuple.vector
 import java.lang.Float.max
 import androidx.compose.foundation.Canvas as ComposeCanvas
 import androidx.compose.ui.graphics.Color as ComposeColor
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ComposePractice(
     modifier: Modifier = Modifier,
 ) {
     var lightPosition by remember { mutableStateOf(point(-10, 10, -10)) }
     var rayOrigin by remember { mutableStateOf(point(0.0, 0.0, -5.0)) }
-
+    var color by remember { mutableStateOf(color(0.0, 0.0, -5.0)) }
+    val requester = remember { FocusRequester() }
     Column {
-        MyCanvas(canvas = controlledLitSpherePractice(lightPosition, rayOrigin), modifier.weight(1f))
-        Row(modifier = modifier) {
-            Text(text = "Light:")
-            Button(onClick = { lightPosition = lightPosition.copy(x = lightPosition.x - 1.0) }) {
-                Text("Left")
-            }
-            Button(onClick = { lightPosition = lightPosition.copy(x = lightPosition.x + 1.0) }) {
-                Text("Right")
-            }
-        }
-        Row(modifier = modifier) {
-            Text(text = "Ray:")
-            Button(onClick = { rayOrigin = rayOrigin.copy(x = rayOrigin.x - 0.5) }) {
-                Text("Left")
-            }
-            Button(onClick = { rayOrigin = rayOrigin.copy(x = rayOrigin.x + 0.5) }) {
-                Text("Right")
-            }
-        }
+        MyCanvas(
+            canvas = controlledLitSpherePractice(lightPosition, rayOrigin),
+            modifier.onKeyEvent {
+                    val step = 0.1
+                    val direction = vector(
+                        x = when (it.key) {
+                            Key.A -> -1.0
+                            Key.D -> 1.0
+                            else -> 0.0
+                        },
+                        y = when (it.key) {
+                            Key.W -> -1.0
+                            Key.S -> 1.0
+                            else -> 0.0
+                        },
+                        z = 0.0,
+                    )
+                    val isCamera = it.isShiftPressed
+                    if (isCamera) {
+                        rayOrigin = rayOrigin + direction * step
+                    } else {
+                        lightPosition = lightPosition + direction * step * 3.0
+                    }
+                    direction.components.any { it != 0.0 }
+                }
+                .focusRequester(requester)
+                .focusable()
+        )
+    }
+    LaunchedEffect(Unit) {
+        requester.requestFocus()
     }
 }
 
