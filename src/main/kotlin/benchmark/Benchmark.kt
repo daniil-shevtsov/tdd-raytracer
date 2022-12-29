@@ -3,33 +3,38 @@ package benchmark
 import org.openjdk.jmh.annotations.*
 import org.openjdk.jmh.infra.Blackhole
 import java.util.concurrent.TimeUnit
-import kotlin.random.Random
 
 private const val REPEAT_AMT = 10_000
+private const val MatrixSize = 1000
 
 @State(Scope.Benchmark)
-@Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
-@Fork(1)
+@Warmup(iterations = 1)
+@Threads(20)
+@Measurement(iterations = 3, time = 1, timeUnit = TimeUnit.SECONDS)
 class NullabilityBenchmark {
 
+    private var array2D: Array<Array<Int>> = arrayOf(arrayOf())
+    private var list2D: List<List<Int>> = emptyList()
+
+    @Setup
+    fun setUp() {
+        array2D = Array(MatrixSize) { i -> Array(MatrixSize) { j -> i * MatrixSize + j } }
+        list2D = List(MatrixSize) { i -> List(MatrixSize) { j -> i * MatrixSize + j } }
+    }
+
     @Benchmark
-    fun nonNullable(blackhole: Blackhole) {
-        repeat(REPEAT_AMT) {
-            val sum = getNonNullable(Random.nextInt()) + 5
-            blackhole.consume(sum)
+    fun array(blackhole: Blackhole) {
+        repeat(MatrixSize) { count ->
+            val element = array2D[count / MatrixSize][count % MatrixSize]
+            blackhole.consume(element)
         }
     }
 
     @Benchmark
-    fun nullable(blackhole: Blackhole) {
-        repeat(REPEAT_AMT) {
-            val sum = (getNullable(Random.nextInt()) ?: 0) + 5
-            blackhole.consume(sum)
+    fun list(blackhole: Blackhole) {
+        repeat(MatrixSize) {count ->
+            val element = list2D[count / MatrixSize][count % MatrixSize]
+            blackhole.consume(element)
         }
     }
-
-    private fun getNonNullable(input: Int) = input
-
-    private fun getNullable(input: Int): Int? = if (input % 2 == 0) input else null
 }
