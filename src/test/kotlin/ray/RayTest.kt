@@ -9,6 +9,7 @@ import transformation.scaling
 import transformation.translation
 import tuple.point
 import tuple.vector
+import kotlin.math.sqrt
 
 internal class RayTest {
 
@@ -232,6 +233,23 @@ internal class RayTest {
         }
     }
 
+    @Test
+    fun `should reflect ray approaching at 45 degrees`() {
+        val ray = vector(1.0, -1.0, 0.0)
+
+        val reflected = ray.reflectFrom(normal = vector(0.0, 1.0, 0.0))
+
+        assertThat(reflected).isEqualTo(vector(1.0, 1.0, 0.0))
+    }
+
+    @Test
+    fun `should reflect from slanted surface`() {
+        val ray = vector(0.0, -1.0, 0.0)
+
+        val reflected = ray.reflectFrom(normal = vector(sqrt(2.0) / 2.0, sqrt(2.0) / 2.0, 0.0))
+
+        assertThat(reflected).isEqualTo(vector(1.0, 0.0, 0.0))
+    }
 
 }
 

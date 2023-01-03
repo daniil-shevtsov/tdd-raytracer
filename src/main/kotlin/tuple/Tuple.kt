@@ -1,6 +1,8 @@
 package tuple
 
+import ray.*
 import kotlin.math.abs
+import kotlin.math.acos
 import kotlin.math.sqrt
 
 data class Tuple(
@@ -19,6 +21,8 @@ data class Tuple(
 
     val normalized: Tuple
         get() = this / magnitude
+    val components: List<Double>
+        get() = listOf(x, y, z, w)
 
     override fun equals(other: Any?): Boolean {
 
@@ -83,6 +87,24 @@ data class Tuple(
         )
     }
 
+    fun reflectFrom(normal: Tuple): Vector {
+        return this - normal * 2.0 * dot(normal)
+    }
+
+    fun angleBetween(vector: Vector): Radians {
+        val angle = acos(this.normalized dot vector.normalized) / (normalized.magnitude * vector.normalized.magnitude)
+        val radians = radians(angle)
+        val degrees = radians.toDegrees()
+        return radians(
+            when {
+                this == -vector -> radians.raw
+                x == 1.0 && vector.y == 1.0 -> radians.raw
+                vector.y == 10.0 -> radians.raw
+                else -> radians.raw
+            }
+        )
+    }
+
     private companion object {
         const val EPSILON = 0.00001
     }
@@ -96,8 +118,40 @@ fun point(
     z: Double
 ) = Tuple(x = x, y = y, z = z, w = 1.0)
 
+fun point(
+    x: Int,
+    y: Int,
+    z: Int,
+) = point(
+    x = x.toDouble(),
+    y = y.toDouble(),
+    z = z.toDouble(),
+)
+
 fun vector(
     x: Double,
     y: Double,
-    z: Double
+    z: Double,
 ) = Tuple(x = x, y = y, z = z, w = 0.0)
+
+fun vector(
+    x: Int,
+    y: Int,
+    z: Int,
+) = vector(
+    x = x.toDouble(),
+    y = y.toDouble(),
+    z = z.toDouble(),
+)
+
+fun vector(
+    x: Radians,
+    y: Radians,
+    z: Radians,
+) = Tuple(x = x.raw, y = y.raw, z = z.raw, w = 0.0)
+
+fun vector(
+    x: Degrees,
+    y: Degrees,
+    z: Degrees,
+) = Tuple(x = x.toRadians().raw, y = y.toRadians().raw, z = z.toRadians().raw, w = 0.0)

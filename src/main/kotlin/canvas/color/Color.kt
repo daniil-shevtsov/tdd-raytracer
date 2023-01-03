@@ -76,3 +76,13 @@ fun color(
     green = green,
     blue = blue,
 )
+
+fun color(
+    red: Int,
+    green: Int,
+    blue: Int
+) = Color(
+    red = red.toDouble(),
+    green = green.toDouble(),
+    blue = blue.toDouble(),
+)
