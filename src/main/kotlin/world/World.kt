@@ -37,3 +37,9 @@ fun defaultWorld() = world(
     ),
     lightSources = emptyList(),
 )
+
+fun Ray.intersect(world: World): Intersections {
+    return world.objects.flatMap { intersectable ->
+        intersect(intersectable)
+    }.sortedBy { it.t }
+}

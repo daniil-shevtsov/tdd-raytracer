@@ -4,7 +4,6 @@ import matrix.Matrix
 import tuple.Point
 import tuple.Vector
 import tuple.point
-import world.World
 import kotlin.math.sqrt
 
 data class Ray(
@@ -27,12 +26,6 @@ data class Ray(
 
 fun Ray.intersect(intersectable: Intersectable): Intersections {
     return intersection(intersectable, this)
-}
-
-fun Ray.intersect(world: World): Intersections {
-    return world.objects.flatMap { intersectable ->
-        intersect(intersectable)
-    }.sortedBy { it.t }
 }
 
 fun intersection(
