@@ -24,7 +24,7 @@ sealed interface Intersectable {
 
 fun Intersectable.normalAt(worldPoint: Point): Vector {
     val objectPoint = transform.inversed() * worldPoint
-    val objectNormal = objectPoint - point(0.0,0.0,0.0)
+    val objectNormal = objectPoint - point(0.0, 0.0, 0.0)
 
     val worldNormal = (transform.inversed().transposed() * objectNormal)
         .copy(w = 0.0)
@@ -34,4 +34,4 @@ fun Intersectable.normalAt(worldPoint: Point): Vector {
 
 fun sphere(
     material: Material = material(),
-) = Sphere(material =material)
+) = Sphere(material = material)
