@@ -4,8 +4,8 @@ import java.lang.Integer.max
 import java.lang.Integer.min
 
 class Grid<T> private constructor(
-    private val width: Int,
-    private val height: Int,
+    val width: Int,
+    val height: Int,
     default: (row: Int, column: Int) -> T,
 ) {
     val minSize: Int
@@ -23,8 +23,10 @@ class Grid<T> private constructor(
         return gridArray[row][column]
     }
 
-    fun update(row: Int, column: Int, value: T) {
-        gridArray[row][column] = value
+    fun update(transform: (row: Int, column: Int, value: T) -> T): Grid<T> {
+        return Grid.createInitialized(width = width, height = height) { row, column ->
+            transform(row, column, get(row, column))
+        }
     }
 
     companion object {
