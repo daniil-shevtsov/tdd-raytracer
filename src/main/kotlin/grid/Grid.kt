@@ -1,5 +1,11 @@
 package grid
 
+import canvas.Canvas
+import canvas.applyToEveryPixel
+import canvas.canvas
+import canvas.color.color
+import fallingsand.CellType
+import fallingsand.FallingSandCell
 import java.lang.Integer.max
 import java.lang.Integer.min
 
@@ -29,6 +35,12 @@ class Grid<T> private constructor(
         }
     }
 
+    fun getAsLists() = gridArray.toList().map { it.toList() }
+
+    operator fun set(row: Int, column: Int, value: T) {
+        gridArray[row][column]
+    }
+
     companion object {
         fun <T> createInitialized(width: Int, height: Int, init: (row: Int, column: Int) -> T): Grid<T> {
             return Grid(width, height, init)
@@ -36,6 +48,15 @@ class Grid<T> private constructor(
 
         fun <T> createInitialized(size: Int, init: (row: Int, column: Int) -> T): Grid<T> {
             return createInitialized(size, size, init)
+        }
+    }
+}
+
+fun Grid<FallingSandCell>.toCanvas(): Canvas {
+    return canvas(width = width, height = height).applyToEveryPixel { x, y ->
+        when (get(y, x).type) {
+            CellType.Sand -> color(0, 0, 0)
+            CellType.Air -> color(1, 1, 1)
         }
     }
 }

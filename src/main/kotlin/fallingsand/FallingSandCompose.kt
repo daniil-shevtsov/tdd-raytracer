@@ -1,4 +1,4 @@
-package ray.practice
+package fallingsand
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
@@ -11,14 +11,9 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
-import canvas.Canvas
 import canvas.MyCanvas
-import canvas.applyToEveryPixel
-import canvas.canvas
-import canvas.color.Color
 import canvas.color.color
-import ray.*
-import tuple.Point
+import ray.practice.controlledLitSpherePractice
 import tuple.point
 import tuple.vector
 import kotlin.random.Random
@@ -74,59 +69,3 @@ fun ComposePractice(
         requester.requestFocus()
     }
 }
-
-fun controlledLitSpherePractice(
-    lightPosition: Point = point(-10, 10, -10),
-    rayOrigin: Point = point(0.0, 0.0, -5.0),
-    color: Color = color(1.0, 0.2, 1.0)
-): Canvas {
-    val canvasPixels = 100
-    val wallZ = 10.0
-    val wallSize = 7.0
-    val pixelSize = wallSize / canvasPixels
-    val half = wallSize / 2.0
-    val sphere = sphere(material = material(color = color))
-
-    val light = pointLight(
-        position = lightPosition,
-        intensity = color(1, 1, 1),
-    )
-    println("light: $lightPosition ray: $rayOrigin")
-
-    return canvas(width = canvasPixels, height = canvasPixels).applyToEveryPixel { x, y ->
-        val worldY = half - pixelSize * y
-        val worldX = -half + pixelSize * x
-        val wallColor = color(0.2, 0.2, 0.2)
-        val position = point(worldX, worldY, wallZ)
-
-        val ray = ray(
-            origin = rayOrigin,
-            direction = (position - rayOrigin).normalized,
-        )
-        val xs = intersection(sphere, ray)
-
-        val hit = hit(xs)
-
-
-        when (hit) {
-            null -> wallColor
-            else -> {
-                val hitObject = hit.intersected
-                val point = ray.position(at = hit.t)
-                val normal = hitObject.normalAt(point)
-                val eye = -ray.direction
-
-                val color = hitObject.material.litBy(
-                    light = light,
-                    point = point,
-                    eye = eye,
-                    normal = normal,
-                )
-                color
-            }
-        }
-    }
-}
-
-
-
