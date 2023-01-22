@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import canvas.color.Color
 import java.lang.Float
 import androidx.compose.foundation.Canvas as ComposeCanvas
@@ -22,10 +23,10 @@ fun MyCanvas(canvas: Canvas, modifier: Modifier = Modifier) {
                 val horizontal = columnIndex * horizontalPixelCount / pixelRow.size
                 val vertical = verticalPixelCount * rowIndex / canvas.pixels.size
 
-                drawCircle(
+                drawRect(
                     color = pixelColor.toComposeColor(),
-                    radius = pixelSize,
-                    center = Offset(horizontal, vertical),
+                    size = Size(pixelSize, pixelSize),
+                    topLeft = Offset(horizontal, vertical),
                 )
             }
         }

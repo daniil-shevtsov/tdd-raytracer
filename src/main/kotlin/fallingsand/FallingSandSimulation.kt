@@ -2,10 +2,33 @@ package fallingsand
 
 import grid.Grid
 
+sealed interface FallingSandAction {
+    object Tick : FallingSandAction
+    data class CreateSand(val row: Int, val column: Int) : FallingSandAction
+    data class CreateAir(val row: Int, val column: Int) : FallingSandAction
+}
+
 fun fallingSandSimulation(
-    currentGrid: Grid<FallingSandCell>
+    currentGrid: Grid<FallingSandCell>,
+    action: FallingSandAction,
 ): Grid<FallingSandCell> {
-    return updateEveryCell(currentGrid)
+    return when (action) {
+        is FallingSandAction.CreateAir -> currentGrid.update { row, column, value ->
+            if (row == action.row && column == action.column) {
+                value.copy(type = CellType.Air)
+            } else {
+                value
+            }
+        }
+        is FallingSandAction.CreateSand -> currentGrid.update { row, column, value ->
+            if (row == action.row && column == action.column) {
+                value.copy(type = CellType.Sand)
+            } else {
+                value
+            }
+        }
+        FallingSandAction.Tick -> updateEveryCell(currentGrid)
+    }
 }
 
 fun updateEveryCell(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
