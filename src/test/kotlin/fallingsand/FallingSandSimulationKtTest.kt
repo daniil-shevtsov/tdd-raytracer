@@ -141,6 +141,77 @@ internal class FallingSandSimulationKtTest {
     }
 
     @Test
+    fun `should fall to the left side when sand on sand and right is screen edge`() {
+        val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
+            fallingSandCell(
+                position = position(row, column), type = when {
+                    row == 1 && column == 2 -> CellType.Sand
+                    row == 2 && column == 2 -> CellType.Sand
+                    else -> CellType.Air
+                }
+            )
+        }
+        val cell = fallingSandCell(position(1, 2), type = CellType.Sand)
+
+        val firstUpdate = updateCell(grid, cell)
+        assertThat(firstUpdate).hasPosition(2, 1)
+    }
+
+    @Test
+    fun `should stay when sand on sand and left and right already sand`() {
+        val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
+            fallingSandCell(
+                position = position(row, column), type = when {
+                    row == 2 && column == 2 -> CellType.Sand
+                    row == 2 && column == 1 -> CellType.Sand
+                    row == 2 && column == 0 -> CellType.Sand
+                    row == 1 && column == 1 -> CellType.Sand
+                    else -> CellType.Air
+                }
+            )
+        }
+        val cell = fallingSandCell(position(1, 1), type = CellType.Sand)
+
+        val firstUpdate = updateCell(grid, cell)
+        assertThat(firstUpdate).hasPosition(1, 1)
+    }
+
+    @Test
+    fun `should fall to the right side when sand on sand and left is screen edge`() {
+        val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
+            fallingSandCell(
+                position = position(row, column), type = when {
+                    row == 1 && column == 0 -> CellType.Sand
+                    row == 2 && column == 0 -> CellType.Sand
+                    else -> CellType.Air
+                }
+            )
+        }
+        val cell = fallingSandCell(position(1, 0), type = CellType.Sand)
+
+        val firstUpdate = updateCell(grid, cell)
+        assertThat(firstUpdate).hasPosition(2, 1)
+    }
+
+    @Test
+    fun `should stay when sand on sand and left is screen edge and right already sand`() {
+        val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
+            fallingSandCell(
+                position = position(row, column), type = when {
+                    row == 1 && column == 0 -> CellType.Sand
+                    row == 2 && column == 0 -> CellType.Sand
+                    row == 2 && column == 1 -> CellType.Sand
+                    else -> CellType.Air
+                }
+            )
+        }
+        val cell = fallingSandCell(position(1, 0), type = CellType.Sand)
+
+        val firstUpdate = updateCell(grid, cell)
+        assertThat(firstUpdate).hasPosition(1, 0)
+    }
+
+    @Test
     fun `should update every cell`() {
         val grid = Grid.createInitialized(width = 2, height = 2) { row, column ->
             fallingSandCell(

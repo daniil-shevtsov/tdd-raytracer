@@ -55,6 +55,7 @@ fun updateEveryCell(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
 private data class LogicChunk(
     val south: FallingSandCell?,
     val southEast: FallingSandCell?,
+    val southWest: FallingSandCell?,
 )
 
 fun updateCell(grid: Grid<FallingSandCell>, cell: FallingSandCell): FallingSandCell {
@@ -66,6 +67,10 @@ fun updateCell(grid: Grid<FallingSandCell>, cell: FallingSandCell): FallingSandC
         southEast = when {
             cell.position.row == grid.height - 1 || cell.position.column == grid.width - 1 -> null
             else -> grid[cell.position.row + 1, cell.position.column + 1]
+        },
+        southWest = when {
+            cell.position.row == grid.height - 1 || cell.position.column == 0 -> null
+            else -> grid[cell.position.row + 1, cell.position.column - 1]
         },
     )
 
@@ -79,12 +84,15 @@ fun updateCell(grid: Grid<FallingSandCell>, cell: FallingSandCell): FallingSandC
                         column = cell.position.column + 1
                     )
                 )
-                CellType.Sand -> cell.copy(
-                    position = cell.position.copy(
-                        row = cell.position.row + 1,
-                        column = cell.position.column - 1
+                CellType.Sand, null -> when (logicChunk.southWest?.type) {
+                    CellType.Air -> cell.copy(
+                        position = cell.position.copy(
+                            row = cell.position.row + 1,
+                            column = cell.position.column - 1
+                        )
                     )
-                )
+                    else -> cell
+                }
                 else -> cell
             }
             else -> cell.copy(position = cell.position.copy(row = cell.position.row + 1))
