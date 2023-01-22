@@ -11,6 +11,8 @@ import androidx.compose.ui.input.key.*
 import canvas.MyCanvas
 import grid.Grid
 import grid.toCanvas
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -19,7 +21,7 @@ fun FallingSandCompose(
 ) {
     var currentGrid by remember {
         mutableStateOf(
-            Grid.createInitialized(3) { row, column ->
+            Grid.createInitialized(10) { row, column ->
                 fallingSandCell(
                     position = position(row, column),
                     type = when {
@@ -35,7 +37,23 @@ fun FallingSandCompose(
             position(row = 0, column = 0)
         )
     }
+    var isPaused by remember {
+        mutableStateOf(true)
+    }
     val requester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        launch {
+            while(true) {
+                delay(200L)
+                if(!isPaused) {
+                    println("Simulating in real time")
+                    currentGrid = fallingSandSimulation(currentGrid, FallingSandAction.Tick)
+                }
+            }
+        }
+    }
+
     Column {
         MyCanvas(
             canvas = currentGrid.toCanvas(),
@@ -49,8 +67,13 @@ fun FallingSandCompose(
 //                    }
 //                )
                 .onKeyEvent {
-                    if(it.type == KeyEventType.KeyDown) {
+                    val isDirectionKey = it.key.keyCode in (0x25..0x28)
+                    if (it.type == KeyEventType.KeyDown && (isDirectionKey || it.key == Key.P || it.key == Key.Spacebar)) {
                         return@onKeyEvent false
+                    }
+                    if(it.key == Key.P) {
+                        println("Toggle pause")
+                        isPaused = !isPaused
                     }
                     val positionX = when {
                         it.key == Key.DirectionLeft && cursorPosition.column > 0 -> -1
@@ -68,15 +91,23 @@ fun FallingSandCompose(
                             column = cursorPosition.column + 1 * positionX
                         )
                     }
+
                     when (it.key) {
                         Key.Spacebar -> {
+                            println("One tick")
                             currentGrid = fallingSandSimulation(currentGrid, FallingSandAction.Tick)
                         }
                         Key.S -> {
-                            currentGrid = fallingSandSimulation(currentGrid, FallingSandAction.CreateSand(row = cursorPosition.row, column = cursorPosition.column))
+                            currentGrid = fallingSandSimulation(
+                                currentGrid,
+                                FallingSandAction.CreateSand(row = cursorPosition.row, column = cursorPosition.column)
+                            )
                         }
                         Key.A -> {
-                            currentGrid = fallingSandSimulation(currentGrid, FallingSandAction.CreateAir(row = cursorPosition.row, column = cursorPosition.column))
+                            currentGrid = fallingSandSimulation(
+                                currentGrid,
+                                FallingSandAction.CreateAir(row = cursorPosition.row, column = cursorPosition.column)
+                            )
                         }
                     }
                     true
