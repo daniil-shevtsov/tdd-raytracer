@@ -32,6 +32,7 @@ fun fallingSandSimulation(
 }
 
 fun updateEveryCell(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
+    val candidates = mutableMapOf<Position, List<FallingSandCell>>()
     val updatedGrid = grid.update { row, column, value ->
         updateCell(grid, value)
     }.getAsLists()
@@ -40,8 +41,13 @@ fun updateEveryCell(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
             val map = mutableMapOf<Position, List<FallingSandCell>>()
             originalList.forEach { cell ->
                 map[cell.position] = map[cell.position].orEmpty() + cell
+                candidates[cell.position] = candidates[cell.position].orEmpty() + cell
             }
             map.toMap()
+        }
+    val firstNonAirCandidate =
+        candidates.entries.firstOrNull { it.value.any { it.type != CellType.Air } }?.let {
+            it.key to it.value.first { it.type != CellType.Air }
         }
     return grid.update { row, column, value ->
         when (val cell = updatedGrid[position(row, column)].orEmpty().firstOrNull { it.type != CellType.Air }

@@ -253,12 +253,6 @@ internal class FallingSandSimulationKtTest {
             position(1, 1) to CellType.Air,
             position(1, 2) to CellType.Sand,
         )
-//        assertThat(newGrid[2, 0]).hasType(CellType.Sand)
-//        assertThat(newGrid[2, 1]).hasType(CellType.Sand)
-//        assertThat(newGrid[2, 2]).hasType(CellType.Sand)
-//        assertThat(newGrid[1, 0]).hasType(CellType.Air )
-//        assertThat(newGrid[1, 1]).hasType(CellType.Air )
-//        assertThat(newGrid[1, 2]).hasType(CellType.Sand)
     }
 
     fun Assert<Grid<FallingSandCell>>.hasTypes(
