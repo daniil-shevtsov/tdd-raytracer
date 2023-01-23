@@ -50,8 +50,15 @@ fun updateEveryCell(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
             it.key to it.value.first { it.type != CellType.Air }
         }
     return grid.update { row, column, value ->
-        when (val cell = updatedGrid[position(row, column)].orEmpty().firstOrNull { it.type != CellType.Air }
-            ?: updatedGrid[position(row, column)]?.first()) {
+        val currentPosition = position(row, column)
+        val newCell = when {
+            currentPosition == firstNonAirCandidate?.first -> firstNonAirCandidate?.second
+            else -> value
+        }
+        val oldCell = updatedGrid[currentPosition].orEmpty().firstOrNull { it.type != CellType.Air }
+            ?: updatedGrid[currentPosition]?.first()
+        val cell = oldCell
+        when (cell) {
             null -> value.copy(type = CellType.Air)
             else -> cell
         }

@@ -224,10 +224,12 @@ internal class FallingSandSimulationKtTest {
         }
         val newGrid = updateEveryCell(grid)
 
-        assertThat(newGrid[0, 0]).hasType(CellType.Air)
-        assertThat(newGrid[0, 1]).hasType(CellType.Air)
-        assertThat(newGrid[1, 0]).hasType(CellType.Sand)
-        assertThat(newGrid[1, 1]).hasType(CellType.Sand)
+        assertThat(newGrid).hasTypes(
+            position(0, 0) to CellType.Air,
+            position(0, 1) to CellType.Air,
+            position(1, 0) to CellType.Sand,
+            position(1, 1) to CellType.Sand,
+        )
     }
 
     @Test
@@ -266,6 +268,10 @@ internal class FallingSandSimulationKtTest {
         val expectedTypes = expected.toMap()
 
         val difference = actualTypes.filter { expectedTypes[it.key] != null && expectedTypes[it.key] != it.value }
+
+        if(difference.isEmpty()) {
+            return@given
+        }
 
         val expectedString = expectedTypes.toList().filter { difference.containsKey(it.first) }.joinToString(
             prefix = "{",
