@@ -21,7 +21,7 @@ fun FallingSandCompose(
 ) {
     var currentGrid by remember {
         mutableStateOf(
-            Grid.createInitialized(10) { row, column ->
+            Grid.createInitialized(5) { row, column ->
                 fallingSandCell(
                     position = position(row, column),
                     type = when {
@@ -45,9 +45,9 @@ fun FallingSandCompose(
     LaunchedEffect(Unit) {
         launch {
             while(true) {
-                delay(200L)
+                delay(10L)
                 if(!isPaused) {
-                    println("Simulating in real time")
+                    println("Real time tick")
                     currentGrid = fallingSandSimulation(currentGrid, FallingSandAction.Tick)
                 }
             }
@@ -90,6 +90,7 @@ fun FallingSandCompose(
                             row = cursorPosition.row + 1 * positionY,
                             column = cursorPosition.column + 1 * positionX
                         )
+                        println("new position: $cursorPosition")
                     }
 
                     when (it.key) {

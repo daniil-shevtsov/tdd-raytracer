@@ -6,6 +6,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import assertk.assertions.prop
+import assertk.assertions.support.expected
 import canvas.Canvas
 import canvas.color.color
 import grid.Grid
@@ -228,6 +229,69 @@ internal class FallingSandSimulationKtTest {
         assertThat(newGrid[1, 0]).hasType(CellType.Sand)
         assertThat(newGrid[1, 1]).hasType(CellType.Sand)
     }
+
+    @Test
+    fun `should only one fall when air under and two candidate`() {
+        val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
+            fallingSandCell(
+                position = position(row, column), type = when {
+                    row == 2 && column == 1 -> CellType.Air
+                    row == 1 && column == 0 -> CellType.Sand
+                    row == 1 && column == 2 -> CellType.Sand
+                    row == 2 -> CellType.Sand
+                    else -> CellType.Air
+                }
+            )
+        }
+        val newGrid = updateEveryCell(grid)
+
+        assertThat(newGrid).hasTypes(
+            position(2, 0) to CellType.Sand,
+            position(2, 1) to CellType.Sand,
+            position(2, 2) to CellType.Sand,
+            position(1, 0) to CellType.Air,
+            position(1, 1) to CellType.Air,
+            position(1, 2) to CellType.Sand,
+        )
+//        assertThat(newGrid[2, 0]).hasType(CellType.Sand)
+//        assertThat(newGrid[2, 1]).hasType(CellType.Sand)
+//        assertThat(newGrid[2, 2]).hasType(CellType.Sand)
+//        assertThat(newGrid[1, 0]).hasType(CellType.Air )
+//        assertThat(newGrid[1, 1]).hasType(CellType.Air )
+//        assertThat(newGrid[1, 2]).hasType(CellType.Sand)
+    }
+
+    fun Assert<Grid<FallingSandCell>>.hasTypes(
+        vararg expected: Pair<Position, CellType>,
+    ) = given { actual ->
+        val actualTypes = actual.getAsLists().flatMap { row ->
+            row.map { cell ->
+                cell.position to cell.type
+            }
+        }.toMap()
+        val expectedTypes = expected.toMap()
+
+        val difference = actualTypes.filter { expectedTypes[it.key] != null && expectedTypes[it.key] != it.value }
+
+        val expectedString = expectedTypes.toList().filter { difference.containsKey(it.first) }.joinToString(
+            prefix = "{",
+            postfix = "}",
+            separator = "\n"
+        ) { "[${it.first.row}:${it.first.column}] = ${it.second.name}" }
+
+        val differenceString = difference.toList().joinToString(
+            prefix = "{",
+            postfix = "}",
+            separator = "\n"
+        ) { "[${it.first.row}:${it.first.column}] = ${it.second.name}" }
+
+        expected(
+            message = ":<$expectedString> but was:<$differenceString>",
+            expected = expectedTypes,
+            actual = actualTypes
+        )
+    }
+
 
     @Test
     fun `should map grid to canvas`() {
