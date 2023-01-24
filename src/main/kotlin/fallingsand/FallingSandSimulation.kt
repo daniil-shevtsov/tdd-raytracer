@@ -34,7 +34,7 @@ fun fallingSandSimulation(
 fun updateEveryCell(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
     val candidates = mutableMapOf<Position, List<FallingSandCell>>()
     val updatedGrid = grid.update { row, column, value ->
-        updateCell(grid, value)
+        createChangeCandidate(grid, value)
     }.getAsLists()
         .flatten()
         .let { originalList ->
@@ -49,6 +49,7 @@ fun updateEveryCell(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
         candidates.entries.firstOrNull { it.value.any { it.type != CellType.Air } }?.let {
             it.key to it.value.first { it.type != CellType.Air }
         }
+
     return grid.update { row, column, value ->
         val currentPosition = position(row, column)
         val newCell = when {
@@ -65,13 +66,24 @@ fun updateEveryCell(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
     }
 }
 
-private data class LogicChunk(
+data class LogicChunk(
     val south: FallingSandCell?,
     val southEast: FallingSandCell?,
     val southWest: FallingSandCell?,
 )
 
-fun updateCell(grid: Grid<FallingSandCell>, cell: FallingSandCell): FallingSandCell {
+sealed interface ChangeCandidate {
+    data class Change(
+        val sourcePosition: Position,
+        val destinationPosition: Position,
+        val newType: CellType,
+    ) : ChangeCandidate
+
+    object Nothing : ChangeCandidate
+}
+
+
+fun createChangeCandidate(grid: Grid<FallingSandCell>, cell: FallingSandCell): FallingSandCell {
     val logicChunk = LogicChunk(
         south = when (cell.position.row) {
             grid.height - 1 -> null
@@ -87,29 +99,47 @@ fun updateCell(grid: Grid<FallingSandCell>, cell: FallingSandCell): FallingSandC
         },
     )
 
+    return when(val changeCandidate = createChangeCandidate(logicChunk, cell)) {
+        is ChangeCandidate.Change -> cell.copy(
+            position = changeCandidate.destinationPosition,
+            type = changeCandidate.newType,
+        )
+        ChangeCandidate.Nothing -> cell
+    }
+}
+
+fun createChangeCandidate(logicChunk: LogicChunk, cell: FallingSandCell): ChangeCandidate {
     return when (cell.type) {
         CellType.Sand -> when (logicChunk.south?.type) {
-            null -> cell
+            null -> ChangeCandidate.Nothing
             CellType.Sand -> when (logicChunk.southEast?.type) {
-                CellType.Air -> cell.copy(
-                    position = cell.position.copy(
+                CellType.Air -> ChangeCandidate.Change(
+                    sourcePosition = cell.position,
+                    destinationPosition = cell.position.copy(
                         row = cell.position.row + 1,
                         column = cell.position.column + 1
-                    )
+                    ),
+                    newType = cell.type
                 )
                 CellType.Sand, null -> when (logicChunk.southWest?.type) {
-                    CellType.Air -> cell.copy(
-                        position = cell.position.copy(
+                    CellType.Air -> ChangeCandidate.Change(
+                        sourcePosition = cell.position,
+                        destinationPosition = cell.position.copy(
                             row = cell.position.row + 1,
                             column = cell.position.column - 1
-                        )
+                        ),
+                        newType = cell.type
                     )
-                    else -> cell
+                    else -> ChangeCandidate.Nothing
                 }
-                else -> cell
+                else -> ChangeCandidate.Nothing
             }
-            else -> cell.copy(position = cell.position.copy(row = cell.position.row + 1))
+            else -> ChangeCandidate.Change(
+                sourcePosition = cell.position,
+                destinationPosition = cell.position.copy(row = cell.position.row + 1),
+                newType = cell.type
+            )
         }
-        CellType.Air -> cell
+        CellType.Air -> ChangeCandidate.Nothing
     }
 }

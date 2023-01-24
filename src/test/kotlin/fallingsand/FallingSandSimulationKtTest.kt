@@ -12,6 +12,7 @@ import canvas.color.color
 import grid.Grid
 import grid.toCanvas
 import org.junit.jupiter.api.Test
+import kotlin.test.Ignore
 
 internal class FallingSandSimulationKtTest {
 
@@ -65,7 +66,7 @@ internal class FallingSandSimulationKtTest {
         }
         val cell = fallingSandCell(position(1, 0))
 
-        val updatedCell = updateCell(grid, cell)
+        val updatedCell = createChangeCandidate(grid, cell)
 
         assertThat(updatedCell).hasPosition(1, 0)
     }
@@ -82,7 +83,7 @@ internal class FallingSandSimulationKtTest {
         }
         val cell = fallingSandCell(position(0, 0), type = CellType.Sand)
 
-        val updatedCell = updateCell(grid, cell)
+        val updatedCell = createChangeCandidate(grid, cell)
 
         assertThat(updatedCell).hasPosition(1, 0)
     }
@@ -99,10 +100,10 @@ internal class FallingSandSimulationKtTest {
         }
         val cell = fallingSandCell(position(0, 0), type = CellType.Sand)
 
-        val firstUpdate = updateCell(grid, cell)
+        val firstUpdate = createChangeCandidate(grid, cell)
         assertThat(firstUpdate).hasPosition(1, 0)
 
-        val secondUpdate = updateCell(grid, firstUpdate)
+        val secondUpdate = createChangeCandidate(grid, firstUpdate)
         assertThat(secondUpdate).hasPosition(2, 0)
     }
 
@@ -119,7 +120,7 @@ internal class FallingSandSimulationKtTest {
         }
         val cell = fallingSandCell(position(1, 1), type = CellType.Sand)
 
-        val firstUpdate = updateCell(grid, cell)
+        val firstUpdate = createChangeCandidate(grid, cell)
         assertThat(firstUpdate).hasPosition(2, 2)
     }
 
@@ -137,7 +138,7 @@ internal class FallingSandSimulationKtTest {
         }
         val cell = fallingSandCell(position(1, 1), type = CellType.Sand)
 
-        val firstUpdate = updateCell(grid, cell)
+        val firstUpdate = createChangeCandidate(grid, cell)
         assertThat(firstUpdate).hasPosition(2, 0)
     }
 
@@ -154,7 +155,7 @@ internal class FallingSandSimulationKtTest {
         }
         val cell = fallingSandCell(position(1, 2), type = CellType.Sand)
 
-        val firstUpdate = updateCell(grid, cell)
+        val firstUpdate = createChangeCandidate(grid, cell)
         assertThat(firstUpdate).hasPosition(2, 1)
     }
 
@@ -173,7 +174,7 @@ internal class FallingSandSimulationKtTest {
         }
         val cell = fallingSandCell(position(1, 1), type = CellType.Sand)
 
-        val firstUpdate = updateCell(grid, cell)
+        val firstUpdate = createChangeCandidate(grid, cell)
         assertThat(firstUpdate).hasPosition(1, 1)
     }
 
@@ -190,7 +191,7 @@ internal class FallingSandSimulationKtTest {
         }
         val cell = fallingSandCell(position(1, 0), type = CellType.Sand)
 
-        val firstUpdate = updateCell(grid, cell)
+        val firstUpdate = createChangeCandidate(grid, cell)
         assertThat(firstUpdate).hasPosition(2, 1)
     }
 
@@ -208,7 +209,7 @@ internal class FallingSandSimulationKtTest {
         }
         val cell = fallingSandCell(position(1, 0), type = CellType.Sand)
 
-        val firstUpdate = updateCell(grid, cell)
+        val firstUpdate = createChangeCandidate(grid, cell)
         assertThat(firstUpdate).hasPosition(1, 0)
     }
 
@@ -233,7 +234,33 @@ internal class FallingSandSimulationKtTest {
     }
 
     @Test
-    fun `should only one fall when air under and two candidate`() {
+    @Ignore
+    fun `should only one fall when air under and two candidate with grid`() {
+        val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
+            fallingSandCell(
+                position = position(row, column), type = when {
+                    row == 2 && column == 1 -> CellType.Air
+                    row == 1 && column == 0 -> CellType.Sand
+                    row == 1 && column == 2 -> CellType.Sand
+                    row == 2 -> CellType.Sand
+                    else -> CellType.Air
+                }
+            )
+        }
+        val newGrid = updateEveryCell(grid)
+
+        assertThat(newGrid).hasTypes(
+            position(2, 0) to CellType.Sand,
+            position(2, 1) to CellType.Sand,
+            position(2, 2) to CellType.Sand,
+            position(1, 0) to CellType.Air,
+            position(1, 1) to CellType.Air,
+            position(1, 2) to CellType.Sand,
+        )
+    }
+
+    @Test
+    fun `should create change candidate`() {
         val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
             fallingSandCell(
                 position = position(row, column), type = when {
