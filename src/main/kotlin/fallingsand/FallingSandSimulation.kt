@@ -112,40 +112,27 @@ fun createChangeCandidate(logicChunk: LogicChunk, cell: FallingSandCell): Change
     val rowChange = when {
         cell.type == CellType.Sand && logicChunk.south?.type == null -> 0
         cell.type == CellType.Sand && logicChunk.south?.type == CellType.Sand && logicChunk.southEast?.type == CellType.Air -> 1
-        cell.type == CellType.Sand && logicChunk.south?.type == CellType.Sand && (logicChunk.southEast?.type == CellType.Sand || logicChunk.southEast?.type == null) -> 1
+        cell.type == CellType.Sand && logicChunk.south?.type == CellType.Sand && (logicChunk.southEast?.type == CellType.Sand || logicChunk.southEast?.type == null) && logicChunk.southWest?.type == CellType.Air -> 1
         cell.type == CellType.Sand && logicChunk.south?.type == CellType.Air -> 1
         else -> 0
     }
-    return when (cell.type) {
-        CellType.Sand -> when (logicChunk.south?.type) {
-            null -> ChangeCandidate.Nothing
-            CellType.Sand -> when (logicChunk.southEast?.type) {
-                CellType.Air -> ChangeCandidate.Change(
-                    sourcePosition = cell.position,
-                    destinationPosition = cell.position.copy(
-                        row = cell.position.row + rowChange,
-                        column = cell.position.column + 1
-                    ),
-                    newType = cell.type
-                )
-                CellType.Sand, null -> when (logicChunk.southWest?.type) {
-                    CellType.Air -> ChangeCandidate.Change(
-                        sourcePosition = cell.position,
-                        destinationPosition = cell.position.copy(
-                            row = cell.position.row + rowChange,
-                            column = cell.position.column - 1
-                        ),
-                        newType = cell.type
-                    )
-                    else -> ChangeCandidate.Nothing
-                }
-            }
-            CellType.Air -> ChangeCandidate.Change(
-                sourcePosition = cell.position,
-                destinationPosition = cell.position.copy(row = cell.position.row + rowChange),
-                newType = cell.type
-            )
-        }
-        CellType.Air -> ChangeCandidate.Nothing
+    val columnChange = when {
+        cell.type == CellType.Sand && logicChunk.south?.type == null -> 0
+        cell.type == CellType.Sand && logicChunk.south?.type == CellType.Sand && logicChunk.southEast?.type == CellType.Air -> 1
+        cell.type == CellType.Sand && logicChunk.south?.type == CellType.Sand && (logicChunk.southEast?.type == CellType.Sand || logicChunk.southEast?.type == null) && logicChunk.southWest?.type == CellType.Air -> -1
+        cell.type == CellType.Sand && logicChunk.south?.type == CellType.Sand && (logicChunk.southEast?.type == CellType.Sand || logicChunk.southEast?.type == null) -> 0
+        cell.type == CellType.Sand && logicChunk.south?.type == CellType.Air -> 0
+        else -> 0
+    }
+    return when {
+        rowChange == 0 && columnChange == 0 -> ChangeCandidate.Nothing
+        else -> ChangeCandidate.Change(
+            sourcePosition = position(-1, -1),
+            destinationPosition = cell.position.copy(
+                row = cell.position.row + rowChange,
+                column = cell.position.column + columnChange
+            ),
+            newType = CellType.Sand,
+        )
     }
 }
