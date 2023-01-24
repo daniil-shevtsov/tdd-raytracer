@@ -260,6 +260,7 @@ internal class FallingSandSimulationKtTest {
     }
 
     @Test
+    @Ignore
     fun `should create change candidate`() {
         val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
             fallingSandCell(

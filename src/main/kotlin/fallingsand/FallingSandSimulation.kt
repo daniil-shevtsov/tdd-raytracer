@@ -99,7 +99,7 @@ fun createChangeCandidate(grid: Grid<FallingSandCell>, cell: FallingSandCell): F
         },
     )
 
-    return when(val changeCandidate = createChangeCandidate(logicChunk, cell)) {
+    return when (val changeCandidate = createChangeCandidate(logicChunk, cell)) {
         is ChangeCandidate.Change -> cell.copy(
             position = changeCandidate.destinationPosition,
             type = changeCandidate.newType,
@@ -109,6 +109,13 @@ fun createChangeCandidate(grid: Grid<FallingSandCell>, cell: FallingSandCell): F
 }
 
 fun createChangeCandidate(logicChunk: LogicChunk, cell: FallingSandCell): ChangeCandidate {
+    val rowChange = when {
+        cell.type == CellType.Sand && logicChunk.south?.type == null -> 0
+        cell.type == CellType.Sand && logicChunk.south?.type == CellType.Sand && logicChunk.southEast?.type == CellType.Air -> 1
+        cell.type == CellType.Sand && logicChunk.south?.type == CellType.Sand && (logicChunk.southEast?.type == CellType.Sand || logicChunk.southEast?.type == null) -> 1
+        cell.type == CellType.Sand && logicChunk.south?.type == CellType.Air -> 1
+        else -> 0
+    }
     return when (cell.type) {
         CellType.Sand -> when (logicChunk.south?.type) {
             null -> ChangeCandidate.Nothing
@@ -116,7 +123,7 @@ fun createChangeCandidate(logicChunk: LogicChunk, cell: FallingSandCell): Change
                 CellType.Air -> ChangeCandidate.Change(
                     sourcePosition = cell.position,
                     destinationPosition = cell.position.copy(
-                        row = cell.position.row + 1,
+                        row = cell.position.row + rowChange,
                         column = cell.position.column + 1
                     ),
                     newType = cell.type
@@ -125,18 +132,17 @@ fun createChangeCandidate(logicChunk: LogicChunk, cell: FallingSandCell): Change
                     CellType.Air -> ChangeCandidate.Change(
                         sourcePosition = cell.position,
                         destinationPosition = cell.position.copy(
-                            row = cell.position.row + 1,
+                            row = cell.position.row + rowChange,
                             column = cell.position.column - 1
                         ),
                         newType = cell.type
                     )
                     else -> ChangeCandidate.Nothing
                 }
-                else -> ChangeCandidate.Nothing
             }
-            else -> ChangeCandidate.Change(
+            CellType.Air -> ChangeCandidate.Change(
                 sourcePosition = cell.position,
-                destinationPosition = cell.position.copy(row = cell.position.row + 1),
+                destinationPosition = cell.position.copy(row = cell.position.row + rowChange),
                 newType = cell.type
             )
         }
