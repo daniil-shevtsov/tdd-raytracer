@@ -70,6 +70,7 @@ data class LogicChunk(
     val south: FallingSandCell?,
     val southEast: FallingSandCell?,
     val southWest: FallingSandCell?,
+    val current: FallingSandCell,
 )
 
 sealed interface ChangeCandidate {
@@ -97,6 +98,7 @@ fun createChangeCandidate(grid: Grid<FallingSandCell>, cell: FallingSandCell): F
             cell.position.row == grid.height - 1 || cell.position.column == 0 -> null
             else -> grid[cell.position.row + 1, cell.position.column - 1]
         },
+        current = cell,
     )
 
     return when (val changeCandidate = createChangeCandidate(logicChunk, cell)) {
@@ -109,8 +111,25 @@ fun createChangeCandidate(grid: Grid<FallingSandCell>, cell: FallingSandCell): F
 }
 
 fun createChangeCandidate(logicChunk: LogicChunk, cell: FallingSandCell): ChangeCandidate {
+    val rule1 = { logicChunk: LogicChunk -> logicChunk.current.type == CellType.Sand }
+    val rule2 = { logicChunk: LogicChunk ->
+        CellType.Air in listOfNotNull(
+            logicChunk.south,
+            logicChunk.southEast,
+            logicChunk.southWest
+        ).map(FallingSandCell::type)
+    }
+    val rule3 = { logicChunk: LogicChunk ->
+        listOfNotNull(logicChunk.south, logicChunk.southEast, logicChunk.southWest).filter { it.type == CellType.Air }.map(FallingSandCell::position)
+            .firstOrNull()?.let { it - logicChunk.current.position } ?: position(0, 0)
+    }
+
+    val change = when {
+        rule1(logicChunk) && rule2(logicChunk) -> rule3(logicChunk)
+        else -> position(0, 0)
+    }
+
     val positionChange = when {
-        cell.type == CellType.Sand && logicChunk.south?.type == null -> position(row = 0, column = 0)
         cell.type == CellType.Sand && logicChunk.south?.type == CellType.Sand
                 && logicChunk.southEast?.type == CellType.Air -> position(row = 1, column = 1)
         cell.type == CellType.Sand && logicChunk.south?.type == CellType.Sand
@@ -119,13 +138,13 @@ fun createChangeCandidate(logicChunk: LogicChunk, cell: FallingSandCell): Change
         cell.type == CellType.Sand && logicChunk.south?.type == CellType.Air -> position(row = 1, column = 0)
         else -> position(row = 0, column = 0)
     }
-    return when {
-        positionChange == position(0, 0) -> ChangeCandidate.Nothing
+    return when (change) {
+        position(0, 0) -> ChangeCandidate.Nothing
         else -> ChangeCandidate.Change(
             sourcePosition = position(-1, -1),
             destinationPosition = cell.position.copy(
-                row = cell.position.row + positionChange.row,
-                column = cell.position.column + positionChange.column
+                row = cell.position.row + change.row,
+                column = cell.position.column + change.column
             ),
             newType = CellType.Sand,
         )

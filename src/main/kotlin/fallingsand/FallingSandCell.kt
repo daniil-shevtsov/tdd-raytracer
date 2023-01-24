@@ -15,7 +15,14 @@ enum class CellType {
 data class Position(
     val row: Int,
     val column: Int,
-)
+) {
+    operator fun minus(other: Position): Position {
+        return copy(
+            row = row - other.row,
+            column = column - other.column,
+        )
+    }
+}
 
 @TestOnly
 fun fallingSandCell(
