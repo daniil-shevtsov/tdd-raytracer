@@ -34,7 +34,7 @@ fun fallingSandSimulation(
 fun updateEveryCell(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
     val candidates = mutableMapOf<Position, List<FallingSandCell>>()
     val updatedGrid = grid.update { row, column, value ->
-        createChangeCandidate(grid, value)
+        updateCell(grid, value)
     }.getAsLists()
         .flatten()
         .let { originalList ->
@@ -83,9 +83,8 @@ sealed interface ChangeCandidate {
     object Nothing : ChangeCandidate
 }
 
-
-fun createChangeCandidate(grid: Grid<FallingSandCell>, cell: FallingSandCell): FallingSandCell {
-    val logicChunk = LogicChunk(
+fun createLogicChunk(grid: Grid<FallingSandCell>, cell: FallingSandCell): LogicChunk {
+    return LogicChunk(
         south = when (cell.position.row) {
             grid.height - 1 -> null
             else -> grid[cell.position.row + 1, cell.position.column]
@@ -100,9 +99,12 @@ fun createChangeCandidate(grid: Grid<FallingSandCell>, cell: FallingSandCell): F
         },
         current = cell,
     )
+}
 
+fun updateCell(grid: Grid<FallingSandCell>, cell: FallingSandCell): FallingSandCell {
+    val candidate = createChangeCandidate(createLogicChunk(grid, cell), cell)
     return applyChangeCandidate(
-        candidate = createChangeCandidate(logicChunk, cell),
+        candidate = candidate,
         cell = cell,
     )
 }

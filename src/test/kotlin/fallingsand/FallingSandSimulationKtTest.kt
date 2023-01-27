@@ -199,7 +199,7 @@ internal class FallingSandSimulationKtTest {
         grid: Grid<FallingSandCell>,
         cell:FallingSandCell
     ): FallingSandCell {
-        val cell = createChangeCandidate(grid, cell)
+        val cell = updateCell(grid, cell)
         return cell
     }
 
