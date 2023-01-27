@@ -21,7 +21,7 @@ fun FallingSandCompose(
 ) {
     var currentGrid by remember {
         mutableStateOf(
-            Grid.createInitialized(5) { row, column ->
+            Grid.createInitialized(50) { row, column ->
                 fallingSandCell(
                     position = position(row, column),
                     type = when {
@@ -68,7 +68,7 @@ fun FallingSandCompose(
 //                )
                 .onKeyEvent {
                     val isDirectionKey = it.key.keyCode in (0x25..0x28)
-                    if (it.type == KeyEventType.KeyDown && (isDirectionKey || it.key == Key.P || it.key == Key.Spacebar)) {
+                    if (it.type == KeyEventType.KeyDown && (isDirectionKey || it.key == Key.P/* || it.key == Key.Spacebar*/)) {
                         return@onKeyEvent false
                     }
                     if(it.key == Key.P) {

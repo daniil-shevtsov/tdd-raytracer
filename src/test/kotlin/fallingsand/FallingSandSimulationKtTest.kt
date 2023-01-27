@@ -5,6 +5,7 @@ import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import assertk.assertions.prop
 import assertk.assertions.support.expected
 import canvas.Canvas
@@ -234,14 +235,13 @@ internal class FallingSandSimulationKtTest {
     }
 
     @Test
-    @Ignore
     fun `should only one fall when air under and two candidate with grid`() {
         val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
             fallingSandCell(
                 position = position(row, column), type = when {
-                    row == 2 && column == 1 -> CellType.Air
                     row == 1 && column == 0 -> CellType.Sand
                     row == 1 && column == 2 -> CellType.Sand
+                    row == 2 && column == 1 -> CellType.Air
                     row == 2 -> CellType.Sand
                     else -> CellType.Air
                 }
@@ -345,6 +345,14 @@ internal class FallingSandSimulationKtTest {
             prop(Position::row).isEqualTo(row)
         }
     }
+
+//    private fun Assert<ChangeCandidate>.hasPosition(row: Int, column: Int) {
+//        isInstanceOf(ChangeCandidate.Change::class)
+//        .prop(ChangeCandidate.Change::destinationPosition).all {
+//            prop(Position::column).isEqualTo(column)
+//            prop(Position::row).isEqualTo(row)
+//        }
+//    }
 
     private fun Assert<FallingSandCell>.hasType(type: CellType) {
         prop(FallingSandCell::type).isEqualTo(type)
