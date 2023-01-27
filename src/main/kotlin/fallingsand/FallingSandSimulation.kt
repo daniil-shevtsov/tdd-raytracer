@@ -111,33 +111,25 @@ fun createChangeCandidate(grid: Grid<FallingSandCell>, cell: FallingSandCell): F
 }
 
 fun createChangeCandidate(logicChunk: LogicChunk, cell: FallingSandCell): ChangeCandidate {
-    val rule1 = { logicChunk: LogicChunk -> logicChunk.current.type == CellType.Sand }
-    val rule2 = { logicChunk: LogicChunk ->
+    val currentIsSandRule = { logicChunk: LogicChunk -> logicChunk.current.type == CellType.Sand }
+    val airExistsInAnyBelowDirection = { logicChunk: LogicChunk ->
         CellType.Air in listOfNotNull(
             logicChunk.south,
             logicChunk.southEast,
             logicChunk.southWest
         ).map(FallingSandCell::type)
     }
-    val rule3 = { logicChunk: LogicChunk ->
-        listOfNotNull(logicChunk.south, logicChunk.southEast, logicChunk.southWest).filter { it.type == CellType.Air }.map(FallingSandCell::position)
+    val moveBelowToAnyFreeCellRule = { logicChunk: LogicChunk ->
+        listOfNotNull(logicChunk.south, logicChunk.southEast, logicChunk.southWest).filter { it.type == CellType.Air }
+            .map(FallingSandCell::position)
             .firstOrNull()?.let { it - logicChunk.current.position } ?: position(0, 0)
     }
 
     val change = when {
-        rule1(logicChunk) && rule2(logicChunk) -> rule3(logicChunk)
+        currentIsSandRule(logicChunk) && airExistsInAnyBelowDirection(logicChunk) -> moveBelowToAnyFreeCellRule(logicChunk)
         else -> position(0, 0)
     }
 
-    val positionChange = when {
-        cell.type == CellType.Sand && logicChunk.south?.type == CellType.Sand
-                && logicChunk.southEast?.type == CellType.Air -> position(row = 1, column = 1)
-        cell.type == CellType.Sand && logicChunk.south?.type == CellType.Sand
-                && (logicChunk.southEast?.type == CellType.Sand || logicChunk.southEast?.type == null)
-                && logicChunk.southWest?.type == CellType.Air -> position(row = 1, column = -1)
-        cell.type == CellType.Sand && logicChunk.south?.type == CellType.Air -> position(row = 1, column = 0)
-        else -> position(row = 0, column = 0)
-    }
     return when (change) {
         position(0, 0) -> ChangeCandidate.Nothing
         else -> ChangeCandidate.Change(
