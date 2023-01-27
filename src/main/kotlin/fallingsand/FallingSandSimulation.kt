@@ -101,10 +101,17 @@ fun createChangeCandidate(grid: Grid<FallingSandCell>, cell: FallingSandCell): F
         current = cell,
     )
 
-    return when (val changeCandidate = createChangeCandidate(logicChunk, cell)) {
+    return applyChangeCandidate(
+        candidate = createChangeCandidate(logicChunk, cell),
+        cell = cell,
+    )
+}
+
+private fun applyChangeCandidate(candidate: ChangeCandidate, cell: FallingSandCell): FallingSandCell {
+    return when (candidate) {
         is ChangeCandidate.Change -> cell.copy(
-            position = changeCandidate.destinationPosition,
-            type = changeCandidate.newType,
+            position = candidate.destinationPosition,
+            type = candidate.newType,
         )
         ChangeCandidate.Nothing -> cell
     }
@@ -126,7 +133,9 @@ fun createChangeCandidate(logicChunk: LogicChunk, cell: FallingSandCell): Change
     }
 
     val change = when {
-        currentIsSandRule(logicChunk) && airExistsInAnyBelowDirection(logicChunk) -> moveBelowToAnyFreeCellRule(logicChunk)
+        currentIsSandRule(logicChunk) && airExistsInAnyBelowDirection(logicChunk) -> moveBelowToAnyFreeCellRule(
+            logicChunk
+        )
         else -> position(0, 0)
     }
 
