@@ -88,7 +88,7 @@ class CreateChunkTest {
     fun `should set south as null when southest row`() {
         val chunkPositions = createChunkPositions(
             current = position(2, 1),
-            width = 3,
+            height = 3,
         )
 
         assertThat(chunkPositions).hasPositions(
@@ -119,27 +119,7 @@ class CreateChunkTest {
         width: Int = 100,
         height: Int = 100,
         kek: String = "",
-    ) = createChunkPositions(
-        current = current,
-        width = width,
-        height = height,
-    )
-
-    private fun createChunkPositions(current: Position, width: Int, height: Int): ChunkPositions {
-        val min = position(0, 0)
-        val max = position(width - 1, height - 1)
-        return ChunkPositions(
-            current = current,
-            north = (current - position(1, 0)).takeIf { it.row >= min.row },
-            northEast = (current + position(-1, 1)).takeIf { it.row >= min.row && it.column <= max.row },
-            east = (current + position(0, 1)).takeIf { it.column <= max.row },
-            southEast = (current + position(1, 1)).takeIf { it.row <= max.row && it.column <= max.row },
-            south = (current + position(1, 0)).takeIf { it.row <= max.row },
-            southWest = (current + position(1, -1)).takeIf { it.row <= max.row && it.column >= min.column },
-            west = (current - position(0, 1)).takeIf { it.column >= min.column },
-            northWest = (current - position(1, 1)).takeIf { it.row >= min.row && it.column >= min.column },
-        )
-    }
+    ) = fallingsand.createChunkPositions(current = current, width = width, height = height)
 
     private fun Assert<ChunkPositions>.hasPositions(
         current: Position = position(-1, -1),
