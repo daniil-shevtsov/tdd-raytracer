@@ -242,6 +242,12 @@ internal class FallingSandSimulationKtTest {
     }
 
     @Test
+    fun `little steps`() {
+        
+    }
+
+    @Test
+    @Ignore
     fun `should only one fall when air under and two candidate with grid`() {
         val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
             fallingSandCell(

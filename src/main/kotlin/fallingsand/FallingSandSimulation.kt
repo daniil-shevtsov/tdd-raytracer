@@ -1,6 +1,7 @@
 package fallingsand
 
 import grid.Grid
+import org.jetbrains.annotations.TestOnly
 
 sealed interface FallingSandAction {
     object Tick : FallingSandAction
@@ -64,6 +65,31 @@ fun updateEveryCell(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
             else -> cell
         }
     }
+}
+
+data class ChunkPositions(
+    val current: Position,
+    val north: Position?,
+    val northEast: Position?,
+    val east: Position?,
+    val southEast: Position?,
+    val south: Position?,
+    val southWest: Position?,
+    val west: Position?,
+    val northWest: Position?,
+) {
+    @TestOnly
+    fun asMap() = listOf(
+        "current" to current,
+        "north" to north,
+        "northEast" to northEast,
+        "east" to east,
+        "southEast" to southEast,
+        "south" to south,
+        "southWest" to southWest,
+        "west" to west,
+        "northWest" to northWest,
+    ).toMap()
 }
 
 data class LogicChunk(
