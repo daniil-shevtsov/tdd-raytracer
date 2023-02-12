@@ -69,6 +69,51 @@ class CreateChunkTest {
         )
     }
 
+    @Test
+    fun `should set east as null when eastest column`() {
+        val chunkPositions = createChunkPositions(
+            current = position(1, 2),
+            width = 3,
+        )
+
+        assertThat(chunkPositions).hasPositions(
+            current = position(1, 2),
+            northEast = null,
+            east = null,
+            southEast = null,
+        )
+    }
+
+    @Test
+    fun `should set south as null when southest row`() {
+        val chunkPositions = createChunkPositions(
+            current = position(2, 1),
+            width = 3,
+        )
+
+        assertThat(chunkPositions).hasPositions(
+            current = position(2, 1),
+            southEast = null,
+            south = null,
+            southWest = null,
+        )
+    }
+
+    @Test
+    fun `should set west as null when westest column`() {
+        val chunkPositions = createChunkPositions(
+            current = position(1, 0),
+            width = 3,
+        )
+
+        assertThat(chunkPositions).hasPositions(
+            current = position(1, 0),
+            southWest = null,
+            west = null,
+            northWest = null,
+        )
+    }
+
     private fun createChunkPositions(
         current: Position = position(0, 0),
         width: Int = 100,
@@ -82,17 +127,17 @@ class CreateChunkTest {
 
     private fun createChunkPositions(current: Position, width: Int, height: Int): ChunkPositions {
         val min = position(0, 0)
-        val max = position(width -1, height - 1)
+        val max = position(width - 1, height - 1)
         return ChunkPositions(
             current = current,
             north = (current - position(1, 0)).takeIf { it.row >= min.row },
-            northEast = (current + position(-1, 1)).takeIf { it.row >= min.row },
-            east = current + position(0, 1),
-            southEast =  current + position(1, 1),
-            south = current + position(1, 0),
-            southWest = current + position(1, -1),
-            west = current - position(0, 1),
-            northWest = (current - position(1, 1)).takeIf { it.row >= min.row },
+            northEast = (current + position(-1, 1)).takeIf { it.row >= min.row && it.column <= max.row },
+            east = (current + position(0, 1)).takeIf { it.column <= max.row },
+            southEast = (current + position(1, 1)).takeIf { it.row <= max.row && it.column <= max.row },
+            south = (current + position(1, 0)).takeIf { it.row <= max.row },
+            southWest = (current + position(1, -1)).takeIf { it.row <= max.row && it.column >= min.column },
+            west = (current - position(0, 1)).takeIf { it.column >= min.column },
+            northWest = (current - position(1, 1)).takeIf { it.row >= min.row && it.column >= min.column },
         )
     }
 
