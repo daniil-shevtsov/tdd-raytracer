@@ -3,14 +3,6 @@ package fallingsand
 import org.jetbrains.annotations.TestOnly
 
 data class ChunkPositions(
-    val north: Position?,
-    val northEast: Position?,
-    val east: Position?,
-    val southEast: Position?,
-    val south: Position?,
-    val southWest: Position?,
-    val west: Position?,
-    val northWest: Position?,
     val originalMap: Map<Direction, Position?>,
 ) {
     @TestOnly
@@ -38,14 +30,6 @@ data class ChunkPositions(
             west: Position?,
             northWest: Position?,
         ): ChunkPositions = ChunkPositions(
-            north = north,
-            northEast = northEast,
-            east = east,
-            southEast = southEast,
-            south = south,
-            southWest = southWest,
-            west = west,
-            northWest = northWest,
             originalMap = mapOf(
                 Direction(HorizontalDirection.Center, VerticalDirection.Center) to current,
                 Direction(HorizontalDirection.Center, VerticalDirection.North) to north,
@@ -96,17 +80,7 @@ fun createChunkPositions(current: Position, width: Int, height: Int): ChunkPosit
         position(verticalOffset, horizontalOffset)
     }
 
-
-
     return ChunkPositions(
-        north = (current - position(1, 0)).takeIf { it.row >= min.row },
-        northEast = (current + position(-1, 1)).takeIf { it.row >= min.row && it.column <= max.column },
-        east = (current + position(0, 1)).takeIf { it.column <= max.column },
-        southEast = (current + position(1, 1)).takeIf { it.row <= max.row && it.column <= max.column },
-        south = (current + position(1, 0)).takeIf { it.row <= max.row },
-        southWest = (current + position(1, -1)).takeIf { it.row <= max.row && it.column >= min.column },
-        west = (current - position(0, 1)).takeIf { it.column >= min.column },
-        northWest = (current - position(1, 1)).takeIf { it.row >= min.row && it.column >= min.column },
         originalMap = map.mapValues { (current + it.value).takeIf { it.row >= min.row && it.row <= max.row && it.column >= min.column && it.column <= max.column } },
     )
 }
