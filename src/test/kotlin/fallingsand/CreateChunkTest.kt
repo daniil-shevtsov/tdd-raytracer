@@ -57,6 +57,18 @@ class CreateChunkTest {
         )
     }
 
+    @Test
+    fun `should set north as null when northest row`() {
+        val chunkPositions = createChunkPositions(current = position(0, 2))
+
+        assertThat(chunkPositions).hasPositions(
+            current = position(0, 2),
+            north = null,
+            northEast = null,
+            northWest = null,
+        )
+    }
+
     private fun createChunkPositions(
         current: Position = position(0, 0),
         width: Int = 100,
@@ -69,16 +81,18 @@ class CreateChunkTest {
     )
 
     private fun createChunkPositions(current: Position, width: Int, height: Int): ChunkPositions {
+        val min = position(0, 0)
+        val max = position(width -1, height - 1)
         return ChunkPositions(
             current = current,
-            north = current - position(1, 0),
-            northEast = current + position(-1, 1),
+            north = (current - position(1, 0)).takeIf { it.row >= min.row },
+            northEast = (current + position(-1, 1)).takeIf { it.row >= min.row },
             east = current + position(0, 1),
             southEast =  current + position(1, 1),
             south = current + position(1, 0),
             southWest = current + position(1, -1),
             west = current - position(0, 1),
-            northWest = current - position(1, 1),
+            northWest = (current - position(1, 1)).takeIf { it.row >= min.row },
         )
     }
 

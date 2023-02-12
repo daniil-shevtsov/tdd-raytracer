@@ -29,6 +29,14 @@ data class Position(
             column = column + other.column,
         )
     }
+
+    operator fun compareTo(other: Int): Int {
+        return when {
+            row > other && column > other -> 1
+            row < other && column < other -> -1
+            else -> 0
+        }
+    }
 }
 
 @TestOnly
