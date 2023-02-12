@@ -133,7 +133,7 @@ class CreateChunkTest {
         northWest: Position? = position(-1, -1),
     ) {
         hasPositions(
-            chunkPositions = ChunkPositions(
+            chunkPositions = ChunkPositions.fromDirections(
                 current = current,
                 north = north,
                 northEast = northEast,

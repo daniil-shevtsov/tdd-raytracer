@@ -3,7 +3,7 @@ package fallingsand
 import org.jetbrains.annotations.TestOnly
 
 data class ChunkPositions(
-    val current: Position,
+    val currentt: Position,
     val north: Position?,
     val northEast: Position?,
     val east: Position?,
@@ -12,6 +12,7 @@ data class ChunkPositions(
     val southWest: Position?,
     val west: Position?,
     val northWest: Position?,
+    val originalMap: Map<Direction, Position?>,
 ) {
     @TestOnly
     fun asMap() = listOf(
@@ -26,6 +27,9 @@ data class ChunkPositions(
         "northWest" to northWest,
     ).toMap()
 
+    val current: Position
+        get() = originalMap[Direction(HorizontalDirection.Center, VerticalDirection.Center)]!!
+
     val map: Map<Direction, Position?>
         get() = mapOf(
             Direction(HorizontalDirection.Center, VerticalDirection.Center) to current,
@@ -38,6 +42,43 @@ data class ChunkPositions(
             Direction(HorizontalDirection.West, VerticalDirection.Center) to west,
             Direction(HorizontalDirection.West, VerticalDirection.North) to west,
         )
+
+    fun get(direction: Direction): Position? = map[direction]
+
+    companion object {
+        fun fromDirections(
+            current: Position,
+            north: Position?,
+            northEast: Position?,
+            east: Position?,
+            southEast: Position?,
+            south: Position?,
+            southWest: Position?,
+            west: Position?,
+            northWest: Position?,
+        ): ChunkPositions = ChunkPositions(
+            currentt = current,
+            north = north,
+            northEast = northEast,
+            east = east,
+            southEast = southEast,
+            south = south,
+            southWest = southWest,
+            west = west,
+            northWest = northWest,
+            originalMap = mapOf(
+                Direction(HorizontalDirection.Center, VerticalDirection.Center) to current,
+                Direction(HorizontalDirection.Center, VerticalDirection.North) to north,
+                Direction(HorizontalDirection.East, VerticalDirection.North) to northEast,
+                Direction(HorizontalDirection.East, VerticalDirection.Center) to east,
+                Direction(HorizontalDirection.East, VerticalDirection.South) to southEast,
+                Direction(HorizontalDirection.Center, VerticalDirection.South) to south,
+                Direction(HorizontalDirection.West, VerticalDirection.South) to southWest,
+                Direction(HorizontalDirection.West, VerticalDirection.Center) to west,
+                Direction(HorizontalDirection.West, VerticalDirection.North) to west,
+            )
+        )
+    }
 }
 
 data class Direction(
@@ -75,10 +116,10 @@ fun createChunkPositions(current: Position, width: Int, height: Int): ChunkPosit
         position(verticalOffset, horizontalOffset)
     }
 
-    
+
 
     return ChunkPositions(
-        current = current,
+        currentt = current,
         north = (current - position(1, 0)).takeIf { it.row >= min.row },
         northEast = (current + position(-1, 1)).takeIf { it.row >= min.row && it.column <= max.column },
         east = (current + position(0, 1)).takeIf { it.column <= max.column },
@@ -87,5 +128,6 @@ fun createChunkPositions(current: Position, width: Int, height: Int): ChunkPosit
         southWest = (current + position(1, -1)).takeIf { it.row <= max.row && it.column >= min.column },
         west = (current - position(0, 1)).takeIf { it.column >= min.column },
         northWest = (current - position(1, 1)).takeIf { it.row >= min.row && it.column >= min.column },
+        originalMap = map.mapValues { (current + it.value).takeIf { it.row >= min.row && it.row <= max.row && it.column >= min.column && it.column <= max.column } },
     )
 }
