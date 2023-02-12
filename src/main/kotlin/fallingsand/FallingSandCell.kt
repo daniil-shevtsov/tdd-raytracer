@@ -22,6 +22,13 @@ data class Position(
             column = column - other.column,
         )
     }
+
+    operator fun plus(other: Position): Position {
+        return copy(
+            row = row + other.row,
+            column = column + other.column,
+        )
+    }
 }
 
 @TestOnly

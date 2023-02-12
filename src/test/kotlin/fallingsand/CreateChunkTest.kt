@@ -23,6 +23,40 @@ class CreateChunkTest {
         )
     }
 
+    @Test
+    fun `should set every side for current 1 1`() {
+        val chunkPositions = createChunkPositions(current = position(1, 1))
+
+        assertThat(chunkPositions).hasPositions(
+            current = position(1, 1),
+            north = position(0, 1),
+            northEast = position(0, 2),
+            east = position(1, 2),
+            southEast = position(2, 2),
+            south = position(2, 1),
+            southWest = position(2, 0),
+            west = position(1, 0),
+            northWest = position(0, 0),
+        )
+    }
+
+    @Test
+    fun `should set every side for current 2 2`() {
+        val chunkPositions = createChunkPositions(current = position(2, 2))
+
+        assertThat(chunkPositions).hasPositions(
+            current = position(2, 2),
+            north = position(1, 2),
+            northEast = position(1, 3),
+            east = position(2, 3),
+            southEast = position(3, 3),
+            south = position(3, 2),
+            southWest = position(3, 1),
+            west = position(2, 1),
+            northWest = position(1, 1),
+        )
+    }
+
     private fun createChunkPositions(
         current: Position = position(0, 0),
         width: Int = 100,
@@ -36,15 +70,15 @@ class CreateChunkTest {
 
     private fun createChunkPositions(current: Position, width: Int, height: Int): ChunkPositions {
         return ChunkPositions(
-            current = position(1, 1),
-            north = position(0, 1),
-            northEast = null,
-            east = null,
-            southEast = null,
-            south = null,
-            southWest = null,
-            west = null,
-            northWest = null,
+            current = current,
+            north = current - position(1, 0),
+            northEast = current + position(-1, 1),
+            east = current + position(0, 1),
+            southEast =  current + position(1, 1),
+            south = current + position(1, 0),
+            southWest = current + position(1, -1),
+            west = current - position(0, 1),
+            northWest = current - position(1, 1),
         )
     }
 
