@@ -2,6 +2,22 @@ package fallingsand
 
 import grid.Grid
 
+fun createNextChangeCandidate(
+    grid: Grid<FallingSandCell>
+): ChangeCandidate {
+    val changeCandidates = grid.positions.map { position ->
+        createChangeCandidate(
+            grid = grid,
+            chunkPositions = createChunkPositions(current = position, width = grid.width, height = grid.height)
+        )
+    }
+    val changes = changeCandidates.filterIsInstance<ChangeCandidate.Change>()
+    return when (changes.isNotEmpty()) {
+        true -> changes.first()
+        false -> ChangeCandidate.Nothing
+    }
+}
+
 fun createChangeCandidate(
     grid: Grid<FallingSandCell>,
     chunkPositions: ChunkPositions,

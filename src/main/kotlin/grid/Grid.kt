@@ -7,6 +7,7 @@ import canvas.color.color
 import fallingsand.CellType
 import fallingsand.FallingSandCell
 import fallingsand.Position
+import fallingsand.position
 import java.lang.Integer.max
 import java.lang.Integer.min
 
@@ -20,7 +21,19 @@ class Grid<T> private constructor(
     val maxSize: Int
         get() = max(width, height)
 
-    private val gridArray: MutableList<MutableList<T>> = (0 until height).map { row ->
+    val indices: List<List<Int>>
+        get() = (0 until height).map { row ->
+            (0 until width).toList()
+        }
+    val positions: List<Position>
+        get() = (0 until height).map { row ->
+            (0 until width).map { column ->
+                position(row = row, column = column)
+            }
+        }.flatten()
+
+    private
+    val gridArray: MutableList<MutableList<T>> = (0 until height).map { row ->
         (0 until width).map { column ->
             default(row, column)
         }.toMutableList()

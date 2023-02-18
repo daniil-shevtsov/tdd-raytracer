@@ -104,13 +104,22 @@ internal class FallingSandSimulationKtTest {
         assertThat(firstUpdate).hasPosition(1, 0)
         val gridAfterFirstUpdate = applyChangeToGrid(
             grid = grid,
-            changeCandidate = createChangeCandidate(
-                grid,
-                createChunkPositions(current = cell.position, width = grid.width, height = grid.height)
-            )
+            changeCandidate = createNextChangeCandidate(grid)
         )
-        val secondUpdate = getCellUpdate(gridAfterFirstUpdate, firstUpdate)
-        assertThat(secondUpdate).hasPosition(2, 0)
+        assertThat(gridAfterFirstUpdate).hasTypes(
+            position(0, 0) to CellType.Air,
+            position(1, 0) to CellType.Sand,
+            position(2, 0) to CellType.Air,
+        )
+        val gridAfterSecondUpdate = applyChangeToGrid(
+            grid = gridAfterFirstUpdate,
+            changeCandidate = createNextChangeCandidate(gridAfterFirstUpdate)
+        )
+        assertThat(gridAfterSecondUpdate).hasTypes(
+            position(0, 0) to CellType.Air,
+            position(1, 0) to CellType.Air,
+            position(2, 0) to CellType.Sand,
+        )
     }
 
     @Test
