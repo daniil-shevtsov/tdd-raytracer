@@ -6,6 +6,7 @@ import canvas.canvas
 import canvas.color.color
 import fallingsand.CellType
 import fallingsand.FallingSandCell
+import fallingsand.Position
 import java.lang.Integer.max
 import java.lang.Integer.min
 
@@ -27,6 +28,10 @@ class Grid<T> private constructor(
 
     operator fun get(row: Int, column: Int): T {
         return gridArray[row][column]
+    }
+
+    operator fun get(position: Position): T {
+        return get(row = position.row, column = position.column)
     }
 
     fun update(transform: (row: Int, column: Int, value: T) -> T): Grid<T> {

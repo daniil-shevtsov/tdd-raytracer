@@ -17,6 +17,12 @@ data class ChunkPositions(
 
     val current: Position
         get() = originalMap[Direction(HorizontalDirection.Center, VerticalDirection.Center)]!!
+    val south: Position?
+        get() = originalMap[Direction(HorizontalDirection.Center, VerticalDirection.South)]
+    val southEast: Position?
+        get() = originalMap[Direction(HorizontalDirection.East, VerticalDirection.South)]
+    val southWest: Position?
+        get() = originalMap[Direction(HorizontalDirection.West, VerticalDirection.South)]
 
     companion object {
         fun fromDirections(
@@ -44,6 +50,11 @@ data class ChunkPositions(
         )
     }
 }
+
+@TestOnly
+fun chunkPositions(originalMap: Map<Direction, Position?> = mapOf()) = ChunkPositions(
+    originalMap = originalMap,
+)
 
 data class Direction(
     val horizontal: HorizontalDirection,
