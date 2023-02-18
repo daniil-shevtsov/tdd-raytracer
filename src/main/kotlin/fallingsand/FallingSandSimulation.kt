@@ -51,6 +51,18 @@ fun applyChangeToGrid(grid: Grid<FallingSandCell>, changeCandidate: ChangeCandid
     }
 }
 
+fun createFallingSandGrid(
+    size: Int,
+    init: (row: Int, column: Int) -> CellType
+): Grid<FallingSandCell> {
+    return Grid.createInitialized(size = size) { row, column ->
+        fallingSandCell(
+            position = position(row = row, column = column),
+            type = init(row, column),
+        )
+    }
+}
+
 sealed interface ChangeCandidate {
     data class Change(
         val sourcePosition: Position,
@@ -59,17 +71,6 @@ sealed interface ChangeCandidate {
     ) : ChangeCandidate
 
     object Nothing : ChangeCandidate
-}
-
-fun updateCell(grid: Grid<FallingSandCell>, cell: FallingSandCell): FallingSandCell {
-    val candidate = createChangeCandidate(
-        grid,
-        createChunkPositions(current = cell.position, width = grid.width, height = grid.height)
-    )
-    return applyChangeCandidate(
-        candidate = candidate,
-        cell = cell,
-    )
 }
 
 private fun applyChangeCandidate(candidate: ChangeCandidate, cell: FallingSandCell): FallingSandCell {
