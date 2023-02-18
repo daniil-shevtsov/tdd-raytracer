@@ -12,7 +12,6 @@ import canvas.color.color
 import grid.Grid
 import grid.toCanvas
 import org.junit.jupiter.api.Test
-import kotlin.test.Ignore
 
 internal class FallingSandSimulationKtTest {
 
@@ -250,7 +249,6 @@ internal class FallingSandSimulationKtTest {
     }
 
     @Test
-    @Ignore
     fun `should only one fall when air under and two candidate with grid`() {
         val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
             fallingSandCell(
@@ -263,7 +261,7 @@ internal class FallingSandSimulationKtTest {
                 }
             )
         }
-        val newGrid = updateEveryCell(grid)
+        val newGrid = applyNextChangeToGrid(grid)
 
         assertThat(newGrid).hasTypes(
             position(2, 0) to CellType.Sand,
@@ -276,7 +274,6 @@ internal class FallingSandSimulationKtTest {
     }
 
     @Test
-    @Ignore
     fun `should create change candidate`() {
         val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
             fallingSandCell(
@@ -289,7 +286,7 @@ internal class FallingSandSimulationKtTest {
                 }
             )
         }
-        val newGrid = updateEveryCell(grid)
+        val newGrid = applyNextChangeToGrid(grid)
 
         assertThat(newGrid).hasTypes(
             position(2, 0) to CellType.Sand,
