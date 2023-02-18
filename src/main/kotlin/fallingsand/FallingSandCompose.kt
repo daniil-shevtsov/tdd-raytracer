@@ -21,7 +21,7 @@ fun FallingSandCompose(
 ) {
     var currentGrid by remember {
         mutableStateOf(
-            Grid.createInitialized(50) { row, column ->
+            Grid.createInitialized(5) { row, column ->
                 fallingSandCell(
                     position = position(row, column),
                     type = when {

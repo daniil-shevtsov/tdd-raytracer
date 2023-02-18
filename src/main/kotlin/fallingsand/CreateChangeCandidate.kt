@@ -22,13 +22,22 @@ fun createChangeCandidate(
     grid: Grid<FallingSandCell>,
     chunkPositions: ChunkPositions,
 ): ChangeCandidate {
+    val airAt = { position: Position? -> position != null && grid[position].type == CellType.Air }
+    val sandAt = { position: Position? ->position != null && grid[position].type == CellType.Sand }
+
     val currentIsSandRule = { logicChunk: ChunkPositions -> grid[logicChunk.current].type == CellType.Sand }
-    val airExistsInAnyBelowDirection = { logicChunk: ChunkPositions ->
-        CellType.Air in listOfNotNull(
+    val freeAirExistsInAnyBelowDirection = { logicChunk: ChunkPositions ->
+        val belowPositions = listOfNotNull(
             logicChunk.south,
             logicChunk.southEast,
             logicChunk.southWest
-        ).map { grid[it].type }
+        )
+       when {
+           airAt(logicChunk.south) -> true
+           airAt(logicChunk.southEast) && airAt(logicChunk.east) -> true
+           airAt(logicChunk.southWest) && airAt(logicChunk.west) -> true
+           else -> false
+       }
     }
     val moveBelowToAnyFreeCellRule = { logicChunk: ChunkPositions ->
         listOfNotNull(
@@ -41,7 +50,7 @@ fun createChangeCandidate(
     }
 
     val change = when {
-        currentIsSandRule(chunkPositions) && airExistsInAnyBelowDirection(chunkPositions) -> moveBelowToAnyFreeCellRule(
+        currentIsSandRule(chunkPositions) && freeAirExistsInAnyBelowDirection(chunkPositions) -> moveBelowToAnyFreeCellRule(
             chunkPositions
         )
         else -> position(0, 0)

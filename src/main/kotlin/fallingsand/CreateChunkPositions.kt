@@ -17,12 +17,16 @@ data class ChunkPositions(
 
     val current: Position
         get() = originalMap[Direction(HorizontalDirection.Center, VerticalDirection.Center)]!!
-    val south: Position?
-        get() = originalMap[Direction(HorizontalDirection.Center, VerticalDirection.South)]
+    val east: Position?
+        get() = originalMap[Direction(HorizontalDirection.East, VerticalDirection.Center)]
     val southEast: Position?
         get() = originalMap[Direction(HorizontalDirection.East, VerticalDirection.South)]
+    val south: Position?
+        get() = originalMap[Direction(HorizontalDirection.Center, VerticalDirection.South)]
     val southWest: Position?
         get() = originalMap[Direction(HorizontalDirection.West, VerticalDirection.South)]
+    val west: Position?
+        get() = originalMap[Direction(HorizontalDirection.West, VerticalDirection.Center)]
 
     companion object {
         fun fromDirections(
@@ -68,6 +72,10 @@ enum class HorizontalDirection {
 enum class VerticalDirection {
     North, Center, South
 }
+
+fun createChunkPositions(current: Position, size: Int): ChunkPositions = createChunkPositions(
+    current = current, width = size, height = size,
+)
 
 fun createChunkPositions(current: Position, width: Int, height: Int): ChunkPositions {
     val min = position(0, 0)

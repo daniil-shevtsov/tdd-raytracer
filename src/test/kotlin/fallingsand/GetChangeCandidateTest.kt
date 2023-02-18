@@ -89,4 +89,39 @@ class GetChangeCandidateTest {
             )
         )
     }
+
+    /**
+     * SS     SA
+     * SA --> SS
+     * */
+    @Test
+    fun `sand return eastern candidate when can fall diagonally but another sand to the east`() {
+        val grid = Grid.createInitialized(size = 2, init = { row, column ->
+            fallingSandCell(
+                position = position(row, column),
+                type = when {
+                    row == 0 && column == 0 -> CellType.Sand
+                    row == 0 && column == 1 -> CellType.Sand
+                    row == 1 && column == 0 -> CellType.Sand
+                    else -> CellType.Air
+                },
+            )
+        })
+        val firstCandidate = createChangeCandidate(
+            grid = grid,
+            chunkPositions = createChunkPositions(current = position(0, 0), size = 2)
+        )
+        assertThat(firstCandidate).isEqualTo(ChangeCandidate.Nothing)
+        val secondCandidate = createChangeCandidate(
+            grid = grid,
+            chunkPositions = createChunkPositions(current = position(0, 1), size = 2)
+        )
+        assertThat(secondCandidate).isEqualTo(
+            ChangeCandidate.Change(
+                sourcePosition = position(0, 1),
+                destinationPosition = position(1, 1),
+                newType = CellType.Sand
+            )
+        )
+    }
 }

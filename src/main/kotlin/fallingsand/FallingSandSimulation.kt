@@ -72,13 +72,3 @@ sealed interface ChangeCandidate {
 
     object Nothing : ChangeCandidate
 }
-
-private fun applyChangeCandidate(candidate: ChangeCandidate, cell: FallingSandCell): FallingSandCell {
-    return when (candidate) {
-        is ChangeCandidate.Change -> cell.copy(
-            position = candidate.destinationPosition,
-            type = candidate.newType,
-        )
-        ChangeCandidate.Nothing -> cell
-    }
-}

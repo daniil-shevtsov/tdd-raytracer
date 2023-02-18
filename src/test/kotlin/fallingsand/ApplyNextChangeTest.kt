@@ -63,8 +63,33 @@ class ApplyNextChangeTest {
         )
     }
 
+    /**
+     * SS     SA
+     * SA --> SS
+     * */
     @Test
-    fun `should fall to the right side when sand on sand`() {
+    fun `sand should not fall diagonally under another sand`() {
+        val grid = Grid.createInitialized(size = 2) { row, column ->
+            fallingSandCell(
+                position = position(row, column), type = when {
+                    row == 0 && column == 0 -> CellType.Sand
+                    row == 0 && column == 1 -> CellType.Sand
+                    row == 1 && column == 0 -> CellType.Sand
+                    else -> CellType.Air
+                }
+            )
+        }
+
+        assertThat(applyNextChangeToGrid(grid)).hasTypes(
+            position(0, 0) to CellType.Sand,
+            position(0, 1) to CellType.Air,
+            position(1, 0) to CellType.Sand,
+            position(1, 1) to CellType.Sand,
+        )
+    }
+
+    @Test
+    fun `should fall southwest when on sand and air to southwest`() {
         val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
             fallingSandCell(
                 position = position(row, column), type = when {
