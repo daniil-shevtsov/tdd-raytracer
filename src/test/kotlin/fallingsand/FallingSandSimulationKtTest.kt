@@ -102,8 +102,14 @@ internal class FallingSandSimulationKtTest {
 
         val firstUpdate = getCellUpdate(grid, cell)
         assertThat(firstUpdate).hasPosition(1, 0)
-
-        val secondUpdate = getCellUpdate(grid, firstUpdate)
+        val gridAfterFirstUpdate = applyChangeToGrid(
+            grid = grid,
+            changeCandidate = createChangeCandidate(
+                grid,
+                createChunkPositions(current = cell.position, width = grid.width, height = grid.height)
+            )
+        )
+        val secondUpdate = getCellUpdate(gridAfterFirstUpdate, firstUpdate)
         assertThat(secondUpdate).hasPosition(2, 0)
     }
 
@@ -197,7 +203,7 @@ internal class FallingSandSimulationKtTest {
 
     private fun getCellUpdate(
         grid: Grid<FallingSandCell>,
-        cell:FallingSandCell
+        cell: FallingSandCell
     ): FallingSandCell {
         val cell = updateCell(grid, cell)
         return cell
@@ -243,7 +249,7 @@ internal class FallingSandSimulationKtTest {
 
     @Test
     fun `little steps`() {
-        
+
     }
 
     @Test
@@ -310,7 +316,7 @@ internal class FallingSandSimulationKtTest {
 
         val difference = actualTypes.filter { expectedTypes[it.key] != null && expectedTypes[it.key] != it.value }
 
-        if(difference.isEmpty()) {
+        if (difference.isEmpty()) {
             return@given
         }
 

@@ -31,6 +31,19 @@ fun fallingSandSimulation(
     }
 }
 
+fun applyChangeToGrid(grid: Grid<FallingSandCell>, changeCandidate: ChangeCandidate): Grid<FallingSandCell> {
+    return when (changeCandidate) {
+        is ChangeCandidate.Nothing -> grid
+        is ChangeCandidate.Change -> grid.update { row, column, value ->
+            when (position(row, column)) {
+                changeCandidate.sourcePosition -> value.copy(type = CellType.Air)
+                changeCandidate.destinationPosition -> value.copy(type = changeCandidate.newType)
+                else -> value
+            }
+        }
+    }
+}
+
 fun updateEveryCell(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
     val candidates = mutableMapOf<Position, List<FallingSandCell>>()
     val updatedGrid = grid.update { row, column, value ->
@@ -77,7 +90,10 @@ sealed interface ChangeCandidate {
 }
 
 fun updateCell(grid: Grid<FallingSandCell>, cell: FallingSandCell): FallingSandCell {
-    val candidate = createChangeCandidate(createLogicChunk(grid, cell), cell)
+    val candidate = createChangeCandidate(
+        grid,
+        createChunkPositions(current = cell.position, width = grid.width, height = grid.height)
+    )
     return applyChangeCandidate(
         candidate = candidate,
         cell = cell,
@@ -91,40 +107,5 @@ private fun applyChangeCandidate(candidate: ChangeCandidate, cell: FallingSandCe
             type = candidate.newType,
         )
         ChangeCandidate.Nothing -> cell
-    }
-}
-
-fun createChangeCandidate(logicChunk: LogicChunk, cell: FallingSandCell): ChangeCandidate {
-    val currentIsSandRule = { logicChunk: LogicChunk -> logicChunk.current.type == CellType.Sand }
-    val airExistsInAnyBelowDirection = { logicChunk: LogicChunk ->
-        CellType.Air in listOfNotNull(
-            logicChunk.south,
-            logicChunk.southEast,
-            logicChunk.southWest
-        ).map(FallingSandCell::type)
-    }
-    val moveBelowToAnyFreeCellRule = { logicChunk: LogicChunk ->
-        listOfNotNull(logicChunk.south, logicChunk.southEast, logicChunk.southWest).filter { it.type == CellType.Air }
-            .map(FallingSandCell::position)
-            .firstOrNull()?.let { it - logicChunk.current.position } ?: position(0, 0)
-    }
-
-    val change = when {
-        currentIsSandRule(logicChunk) && airExistsInAnyBelowDirection(logicChunk) -> moveBelowToAnyFreeCellRule(
-            logicChunk
-        )
-        else -> position(0, 0)
-    }
-
-    return when (change) {
-        position(0, 0) -> ChangeCandidate.Nothing
-        else -> ChangeCandidate.Change(
-            sourcePosition = position(-1, -1),
-            destinationPosition = cell.position.copy(
-                row = cell.position.row + change.row,
-                column = cell.position.column + change.column
-            ),
-            newType = CellType.Sand,
-        )
     }
 }
