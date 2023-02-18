@@ -64,11 +64,10 @@ internal class FallingSandSimulationKtTest {
                 }
             )
         }
-        val cell = fallingSandCell(position(1, 0))
 
-        val updatedCell = getCellUpdate(grid, cell)
-
-        assertThat(updatedCell).hasPosition(1, 0)
+        assertThat(applyNextChangeToGrid(grid)).hasTypes(
+            position(1, 0) to CellType.Sand
+        )
     }
 
     @Test
@@ -81,11 +80,11 @@ internal class FallingSandSimulationKtTest {
                 }
             )
         }
-        val cell = fallingSandCell(position(0, 0), type = CellType.Sand)
 
-        val updatedCell = getCellUpdate(grid, cell)
-
-        assertThat(updatedCell).hasPosition(1, 0)
+        assertThat(applyNextChangeToGrid(grid)).hasTypes(
+            position(0, 0) to CellType.Air,
+            position(1, 0) to CellType.Sand,
+        )
     }
 
     @Test
@@ -98,23 +97,14 @@ internal class FallingSandSimulationKtTest {
                 }
             )
         }
-        val cell = fallingSandCell(position(0, 0), type = CellType.Sand)
 
-        val firstUpdate = getCellUpdate(grid, cell)
-        assertThat(firstUpdate).hasPosition(1, 0)
-        val gridAfterFirstUpdate = applyChangeToGrid(
-            grid = grid,
-            changeCandidate = createNextChangeCandidate(grid)
-        )
+        val gridAfterFirstUpdate = applyNextChangeToGrid(grid)
         assertThat(gridAfterFirstUpdate).hasTypes(
             position(0, 0) to CellType.Air,
             position(1, 0) to CellType.Sand,
             position(2, 0) to CellType.Air,
         )
-        val gridAfterSecondUpdate = applyChangeToGrid(
-            grid = gridAfterFirstUpdate,
-            changeCandidate = createNextChangeCandidate(gridAfterFirstUpdate)
-        )
+        val gridAfterSecondUpdate = applyNextChangeToGrid(gridAfterFirstUpdate)
         assertThat(gridAfterSecondUpdate).hasTypes(
             position(0, 0) to CellType.Air,
             position(1, 0) to CellType.Air,
@@ -133,10 +123,12 @@ internal class FallingSandSimulationKtTest {
                 }
             )
         }
-        val cell = fallingSandCell(position(1, 1), type = CellType.Sand)
 
-        val firstUpdate = getCellUpdate(grid, cell)
-        assertThat(firstUpdate).hasPosition(2, 2)
+        assertThat(applyNextChangeToGrid(grid)).hasTypes(
+            position(1, 1) to CellType.Air,
+            position(2, 1) to CellType.Sand,
+            position(2, 2) to CellType.Sand,
+        )
     }
 
     @Test
@@ -151,15 +143,18 @@ internal class FallingSandSimulationKtTest {
                 }
             )
         }
-        val cell = fallingSandCell(position(1, 1), type = CellType.Sand)
 
-        val firstUpdate = getCellUpdate(grid, cell)
-        assertThat(firstUpdate).hasPosition(2, 0)
+        assertThat(applyNextChangeToGrid(grid)).hasTypes(
+            position(1, 1) to CellType.Air,
+            position(2, 1) to CellType.Sand,
+            position(2, 2) to CellType.Sand,
+            position(2, 0) to CellType.Sand,
+        )
     }
 
     @Test
     fun `should fall to the left side when sand on sand and right is screen edge`() {
-        val grid = Grid.createInitialized(width = 3, height = 3) { row, column ->
+        val grid = Grid.createInitialized(size = 3) { row, column ->
             fallingSandCell(
                 position = position(row, column), type = when {
                     row == 1 && column == 2 -> CellType.Sand
@@ -168,10 +163,12 @@ internal class FallingSandSimulationKtTest {
                 }
             )
         }
-        val cell = fallingSandCell(position(1, 2), type = CellType.Sand)
 
-        val firstUpdate = getCellUpdate(grid, cell)
-        assertThat(firstUpdate).hasPosition(2, 1)
+        assertThat(applyNextChangeToGrid(grid)).hasTypes(
+            position(1, 2) to CellType.Air,
+            position(2, 2) to CellType.Sand,
+            position(2, 1) to CellType.Sand,
+        )
     }
 
     @Test
@@ -187,10 +184,12 @@ internal class FallingSandSimulationKtTest {
                 }
             )
         }
-        val cell = fallingSandCell(position(1, 1), type = CellType.Sand)
-
-        val firstUpdate = getCellUpdate(grid, cell)
-        assertThat(firstUpdate).hasPosition(1, 1)
+        assertThat(applyNextChangeToGrid(grid)).hasTypes(
+            position(2, 2) to CellType.Sand,
+            position(2, 1) to CellType.Sand,
+            position(2, 0) to CellType.Sand,
+            position(1, 1) to CellType.Sand,
+        )
     }
 
     @Test
@@ -204,18 +203,11 @@ internal class FallingSandSimulationKtTest {
                 }
             )
         }
-        val cell = fallingSandCell(position(1, 0), type = CellType.Sand)
-
-        val firstUpdate = getCellUpdate(grid, cell)
-        assertThat(firstUpdate).hasPosition(2, 1)
-    }
-
-    private fun getCellUpdate(
-        grid: Grid<FallingSandCell>,
-        cell: FallingSandCell
-    ): FallingSandCell {
-        val cell = updateCell(grid, cell)
-        return cell
+        assertThat(applyNextChangeToGrid(grid)).hasTypes(
+            position(1, 0) to CellType.Air,
+            position(2, 0) to CellType.Sand,
+            position(2, 1) to CellType.Sand,
+        )
     }
 
     @Test
@@ -230,10 +222,11 @@ internal class FallingSandSimulationKtTest {
                 }
             )
         }
-        val cell = fallingSandCell(position(1, 0), type = CellType.Sand)
-
-        val firstUpdate = getCellUpdate(grid, cell)
-        assertThat(firstUpdate).hasPosition(1, 0)
+        assertThat(applyNextChangeToGrid(grid)).hasTypes(
+            position(1, 0) to CellType.Sand,
+            position(2, 0) to CellType.Sand,
+            position(2, 1) to CellType.Sand,
+        )
     }
 
     @Test
@@ -254,11 +247,6 @@ internal class FallingSandSimulationKtTest {
             position(1, 0) to CellType.Sand,
             position(1, 1) to CellType.Sand,
         )
-    }
-
-    @Test
-    fun `little steps`() {
-
     }
 
     @Test

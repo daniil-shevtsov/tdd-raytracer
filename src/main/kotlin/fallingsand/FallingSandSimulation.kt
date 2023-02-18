@@ -31,6 +31,13 @@ fun fallingSandSimulation(
     }
 }
 
+fun applyNextChangeToGrid(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
+    return applyChangeToGrid(
+        grid = grid,
+        changeCandidate = createNextChangeCandidate(grid)
+    )
+}
+
 fun applyChangeToGrid(grid: Grid<FallingSandCell>, changeCandidate: ChangeCandidate): Grid<FallingSandCell> {
     return when (changeCandidate) {
         is ChangeCandidate.Nothing -> grid
