@@ -43,14 +43,16 @@ fun fallingSandSimulation(
         )
         is FallingSandAction.Spawn -> currentState.copy(
             grid = currentGrid.update { row, column, value ->
-                if (row == 0 && column == 0) {
+                if (position(row, column) == currentState.cursorPosition) {
                     value.copy(type = action.cellType)
                 } else {
                     value
                 }
             }
         )
-        FallingSandAction.TogglePause -> currentState
+        FallingSandAction.TogglePause -> currentState.copy(
+            isPaused = !currentState.isPaused
+        )
     }
 
     return newState

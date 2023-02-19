@@ -2,6 +2,7 @@ package fallingsand
 
 import assertk.Assert
 import assertk.assertThat
+import assertk.assertions.isEqualTo
 import assertk.assertions.prop
 import assertk.assertions.support.expected
 import org.junit.jupiter.api.Test
@@ -63,6 +64,30 @@ internal class FallingSandSimulationTest {
     }
 
     @Test
+    fun `should spawn at cursor position`() {
+        val initialState = fallingSandSimulationState(
+            grid = filledSandGrid(size = 2, cellType = CellType.Air)
+        )
+
+        val cursorMovedState = fallingSandSimulation(
+            currentState = initialState,
+            action = FallingSandAction.MoveCursor(
+                direction = direction(
+                    horizontal = HorizontalDirection.East,
+                    vertical = VerticalDirection.South,
+                )
+            )
+        )
+
+        val materialSpawnedState = fallingSandSimulation(
+            currentState = cursorMovedState,
+            action = FallingSandAction.Spawn(cellType = CellType.Sand)
+        )
+
+        assertThat(materialSpawnedState).hasTypes(position(1, 1) to CellType.Sand)
+    }
+
+    @Test
     fun `should tick`() {
         val initialState = fallingSandSimulationState(
             grid = createFallingSandGrid(size = 2) { row, column ->
@@ -83,10 +108,34 @@ internal class FallingSandSimulationTest {
         )
     }
 
+    @Test
+    fun `should toggle pause on - off`() {
+        val state = fallingSandSimulation(
+            currentState = fallingSandSimulationState(isPaused = true),
+            action = FallingSandAction.TogglePause
+        )
+        assertThat(state).isNotPaused()
+    }
+
+    @Test
+    fun `should toggle pause off - on`() {
+        val state = fallingSandSimulation(
+            currentState = fallingSandSimulationState(isPaused = false),
+            action = FallingSandAction.TogglePause
+        )
+        assertThat(state).isPaused()
+    }
+
     private fun Assert<FallingSandSimulationState>.hasTypes(
         vararg expected: Pair<Position, CellType>,
     ) = prop(FallingSandSimulationState::grid).hasTypes(*expected)
 
+    private fun Assert<FallingSandSimulationState>.isPaused() = paused(expected = true)
+    private fun Assert<FallingSandSimulationState>.isNotPaused() = paused(expected = false)
+
+    private fun Assert<FallingSandSimulationState>.paused(
+        expected: Boolean
+    ) = prop(FallingSandSimulationState::isPaused).isEqualTo(expected)
 }
 
 private fun Assert<FallingSandSimulationState>.hasCursorAt(expected: Position) = given { actual ->
