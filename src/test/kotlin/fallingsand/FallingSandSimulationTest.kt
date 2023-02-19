@@ -7,11 +7,13 @@ internal class FallingSandSimulationTest {
 
     @Test
     fun `should create air`() {
-        val initialGrid = createFallingSandGrid(size = 2) { row, column ->
-            CellType.Sand
-        }
+        val initialState = fallingSandSimulationState(
+            grid = createFallingSandGrid(size = 2) { row, column ->
+                CellType.Sand
+            }
+        )
         val simulated = fallingSandSimulation(
-            currentGrid = initialGrid,
+            currentGrid = initialState.grid,
             action = FallingSandAction.CreateAir(row = 1, column = 1),
         )
         assertThat(simulated).hasTypes(
@@ -22,11 +24,13 @@ internal class FallingSandSimulationTest {
 
     @Test
     fun `should create sand`() {
-        val initialGrid = createFallingSandGrid(size = 2) { row, column ->
-            CellType.Air
-        }
+        val initialState = fallingSandSimulationState(
+            grid = createFallingSandGrid(size = 2) { row, column ->
+                CellType.Air
+            }
+        )
         val simulated = fallingSandSimulation(
-            currentGrid = initialGrid,
+            currentGrid = initialState.grid,
             action = FallingSandAction.CreateSand(row = 0, column = 1),
         )
         assertThat(simulated).hasTypes(
@@ -37,14 +41,17 @@ internal class FallingSandSimulationTest {
 
     @Test
     fun `should tick`() {
-        val initialGrid = createFallingSandGrid(size = 2) { row, column ->
-            when {
-                row == 0 && column == 0 -> CellType.Sand
-                else -> CellType.Air
+        val initialState = fallingSandSimulationState(
+            grid = createFallingSandGrid(size = 2) { row, column ->
+                when {
+                    row == 0 && column == 0 -> CellType.Sand
+                    else -> CellType.Air
+                }
             }
-        }
+        )
+
         val simulated = fallingSandSimulation(
-            currentGrid = initialGrid,
+            currentGrid = initialState.grid,
             action = FallingSandAction.Tick,
         )
         assertThat(simulated).hasTypes(

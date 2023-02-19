@@ -26,6 +26,10 @@ fun Assert<FallingSandCell>.hasType(type: CellType) {
     prop(FallingSandCell::type).isEqualTo(type)
 }
 
+fun Assert<FallingSandSimulationState>.hasTypess(
+    vararg expected: Pair<Position, CellType>,
+) = prop(FallingSandSimulationState::grid).hasTypes(*expected)
+
 fun Assert<Grid<FallingSandCell>>.hasTypes(
     vararg expected: Pair<Position, CellType>,
 ) = given { actual ->
