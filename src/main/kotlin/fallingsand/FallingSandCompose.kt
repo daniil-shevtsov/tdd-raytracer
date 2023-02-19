@@ -19,19 +19,17 @@ import kotlinx.coroutines.launch
 fun FallingSandCompose(
     modifier: Modifier = Modifier,
 ) {
-    var currentGrid by remember {
-        mutableStateOf(
-            Grid.createInitialized(5) { row, column ->
-                fallingSandCell(
-                    position = position(row, column),
-                    type = when {
-                        //row == 1 && (column % 2) == 0 -> CellType.Sand
-                        else -> CellType.Air
-                    }
-                )
-            }
-        )
+    var currentState by remember {
+        mutableStateOf(FallingSandSimulationState(grid = Grid.createInitialized(5) { row, column ->
+            fallingSandCell(
+                position = position(row, column), type = when {
+                    //row == 1 && (column % 2) == 0 -> CellType.Sand
+                    else -> CellType.Air
+                }
+            )
+        }))
     }
+
     var cursorPosition by remember {
         mutableStateOf(
             position(row = 0, column = 0)
@@ -44,20 +42,18 @@ fun FallingSandCompose(
 
     LaunchedEffect(Unit) {
         launch {
-            while(true) {
+            while (true) {
                 delay(10L)
-                if(!isPaused) {
+                if (!isPaused) {
                     println("Real time tick")
-                    currentGrid = fallingSandSimulation(currentGrid, FallingSandAction.Tick)
+                    currentState = fallingSandSimulation(currentState, FallingSandAction.Tick)
                 }
             }
         }
     }
 
     Column {
-        MyCanvas(
-            canvas = currentGrid.toCanvas(),
-            modifier
+        MyCanvas(canvas = currentState.grid.toCanvas(), modifier
 //                .onClick(
 //                    matcher = PointerMatcher.mouse(PointerButton.Primary),
 //                    onClick = {
@@ -66,56 +62,52 @@ fun FallingSandCompose(
 //                        currentGrid = fallingSandSimulation(currentGrid, FallingSandAction.CreateSand(row = row, column = column))
 //                    }
 //                )
-                .onKeyEvent {
-                    val isDirectionKey = it.key.keyCode in (0x25..0x28)
-                    if (it.type == KeyEventType.KeyDown && (isDirectionKey || it.key == Key.P/* || it.key == Key.Spacebar*/)) {
-                        return@onKeyEvent false
-                    }
-                    if(it.key == Key.P) {
-                        println("Toggle pause")
-                        isPaused = !isPaused
-                    }
-                    val positionX = when {
-                        it.key == Key.DirectionLeft && cursorPosition.column > 0 -> -1
-                        it.key == Key.DirectionRight && cursorPosition.column < currentGrid.width - 1 -> 1
-                        else -> 0
-                    }
-                    val positionY = when {
-                        it.key == Key.DirectionUp && cursorPosition.row > 0 -> -1
-                        it.key == Key.DirectionDown && cursorPosition.row < currentGrid.height - 1 -> 1
-                        else -> 0
-                    }
-                    if (positionX != 0 || positionY != 0) {
-                        cursorPosition = cursorPosition.copy(
-                            row = cursorPosition.row + 1 * positionY,
-                            column = cursorPosition.column + 1 * positionX
-                        )
-                        println("new position: $cursorPosition")
-                    }
-
-                    when (it.key) {
-                        Key.Spacebar -> {
-                            println("One tick")
-                            currentGrid = fallingSandSimulation(currentGrid, FallingSandAction.Tick)
-                        }
-                        Key.S -> {
-                            currentGrid = fallingSandSimulation(
-                                currentGrid,
-                                FallingSandAction.CreateSand(row = cursorPosition.row, column = cursorPosition.column)
-                            )
-                        }
-                        Key.A -> {
-                            currentGrid = fallingSandSimulation(
-                                currentGrid,
-                                FallingSandAction.CreateAir(row = cursorPosition.row, column = cursorPosition.column)
-                            )
-                        }
-                    }
-                    true
+            .onKeyEvent {
+                val isDirectionKey = it.key.keyCode in (0x25..0x28)
+                if (it.type == KeyEventType.KeyDown && (isDirectionKey || it.key == Key.P/* || it.key == Key.Spacebar*/)) {
+                    return@onKeyEvent false
                 }
-                .focusRequester(requester)
-                .focusable()
-        )
+                if (it.key == Key.P) {
+                    println("Toggle pause")
+                    isPaused = !isPaused
+                }
+                val positionX = when {
+                    it.key == Key.DirectionLeft && cursorPosition.column > 0 -> -1
+                    it.key == Key.DirectionRight && cursorPosition.column < currentState.grid.width - 1 -> 1
+                    else -> 0
+                }
+                val positionY = when {
+                    it.key == Key.DirectionUp && cursorPosition.row > 0 -> -1
+                    it.key == Key.DirectionDown && cursorPosition.row < currentState.grid.height - 1 -> 1
+                    else -> 0
+                }
+                if (positionX != 0 || positionY != 0) {
+                    cursorPosition = cursorPosition.copy(
+                        row = cursorPosition.row + 1 * positionY, column = cursorPosition.column + 1 * positionX
+                    )
+                    println("new position: $cursorPosition")
+                }
+
+                when (it.key) {
+                    Key.Spacebar -> {
+                        println("One tick")
+                        currentState = fallingSandSimulation(currentState, FallingSandAction.Tick)
+                    }
+                    Key.S -> {
+                        currentState = fallingSandSimulation(
+                            currentState,
+                            FallingSandAction.CreateSand(row = cursorPosition.row, column = cursorPosition.column)
+                        )
+                    }
+                    Key.A -> {
+                        currentState = fallingSandSimulation(
+                            currentState,
+                            FallingSandAction.CreateAir(row = cursorPosition.row, column = cursorPosition.column)
+                        )
+                    }
+                }
+                true
+            }.focusRequester(requester).focusable())
     }
     LaunchedEffect(Unit) {
         requester.requestFocus()

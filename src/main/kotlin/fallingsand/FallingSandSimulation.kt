@@ -9,10 +9,10 @@ sealed interface FallingSandAction {
 }
 
 fun fallingSandSimulation(
-    currentGrid: Grid<FallingSandCell>,
+    currentState: FallingSandSimulationState,
     action: FallingSandAction,
-    currentState: FallingSandSimulationState = FallingSandSimulationState(currentGrid),
-): Grid<FallingSandCell> {
+): FallingSandSimulationState {
+    val currentGrid = currentState.grid
     val newState = currentState.copy(
         grid = when (action) {
             is FallingSandAction.CreateAir -> currentGrid.update { row, column, value ->
@@ -32,7 +32,7 @@ fun fallingSandSimulation(
             FallingSandAction.Tick -> applyNextChangeToGrid(currentGrid)
         }
     )
-    return newState.grid
+    return newState
 }
 
 fun applyNextChangeToGrid(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {

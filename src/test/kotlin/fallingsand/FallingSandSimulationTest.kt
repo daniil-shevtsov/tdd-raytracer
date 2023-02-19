@@ -1,6 +1,8 @@
 package fallingsand
 
+import assertk.Assert
 import assertk.assertThat
+import assertk.assertions.prop
 import org.junit.jupiter.api.Test
 
 internal class FallingSandSimulationTest {
@@ -13,7 +15,7 @@ internal class FallingSandSimulationTest {
             }
         )
         val simulated = fallingSandSimulation(
-            currentGrid = initialState.grid,
+            currentState = initialState,
             action = FallingSandAction.CreateAir(row = 1, column = 1),
         )
         assertThat(simulated).hasTypes(
@@ -30,7 +32,7 @@ internal class FallingSandSimulationTest {
             }
         )
         val simulated = fallingSandSimulation(
-            currentGrid = initialState.grid,
+            currentState = initialState,
             action = FallingSandAction.CreateSand(row = 0, column = 1),
         )
         assertThat(simulated).hasTypes(
@@ -51,7 +53,7 @@ internal class FallingSandSimulationTest {
         )
 
         val simulated = fallingSandSimulation(
-            currentGrid = initialState.grid,
+            currentState = initialState,
             action = FallingSandAction.Tick,
         )
         assertThat(simulated).hasTypes(
@@ -59,5 +61,9 @@ internal class FallingSandSimulationTest {
             position(1, 0) to CellType.Sand,
         )
     }
+
+    private fun Assert<FallingSandSimulationState>.hasTypes(
+        vararg expected: Pair<Position, CellType>,
+    ) = prop(FallingSandSimulationState::grid).hasTypes(*expected)
 
 }
