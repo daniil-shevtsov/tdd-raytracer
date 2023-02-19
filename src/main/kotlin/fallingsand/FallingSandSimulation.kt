@@ -4,8 +4,6 @@ import grid.Grid
 
 sealed interface FallingSandAction {
     object Tick : FallingSandAction
-    data class CreateSand(val row: Int, val column: Int) : FallingSandAction
-    data class CreateAir(val row: Int, val column: Int) : FallingSandAction
     object TogglePause : FallingSandAction
     data class MoveCursor(val direction: Direction) : FallingSandAction
     data class Spawn(val cellType: CellType) : FallingSandAction
@@ -17,24 +15,6 @@ fun fallingSandSimulation(
 ): FallingSandSimulationState {
     val currentGrid = currentState.grid
     val newState = when (action) {
-        is FallingSandAction.CreateAir -> currentState.copy(
-            grid = currentGrid.update { row, column, value ->
-                if (row == action.row && column == action.column) {
-                    value.copy(type = CellType.Air)
-                } else {
-                    value
-                }
-            }
-        )
-        is FallingSandAction.CreateSand -> currentState.copy(
-            grid = currentGrid.update { row, column, value ->
-                if (row == action.row && column == action.column) {
-                    value.copy(type = CellType.Sand)
-                } else {
-                    value
-                }
-            }
-        )
         FallingSandAction.Tick -> currentState.copy(
             grid = applyNextChangeToGrid(currentGrid)
         )

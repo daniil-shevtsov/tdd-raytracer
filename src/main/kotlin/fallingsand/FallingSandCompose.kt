@@ -9,7 +9,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.*
 import canvas.MyCanvas
-import grid.Grid
 import grid.toCanvas
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -22,14 +21,7 @@ fun FallingSandCompose(
     var currentState by remember {
         mutableStateOf(
             FallingSandSimulationState(
-                grid = Grid.createInitialized(5) { row, column ->
-                    fallingSandCell(
-                        position = position(row, column), type = when {
-                            //row == 1 && (column % 2) == 0 -> CellType.Sand
-                            else -> CellType.Air
-                        }
-                    )
-                },
+                grid = filledSandGrid(size = 5, cellType = CellType.Air),
                 cursorPosition = position(0, 0),
                 isPaused = false,
             )
@@ -92,6 +84,21 @@ fun FallingSandCompose(
                         cursorPosition = cursorPosition.copy(
                             row = cursorPosition.row + 1 * positionY, column = cursorPosition.column + 1 * positionX
                         )
+                        currentState = fallingSandSimulation(
+                            currentState, FallingSandAction.MoveCursor(
+                                direction = direction(
+                                    horizontal = when (it.key) {
+                                        Key.DirectionLeft -> HorizontalDirection.West
+                                        Key.DirectionRight -> HorizontalDirection.East
+                                        else -> HorizontalDirection.Center
+                                    }, vertical = when (it.key) {
+                                        Key.DirectionUp -> VerticalDirection.North
+                                        Key.DirectionDown -> VerticalDirection.South
+                                        else -> VerticalDirection.Center
+                                    }
+                                )
+                            )
+                        )
                         println("new position: $cursorPosition")
                     }
 
@@ -103,13 +110,13 @@ fun FallingSandCompose(
                         Key.S -> {
                             currentState = fallingSandSimulation(
                                 currentState,
-                                FallingSandAction.CreateSand(row = cursorPosition.row, column = cursorPosition.column)
+                                FallingSandAction.Spawn(cellType = CellType.Sand)
                             )
                         }
                         Key.A -> {
                             currentState = fallingSandSimulation(
                                 currentState,
-                                FallingSandAction.CreateAir(row = cursorPosition.row, column = cursorPosition.column)
+                                FallingSandAction.Spawn(cellType = CellType.Air)
                             )
                         }
                     }
