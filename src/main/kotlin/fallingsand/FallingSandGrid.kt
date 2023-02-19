@@ -1,3 +1,3 @@
 package fallingsand
 
-fun defaultSandGrid() = createFallingSandGrid(size = 2, init = { _, _ -> CellType.Air })
+fun defaultSandGrid(size: Int = 2) = createFallingSandGrid(size = size, init = { _, _ -> CellType.Air })

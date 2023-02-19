@@ -6,6 +6,9 @@ sealed interface FallingSandAction {
     object Tick : FallingSandAction
     data class CreateSand(val row: Int, val column: Int) : FallingSandAction
     data class CreateAir(val row: Int, val column: Int) : FallingSandAction
+    object TogglePause : FallingSandAction
+    data class MoveCursor(val direction: Direction) : FallingSandAction
+    data class Spawn(val cellType: CellType) : FallingSandAction
 }
 
 fun fallingSandSimulation(
@@ -13,25 +16,43 @@ fun fallingSandSimulation(
     action: FallingSandAction,
 ): FallingSandSimulationState {
     val currentGrid = currentState.grid
-    val newState = currentState.copy(
-        grid = when (action) {
-            is FallingSandAction.CreateAir -> currentGrid.update { row, column, value ->
+    val newState = when (action) {
+        is FallingSandAction.CreateAir -> currentState.copy(
+            grid = currentGrid.update { row, column, value ->
                 if (row == action.row && column == action.column) {
                     value.copy(type = CellType.Air)
                 } else {
                     value
                 }
             }
-            is FallingSandAction.CreateSand -> currentGrid.update { row, column, value ->
+        )
+        is FallingSandAction.CreateSand -> currentState.copy(
+            grid = currentGrid.update { row, column, value ->
                 if (row == action.row && column == action.column) {
                     value.copy(type = CellType.Sand)
                 } else {
                     value
                 }
             }
-            FallingSandAction.Tick -> applyNextChangeToGrid(currentGrid)
-        }
-    )
+        )
+        FallingSandAction.Tick -> currentState.copy(
+            grid = applyNextChangeToGrid(currentGrid)
+        )
+        is FallingSandAction.MoveCursor -> currentState.copy(
+            cursorPosition = currentState.cursorPosition + action.direction.toPositionOffset()
+        )
+        is FallingSandAction.Spawn -> currentState.copy(
+            grid = currentGrid.update { row, column, value ->
+                if (row == 0 && column == 0) {
+                    value.copy(type = action.cellType)
+                } else {
+                    value
+                }
+            }
+        )
+        FallingSandAction.TogglePause -> currentState
+    }
+
     return newState
 }
 

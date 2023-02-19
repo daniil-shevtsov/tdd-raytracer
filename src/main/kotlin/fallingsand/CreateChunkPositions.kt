@@ -65,6 +65,29 @@ data class Direction(
     val vertical: VerticalDirection,
 )
 
+fun Direction.toPositionOffset(): Position {
+    val horizontalOffset = when (horizontal) {
+        HorizontalDirection.West -> -1
+        HorizontalDirection.Center -> 0
+        HorizontalDirection.East -> 1
+    }
+    val verticalOffset = when (vertical) {
+        VerticalDirection.North -> -1
+        VerticalDirection.Center -> 0
+        VerticalDirection.South -> 1
+    }
+    return position(verticalOffset, horizontalOffset)
+}
+
+@TestOnly
+fun direction(
+    horizontal: HorizontalDirection = HorizontalDirection.Center,
+    vertical: VerticalDirection = VerticalDirection.Center,
+) = Direction(
+    horizontal = horizontal,
+    vertical = vertical,
+)
+
 enum class HorizontalDirection {
     West, Center, East
 }
@@ -86,17 +109,7 @@ fun createChunkPositions(current: Position, width: Int, height: Int): ChunkPosit
             Direction(horizontal, vertical)
         }
     }.associateWith { direction ->
-        val horizontalOffset = when (direction.horizontal) {
-            HorizontalDirection.West -> -1
-            HorizontalDirection.Center -> 0
-            HorizontalDirection.East -> 1
-        }
-        val verticalOffset = when (direction.vertical) {
-            VerticalDirection.North -> -1
-            VerticalDirection.Center -> 0
-            VerticalDirection.South -> 1
-        }
-        position(verticalOffset, horizontalOffset)
+        direction.toPositionOffset()
     }
 
     return ChunkPositions(
