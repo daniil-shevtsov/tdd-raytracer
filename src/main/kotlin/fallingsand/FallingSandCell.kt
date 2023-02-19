@@ -10,6 +10,7 @@ data class FallingSandCell(
 enum class CellType {
     Air,
     Sand,
+    Water,
 }
 
 data class Position(

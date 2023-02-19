@@ -75,6 +75,7 @@ fun Grid<FallingSandCell>.toCanvas(): Canvas {
         when (get(y, x).type) {
             CellType.Sand -> color(0, 0, 0)
             CellType.Air -> color(1, 1, 1)
+            CellType.Water -> color(0, 0, 1)
         }
     }
 }
