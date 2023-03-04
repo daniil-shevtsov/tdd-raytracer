@@ -2,10 +2,11 @@ package fallingsand
 
 import grid.Grid
 
-fun createNextChangeCandidate(
-    grid: Grid<FallingSandCell>
+fun selectChangeCandidate(
+    grid: Grid<FallingSandCell>,
+    handled: Set<Position> = setOf(),
 ): ChangeCandidate {
-    val changeCandidates = grid.positions.map { position ->
+    val changeCandidates = grid.positions.filter { it !in handled }.map { position ->
         createChangeCandidate(
             grid = grid,
             chunkPositions = createChunkPositions(current = position, width = grid.width, height = grid.height)

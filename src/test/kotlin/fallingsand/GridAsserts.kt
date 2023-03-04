@@ -14,14 +14,6 @@ fun Assert<FallingSandCell>.hasPosition(row: Int, column: Int) {
     }
 }
 
-//    private fun Assert<ChangeCandidate>.hasPosition(row: Int, column: Int) {
-//        isInstanceOf(ChangeCandidate.Change::class)
-//        .prop(ChangeCandidate.Change::destinationPosition).all {
-//            prop(Position::column).isEqualTo(column)
-//            prop(Position::row).isEqualTo(row)
-//        }
-//    }
-
 fun Assert<FallingSandCell>.hasType(type: CellType) {
     prop(FallingSandCell::type).isEqualTo(type)
 }
@@ -58,7 +50,7 @@ fun Assert<Grid<FallingSandCell>>.hasTypes(
     fun Map<Position, CellType>.picture(
         indexWindow: IndexWindow = keys.indexWindow()
     ) =
-        toList().filter { (position, _) ->
+        toList().sortedBy { it.first.row }.filter { (position, _) ->
             position.column in IntRange(indexWindow.columnMin, indexWindow.columnMax)
                     && position.row in IntRange(indexWindow.rowMin, indexWindow.rowMax)
         }.joinToString(separator = "") { (position, type) ->

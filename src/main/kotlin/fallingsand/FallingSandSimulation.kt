@@ -41,7 +41,7 @@ fun fallingSandSimulation(
 fun applyNextChangeToGrid(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
     return applyChangeToGrid(
         grid = grid,
-        changeCandidate = createNextChangeCandidate(grid)
+        changeCandidate = selectChangeCandidate(grid)
     )
 }
 
