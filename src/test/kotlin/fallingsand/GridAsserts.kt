@@ -42,6 +42,37 @@ fun Assert<Grid<FallingSandCell>>.hasTypes(
         return@given
     }
 
+    fun CellType.char() = when (this) {
+        CellType.Air -> "A"
+        CellType.Sand -> "S"
+        CellType.Water -> "W"
+    }
+
+    fun Collection<Position>.indexWindow() = IndexWindow(
+        rowMin = minOf { it.row },
+        rowMax = maxOf { it.row },
+        columnMin = minOf { it.column },
+        columnMax = maxOf { it.column },
+    )
+
+    fun Map<Position, CellType>.picture(
+        indexWindow: IndexWindow = keys.indexWindow()
+    ) =
+        toList().filter { (position, _) ->
+            position.column in IntRange(indexWindow.columnMin, indexWindow.columnMax)
+                    && position.row in IntRange(indexWindow.rowMin, indexWindow.rowMax)
+        }.joinToString(separator = "") { (position, type) ->
+            type.char() + when (position.column) {
+                maxBy { it.key.column }.key.column -> "\n"
+                else -> ""
+            }
+        }
+
+    val expectedWindow = expectedTypes.keys.indexWindow()
+
+    val actualPicture = actualTypes.picture(expectedWindow)
+    val expectedPicture = expectedTypes.picture(expectedWindow)
+
     val expectedString = expectedTypes.toList().filter { difference.containsKey(it.first) }.joinToString(
         prefix = "{",
         postfix = "}",
@@ -55,8 +86,15 @@ fun Assert<Grid<FallingSandCell>>.hasTypes(
     ) { "[${it.first.row}:${it.first.column}] = ${it.second.name}" }
 
     expected(
-        message = ":<$expectedString> but was:<$differenceString>",
+        message = ":<$expectedString> but was:<$differenceString>\nexpected grid:\n$expectedPicture\nbut was\n$actualPicture",
         expected = expectedTypes,
         actual = actualTypes
     )
 }
+
+private data class IndexWindow(
+    val rowMin: Int,
+    val rowMax: Int,
+    val columnMin: Int,
+    val columnMax: Int,
+)
