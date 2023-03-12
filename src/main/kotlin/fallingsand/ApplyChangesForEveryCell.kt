@@ -7,20 +7,26 @@ fun applyChangesToEveryCell(
 ): Grid<FallingSandCell> {
     var currentGrid = grid
     var handled = setOf<Position>()
-    grid.positions.forEach { _ ->
+    var changesToApply = emptyList<ChangeCandidate>()
+
+    repeat(grid.width * grid.height) {
         val changeCandidate = selectChangeCandidate(currentGrid, handled)
-        currentGrid = applyChangeToGrid(
-            grid = currentGrid,
-            changeCandidate = changeCandidate
-        )
+//        currentGrid = applyChangeToGrid(
+//            grid = currentGrid,
+//            changeCandidate = changeCandidate
+//        )
         if (changeCandidate is ChangeCandidate.Change) {
             handled += changeCandidate.sourcePosition
+            changesToApply = changesToApply + changeCandidate
         }
     }
 
-    //return currentGrid
-    val a = applyNextChangeToGrid(grid)
-    val b = applyNextChangeToGrid(a)
+    changesToApply.forEach { changeCandidate ->
+        currentGrid = applyChangeToGrid(
+            grid = currentGrid,
+            changeCandidate = changeCandidate,
+        )
+    }
 
-    return b
+    return currentGrid
 }
