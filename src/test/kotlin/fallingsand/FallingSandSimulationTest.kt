@@ -109,6 +109,40 @@ internal class FallingSandSimulationTest {
     }
 
     @Test
+    fun `should handle one step of every cell per tick`() {
+        val initialState = fallingSandSimulationState(
+            grid = createFallingSandGrid(width = 2, height = 3) { row, column ->
+                when {
+                    row == 0 && column == 0 -> CellType.Sand
+                    row == 0 && column == 1 -> CellType.Sand
+                    else -> CellType.Air
+                }
+            }
+        )
+
+        val afterFirstTick = fallingSandSimulation(
+            currentState = initialState,
+            action = FallingSandAction.Tick,
+        )
+        val afterSecondTick = fallingSandSimulation(
+            currentState = afterFirstTick,
+            action = FallingSandAction.Tick,
+        )
+        assertThat(afterFirstTick).hasTypes(
+            position(0, 0) to CellType.Air,
+            position(0, 1) to CellType.Air,
+            position(1, 0) to CellType.Sand,
+            position(1, 1) to CellType.Sand,
+        )
+        assertThat(afterSecondTick).hasTypes(
+            position(1, 0) to CellType.Air,
+            position(1, 1) to CellType.Air,
+            position(2, 0) to CellType.Sand,
+            position(2, 1) to CellType.Sand,
+        )
+    }
+
+    @Test
     fun `should toggle pause on - off`() {
         val state = fallingSandSimulation(
             currentState = fallingSandSimulationState(isPaused = true),

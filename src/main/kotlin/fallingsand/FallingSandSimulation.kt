@@ -16,7 +16,7 @@ fun fallingSandSimulation(
     val currentGrid = currentState.grid
     val newState = when (action) {
         FallingSandAction.Tick -> currentState.copy(
-            grid = applyNextChangeToGrid(currentGrid)
+            grid = applyChangesToEveryCell(currentGrid)
         )
         is FallingSandAction.MoveCursor -> currentState.copy(
             cursorPosition = currentState.cursorPosition + action.direction.toPositionOffset()
@@ -38,16 +38,6 @@ fun fallingSandSimulation(
     return newState
 }
 
-fun applyNextChangeToGrid(
-    grid: Grid<FallingSandCell>,
-    handled: Set<Position> = setOf(),
-): Grid<FallingSandCell> {
-    return applyChangeToGrid(
-        grid = grid,
-        changeCandidate = selectChangeCandidate(grid, handled)
-    )
-}
-
 fun applyChangeToGrid(grid: Grid<FallingSandCell>, changeCandidate: ChangeCandidate): Grid<FallingSandCell> {
     return when (changeCandidate) {
         is ChangeCandidate.Nothing -> grid
@@ -62,16 +52,26 @@ fun applyChangeToGrid(grid: Grid<FallingSandCell>, changeCandidate: ChangeCandid
 }
 
 fun createFallingSandGrid(
-    size: Int,
+    width: Int,
+    height: Int,
     init: (row: Int, column: Int) -> CellType
 ): Grid<FallingSandCell> {
-    return Grid.createInitialized(size = size) { row, column ->
+    return Grid.createInitialized(width = width, height = height) { row, column ->
         fallingSandCell(
             position = position(row = row, column = column),
             type = init(row, column),
         )
     }
 }
+
+fun createFallingSandGrid(
+    size: Int,
+    init: (row: Int, column: Int) -> CellType
+): Grid<FallingSandCell> = createFallingSandGrid(
+    width = size,
+    height = size,
+    init = init,
+)
 
 sealed interface ChangeCandidate {
     data class Change(

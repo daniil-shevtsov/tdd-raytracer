@@ -11,10 +11,7 @@ fun applyChangesToEveryCell(
 
     repeat(grid.width * grid.height) {
         val changeCandidate = selectChangeCandidate(currentGrid, handled)
-//        currentGrid = applyChangeToGrid(
-//            grid = currentGrid,
-//            changeCandidate = changeCandidate
-//        )
+
         if (changeCandidate is ChangeCandidate.Change) {
             handled += changeCandidate.sourcePosition
             changesToApply = changesToApply + changeCandidate
