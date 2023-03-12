@@ -38,10 +38,13 @@ fun fallingSandSimulation(
     return newState
 }
 
-fun applyNextChangeToGrid(grid: Grid<FallingSandCell>): Grid<FallingSandCell> {
+fun applyNextChangeToGrid(
+    grid: Grid<FallingSandCell>,
+    handled: Set<Position> = setOf(),
+): Grid<FallingSandCell> {
     return applyChangeToGrid(
         grid = grid,
-        changeCandidate = selectChangeCandidate(grid)
+        changeCandidate = selectChangeCandidate(grid, handled)
     )
 }
 

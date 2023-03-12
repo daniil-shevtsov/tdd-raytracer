@@ -42,7 +42,7 @@ class ApplyChangesForEveryCellTest {
             position(0, 1) to CellType.Air,
             position(1, 0) to CellType.Sand,
             position(1, 1) to CellType.Sand,
-            position(2, 1) to CellType.Air,
+            position(2, 0) to CellType.Air,
             position(2, 1) to CellType.Air,
         )
     }

@@ -6,12 +6,15 @@ fun selectChangeCandidate(
     grid: Grid<FallingSandCell>,
     handled: Set<Position> = setOf(),
 ): ChangeCandidate {
-    val changeCandidates = grid.positions.filter { it !in handled }.map { position ->
-        createChangeCandidate(
-            grid = grid,
-            chunkPositions = createChunkPositions(current = position, width = grid.width, height = grid.height)
-        )
-    }
+    val changeCandidates = grid.positions
+        .sortedByDescending { it.row }
+        .filter { it !in handled }
+        .map { position ->
+            createChangeCandidate(
+                grid = grid,
+                chunkPositions = createChunkPositions(current = position, width = grid.width, height = grid.height)
+            )
+        }
     val changes = changeCandidates.filterIsInstance<ChangeCandidate.Change>()
     return when (changes.isNotEmpty()) {
         true -> changes.first()
