@@ -21,7 +21,7 @@ fun FallingSandCompose(
     var currentState by remember {
         mutableStateOf(
             FallingSandSimulationState(
-                grid = filledSandGrid(size = 5, cellType = CellType.Air),
+                grid = filledSandGrid(size = 10, cellType = CellType.Air),
                 cursorPosition = position(0, 0),
                 isPaused = false,
             )

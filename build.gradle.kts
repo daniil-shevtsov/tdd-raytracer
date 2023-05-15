@@ -1,11 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.20"
-    id("org.jetbrains.compose") version "1.2.2"
+    kotlin("jvm") version "1.8.20"
+    id("org.jetbrains.compose") version "1.4.0"
     id ("org.jetbrains.kotlinx.benchmark") version "0.4.7"
     kotlin("plugin.allopen") version "1.7.22"
     application
+    id("info.solidsoft.pitest") version "1.4.7"
 }
 
 group = "org.example"
