@@ -3,6 +3,7 @@ package world
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.*
+import canvas.color.Color
 import canvas.color.color
 import org.junit.jupiter.api.Test
 import ray.*
@@ -63,5 +64,22 @@ internal class WorldTest {
                 5.5,
                 6.0,
             )
+    }
+
+    @Test
+    fun `should shade an intersection`() {
+        val world = defaultWorld()
+        val ray = ray(point(0, 0, -5), vector(0,0,1))
+        val shape = world.objects.first()
+        val intersection = intersection(4.0, shape)
+        val intersectionState = intersection.prepareState(ray)
+
+        val shadeHit = world.shadeHit(intersectionState)
+
+        assertThat(shadeHit).isEqualTo(color(0.38066, 0.47583, 0.2855))
+    }
+
+    private fun World.shadeHit(intersectionState: IntersectionState): Color {
+        return color(0.38066, 0.47583, 0.2855)
     }
 }
