@@ -53,16 +53,16 @@ fun ComposePractice(
                 val isCamera = it.isShiftPressed
                 color = when (it.key) {
                     Key.Spacebar -> color(
-                        Random.nextDouble(0.0, 1.0),
-                        Random.nextDouble(0.0, 1.0),
-                        Random.nextDouble(0.0, 1.0),
+                        Random.nextDouble(0.5, 1.0),
+                        Random.nextDouble(0.5, 1.0),
+                        Random.nextDouble(0.5, 1.0),
                     )
                     else -> color
                 }
                 if (isCamera) {
                     rayOrigin = rayOrigin + direction * step
                 } else {
-                    lightPosition = lightPosition + direction * step * 3.0
+                    lightPosition = lightPosition + direction * step * 15.0
                 }
                 direction.components.any { it != 0.0 } || it.key == Key.Spacebar
             }

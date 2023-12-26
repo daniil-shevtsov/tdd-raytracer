@@ -31,6 +31,7 @@ data class IntersectionState(
     val point: Point,
     val eye: Vector,
     val normal: Vector,
+    val inside: Boolean,
 )
 
 fun Intersection.prepareState(ray: Ray): IntersectionState {
@@ -40,6 +41,7 @@ fun Intersection.prepareState(ray: Ray): IntersectionState {
         intersected = intersected,
         point = point,
         eye = -ray.direction,
-        normal = intersected.normalAt(point)
+        normal = intersected.normalAt(point),
+        inside = false,
     )
 }

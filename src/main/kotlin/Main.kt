@@ -3,6 +3,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import fallingsand.FallingSandCompose
+import ray.practice.ComposePractice
 
 
 fun main(args: Array<String>) =  application {
@@ -11,6 +12,6 @@ fun main(args: Array<String>) =  application {
         state = WindowState(width = 400.dp, height = 300.dp),
         title = "Ray Tracer"
     ) {
-        FallingSandCompose()
+        ComposePractice()
     }
 }
