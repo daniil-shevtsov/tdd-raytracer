@@ -36,12 +36,20 @@ data class IntersectionState(
 
 fun Intersection.prepareState(ray: Ray): IntersectionState {
     val point = ray.origin + ray.direction * t
+    val eye = -ray.direction
+    val assumedNormal = intersected.normalAt(point)
+    val inside = assumedNormal.dot(eye) < 0
+    val finalNormal = when {
+        inside -> -assumedNormal
+        else -> assumedNormal
+    }
+
     return IntersectionState(
         t = t,
         intersected = intersected,
         point = point,
-        eye = -ray.direction,
-        normal = intersected.normalAt(point),
-        inside = false,
+        eye = eye,
+        normal = finalNormal,
+        inside = inside,
     )
 }
