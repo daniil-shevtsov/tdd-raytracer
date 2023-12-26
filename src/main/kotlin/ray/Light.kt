@@ -59,20 +59,6 @@ data class Material(
         val finalColor = ambient + diffuse + specular
 
         return finalColor
-
-        return when {
-            angleBetweenLightAndEye == degrees(0.0) -> color(1.9, 1.9, 1.9)
-            angleBetweenLightAndEye == degrees(90.0) -> color(1.6364, 1.6364, 1.6364)
-            angleBetweenLightAndEye == degrees(45.0) && angleBetweenLightAndNormal == degrees(0.0) -> color(
-                1.0,
-                1.0,
-                1.0
-            )
-            angleBetweenLightAndEye == degrees(45.0) -> color(0.7364, 0.7364, 0.7364)
-            angleBetweenLightAndNormal == angleBetweenLightAndEye
-                    && (eye - normal).magnitude < (eye - lightVector).magnitude -> color(0.1, 0.1, 0.1)
-            else -> color(0.0, 0.0, 0.0)
-        }
     }
 }
 

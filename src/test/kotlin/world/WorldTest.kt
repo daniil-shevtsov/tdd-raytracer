@@ -80,6 +80,11 @@ internal class WorldTest {
     }
 
     private fun World.shadeHit(intersectionState: IntersectionState): Color {
-        return color(0.38066, 0.47583, 0.2855)
+        return intersectionState.intersected.material.litBy(
+            light = light,
+            eye = intersectionState.eye,
+            normal = intersectionState.normal,
+            point = intersectionState.point,
+        )
     }
 }
