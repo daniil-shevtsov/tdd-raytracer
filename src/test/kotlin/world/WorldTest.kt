@@ -3,7 +3,6 @@ package world
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.*
-import canvas.color.Color
 import canvas.color.color
 import org.junit.jupiter.api.Test
 import ray.*
@@ -106,12 +105,23 @@ internal class WorldTest {
         assertThat(shadeHit).isEqualTo(color(0.90498, 0.90498, 0.90498))
     }
 
-    private fun World.shadeHit(intersectionState: IntersectionState): Color {
-        return intersectionState.intersected.material.litBy(
-            light = light,
-            eye = intersectionState.eye,
-            normal = intersectionState.normal,
-            point = intersectionState.point,
-        )
+    @Test
+    fun `color should be pitch black when ray misses`() {
+        val world = defaultWorld()
+        val ray = ray(point(0,0,-5), vector(0,1,0))
+
+        val color = world.colorAt(ray)
+
+        assertThat(color).isEqualTo(color(0,0,0))
+    }
+
+    @Test
+    fun `color should be the material color when ray hits`() {
+        val world = defaultWorld()
+        val ray = ray(point(0,0,-5), vector(0,0,1))
+
+        val color = world.colorAt(ray)
+
+        assertThat(color).isEqualTo(color(0.38066, 0.47583, 0.2855))
     }
 }
