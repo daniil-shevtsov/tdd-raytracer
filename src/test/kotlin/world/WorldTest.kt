@@ -124,4 +124,13 @@ internal class WorldTest {
 
         assertThat(color).isEqualTo(color(0.38066, 0.47583, 0.2855))
     }
+
+    @Test
+    fun `color should be of the material of the inner sphere`() {
+        val world = defaultWorldWithMaxAmbient()
+        val innerSphere = world.objects[1]
+        val ray = ray(point(0.0,0.0,0.75), vector(0,0,-1))
+        val color = world.colorAt(ray)
+        assertThat(color).isEqualTo(innerSphere.material.color)
+    }
 }

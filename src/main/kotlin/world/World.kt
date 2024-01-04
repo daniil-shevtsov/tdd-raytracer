@@ -7,7 +7,7 @@ import transformation.scaling
 import tuple.point
 import java.util.Collections.emptyList
 
-class World(
+data class World(
     val objects: List<Intersectable>,
     val lightSources: List<Light>,
 ) {
@@ -23,16 +23,26 @@ fun world(
     lightSources = lightSources,
 )
 
-fun defaultWorld() = world(
+fun defaultWorld(overrideAmbient: Double? = null) = world(
     objects = listOf(
         sphere(
             material = material(
                 color = color(0.8, 1.0, 0.6),
                 diffuse = 0.7,
-                specular = 0.2
-            )
+                specular = 0.2,
+            ).let {material ->
+                when {
+                    overrideAmbient != null -> material.copy(ambient = overrideAmbient)
+                    else -> material
+                }
+            }
         ),
-        sphere().transformBy(scaling(0.5, 0.5, 0.5))
+        sphere(material = material().let {material ->
+            when {
+                overrideAmbient != null -> material.copy(ambient = overrideAmbient)
+                else -> material
+            }
+        }).transformBy(scaling(0.5, 0.5, 0.5))
     ),
     lightSources = listOf(
         pointLight(
@@ -41,6 +51,8 @@ fun defaultWorld() = world(
         )
     )
 )
+
+fun defaultWorldWithMaxAmbient() = defaultWorld(overrideAmbient = 1.0)
 
 fun defaultWorldWithLightSource(
     lightSource: Light
@@ -66,6 +78,7 @@ fun World.shadeHit(intersectionState: IntersectionState): Color {
 
 fun World.colorAt(ray: Ray): Color {
     val intersections = ray.intersect(world = this)
+        .filter {it.t > 0} //TODO: Not sure if I should do this, but right now to pass the test I need this
     return when {
         intersections.isEmpty() -> color(0,0,0)
         else -> {
