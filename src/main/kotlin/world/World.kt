@@ -4,16 +4,14 @@ import canvas.color.color
 import ray.*
 import transformation.scaling
 import tuple.point
+import java.util.Collections.emptyList
 
 class World(
     val objects: List<Intersectable>,
     val lightSources: List<Light>,
 ) {
     val light: Light
-        get() = pointLight(
-            position = point(-10, 10, -10),
-            intensity = color(1, 1, 1),
-        )
+        get() = lightSources.first()
 }
 
 fun world(
@@ -35,7 +33,19 @@ fun defaultWorld() = world(
         ),
         sphere().transformBy(scaling(0.5, 0.5, 0.5))
     ),
-    lightSources = emptyList(),
+    lightSources = listOf(
+        pointLight(
+            position = point(-10, 10, -10),
+            intensity = color(1, 1, 1),
+        )
+    )
+)
+
+fun defaultWorldWithLightSource(
+    lightSource: Light
+): World = world(
+    objects = defaultWorld().objects,
+    lightSources = listOf(lightSource),
 )
 
 fun Ray.intersect(world: World): Intersections {

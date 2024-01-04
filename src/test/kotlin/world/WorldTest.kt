@@ -50,6 +50,18 @@ internal class WorldTest {
     }
 
     @Test
+    fun `should create default world with given light source`() {
+        val light = pointLight(
+            position = point(-50, 100, -30),
+            intensity = color(0.0, 1.0, 0.5)
+        )
+
+        val world = defaultWorldWithLightSource(lightSource = light)
+
+        assertThat(world).prop(World::light).isEqualTo(light)
+    }
+
+    @Test
     fun `should intersect world with a ray`() {
         val world = defaultWorld()
         val ray = ray(point(0, 0, -5), vector(0, 0, 1))
@@ -77,6 +89,21 @@ internal class WorldTest {
         val shadeHit = world.shadeHit(intersectionState)
 
         assertThat(shadeHit).isEqualTo(color(0.38066, 0.47583, 0.2855))
+    }
+
+    @Test
+    fun `should shade an intersection from inside`() {
+        val world = defaultWorldWithLightSource(
+            lightSource = pointLight(point(0.0, 0.25, 0.0), color(1,1,1))
+        )
+        val ray = ray(point(0, 0, 0), vector(0,0,1))
+        val shape = world.objects[1]
+        val intersection = intersection(0.5, shape)
+        val intersectionState = intersection.prepareState(ray)
+
+        val shadeHit = world.shadeHit(intersectionState)
+
+        assertThat(shadeHit).isEqualTo(color(0.90498, 0.90498, 0.90498))
     }
 
     private fun World.shadeHit(intersectionState: IntersectionState): Color {
