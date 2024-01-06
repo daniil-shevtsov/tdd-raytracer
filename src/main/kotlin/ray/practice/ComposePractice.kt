@@ -11,6 +11,8 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import camera.camera
+import camera.render
 import canvas.Canvas
 import canvas.MyCanvas
 import canvas.applyToEveryPixel
@@ -18,9 +20,11 @@ import canvas.canvas
 import canvas.color.Color
 import canvas.color.color
 import ray.*
+import transformation.viewTransform
 import tuple.Point
 import tuple.point
 import tuple.vector
+import world.world
 import kotlin.random.Random
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -34,7 +38,7 @@ fun ComposePractice(
     val requester = remember { FocusRequester() }
     Column {
         MyCanvas(
-            canvas = controlledLitSpherePractice(lightPosition, rayOrigin, color),
+            canvas = controlledLitSpherePracticeWithCamera(lightPosition, rayOrigin, color),
             modifier.onKeyEvent {
                 val step = 0.1
                 val direction = vector(
@@ -128,5 +132,37 @@ fun controlledLitSpherePractice(
     }
 }
 
+fun controlledLitSpherePracticeWithCamera(
+    lightPosition: Point = point(-10, 10, -10),
+    rayOrigin: Point = point(0.0, 0.0, -5.0),
+    color: Color = color(1.0, 0.2, 1.0)
+): Canvas {
+    val canvasPixels = 100
+    val wallZ = 10.0
+    val wallSize = 7.0
+    val pixelSize = wallSize / canvasPixels
+    val half = wallSize / 2.0
+    val sphere = sphere(material = material(color = color))
 
+    val light = pointLight(
+        position = lightPosition,
+        intensity = color(1, 1, 1),
+    )
+    val camera = camera(
+        hsize = canvasPixels,
+        vsize = canvasPixels,
+        fov = Math.PI/3,
+        transform = viewTransform(
+            from = point(0.0,1.5,-5.0),
+            to = point(0.0,1.0,0.0),
+            up = vector(0.0,1.0,0.0)
+        )
+    )
+    val world = world(
+        objects = listOf(sphere),
+        lightSources = listOf(light)
+    )
+
+    return camera.render(world)
+}
 
