@@ -2,7 +2,6 @@ package ray.practice
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -21,7 +20,7 @@ import canvas.canvas
 import canvas.color.Color
 import canvas.color.color
 import ray.*
-import transformation.viewTransform
+import transformation.*
 import tuple.Point
 import tuple.point
 import tuple.vector
@@ -33,13 +32,13 @@ import kotlin.random.Random
 fun ComposePractice(
     modifier: Modifier = Modifier,
 ) {
-    var lightPosition by remember { mutableStateOf(point(1, 1, 0)) }
-    var rayOrigin by remember { mutableStateOf(point(1.0, 1.0, 0.0)) }
+    var lightPosition by remember { mutableStateOf(point(-10, 10, -10)) }
+    var rayOrigin by remember { mutableStateOf(point(0.0, 1.5, -5.0)) }
     var color by remember { mutableStateOf(color(1.0, 0.2, 1.0)) }
     val requester = remember { FocusRequester() }
 
     Column {
-        Text("light=${lightPosition} ray origin=${rayOrigin}")
+        //Text("light=${lightPosition} ray origin=${rayOrigin}")
         MyCanvas(
             canvas = controlledLitSpherePracticeWithCamera(lightPosition, rayOrigin, color),
             modifier.onKeyEvent {
@@ -140,12 +139,50 @@ fun controlledLitSpherePracticeWithCamera(
     rayOrigin: Point,
     color: Color,
 ): Canvas {
-    val canvasPixels = 100
+    val canvasPixels = 250
     val wallZ = 10.0
     val wallSize = 7.0
     val pixelSize = wallSize / canvasPixels
     val half = wallSize / 2.0
     val sphere = sphere(material = material(color = color))
+
+    val planeScaling = scaling(10.0, 0.01, 10.0)
+    val floor = sphere(
+        material = material(color = color(1.0, 0.9, 0.9), specular = 0.0),
+        transform = planeScaling,
+    )
+    val leftWall = sphere(
+        material = floor.material,
+        transform = translation(0.0, 0.0, 5.0) * rotationY(-Math.PI / 4) * rotationX(Math.PI / 2) * planeScaling,
+    )
+    val rightWall = sphere(
+        material = leftWall.material,
+        transform = translation(0.0, 0.0, 5.0) * rotationY(Math.PI / 4) * rotationX(Math.PI / 2) * planeScaling,
+    )
+    val roomMiddleSphere = sphere(
+        material = material(
+            color = color(0.1, 1.0, 0.5),
+            diffuse = 0.7,
+            specular = 0.3,
+        ),
+        transform = translation(-0.5, 1.0, 0.5)
+    )
+    val roomRightSphere = sphere(
+        material = material(
+            color = color(0.5, 1.0, 0.1),
+            diffuse = 0.7,
+            specular = 0.3,
+        ),
+        transform = translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5)
+    )
+    val roomLeftSphere = sphere(
+        material = material(
+            color = color,
+            diffuse = 0.7,
+            specular = 0.3,
+        ),
+        transform = translation(-1.5, 0.33, -0.75) * scaling(0.33, 0.33, 0.33)
+    )
 
     val light = pointLight(
         position = lightPosition,
@@ -154,15 +191,22 @@ fun controlledLitSpherePracticeWithCamera(
     val camera = camera(
         hsize = canvasPixels,
         vsize = canvasPixels,
-        fov = Math.PI/3,
+        fov = Math.PI / 3,
         transform = viewTransform(
             from = rayOrigin,
-            to = point(0.0,1.0,0.0),
-            up = vector(0.0,1.0,0.0)
+            to = point(0.0, 1.0, 0.0),
+            up = vector(0.0, 1.0, 0.0)
         )
     )
     val world = world(
-        objects = listOf(sphere),
+        objects = listOf(
+            floor,
+            leftWall,
+            rightWall,
+            roomMiddleSphere,
+            roomRightSphere,
+            roomLeftSphere,
+        ),
         lightSources = listOf(light)
     )
 

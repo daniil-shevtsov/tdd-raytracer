@@ -34,4 +34,5 @@ fun Intersectable.normalAt(worldPoint: Point): Vector {
 
 fun sphere(
     material: Material = material(),
-) = Sphere(material = material)
+    transform: Matrix = identityMatrix(),
+) = Sphere(material = material, transform = transform)
