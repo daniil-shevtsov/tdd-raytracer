@@ -3,6 +3,7 @@ package ray.practice
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Slider
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -38,50 +39,53 @@ fun ComposePractice(
     var lightPosition by remember { mutableStateOf(point(-10, 10, -10)) }
     var rayOrigin by remember { mutableStateOf(point(0.0, 1.5, -5.0)) }
     var color by remember { mutableStateOf(color(1.0, 0.2, 1.0)) }
+    var resolution by remember { mutableStateOf(25f) }
     val requester = remember { FocusRequester() }
 
     Row(modifier = Modifier.background(ComposeColor.Gray).padding(8.dp).fillMaxSize()) {
         //Text("light=${lightPosition} ray origin=${rayOrigin}")
         MyCanvas(
-            canvas = controlledLitSpherePracticeWithCamera(lightPosition, rayOrigin, color),
+            canvas = controlledLitSpherePracticeWithCamera(lightPosition, rayOrigin, color, resolution.toInt()),
             modifier
                 .weight(1f)
                 .onKeyEvent {
-                val step = 0.1
-                val direction = vector(
-                    x = when (it.key) {
-                        Key.A -> -1.0
-                        Key.D -> 1.0
-                        else -> 0.0
-                    },
-                    y = when (it.key) {
-                        Key.W -> -1.0
-                        Key.S -> 1.0
-                        else -> 0.0
-                    },
-                    z = 0.0,
-                )
-                val isCamera = it.isShiftPressed
-                color = when (it.key) {
-                    Key.Spacebar -> color(
-                        Random.nextDouble(0.5, 1.0),
-                        Random.nextDouble(0.5, 1.0),
-                        Random.nextDouble(0.5, 1.0),
+                    val step = 0.1
+                    val direction = vector(
+                        x = when (it.key) {
+                            Key.A -> -1.0
+                            Key.D -> 1.0
+                            else -> 0.0
+                        },
+                        y = when (it.key) {
+                            Key.W -> -1.0
+                            Key.S -> 1.0
+                            else -> 0.0
+                        },
+                        z = 0.0,
                     )
-                    else -> color
+                    val isCamera = it.isShiftPressed
+                    color = when (it.key) {
+                        Key.Spacebar -> color(
+                            Random.nextDouble(0.5, 1.0),
+                            Random.nextDouble(0.5, 1.0),
+                            Random.nextDouble(0.5, 1.0),
+                        )
+                        else -> color
+                    }
+                    if (isCamera) {
+                        rayOrigin = rayOrigin + direction * step
+                    } else {
+                        lightPosition = lightPosition + direction * step * 15.0
+                    }
+                    direction.components.any { it != 0.0 } || it.key == Key.Spacebar
                 }
-                if (isCamera) {
-                    rayOrigin = rayOrigin + direction * step
-                } else {
-                    lightPosition = lightPosition + direction * step * 15.0
-                }
-                direction.components.any { it != 0.0 } || it.key == Key.Spacebar
-            }
                 .focusRequester(requester)
                 .focusable()
         )
         Column(modifier = Modifier.width(200.dp)) {
-
+            Slider(value = resolution, steps = 10, valueRange = 25f..250f, onValueChange = { newValue ->
+                resolution = newValue
+            })
         }
     }
     LaunchedEffect(Unit) {
@@ -146,8 +150,9 @@ fun controlledLitSpherePracticeWithCamera(
     lightPosition: Point,
     rayOrigin: Point,
     color: Color,
+    resolution: Int,
 ): Canvas {
-    val canvasPixels = 25
+    val canvasPixels = resolution
 
     val planeScaling = scaling(10.0, 0.01, 10.0)
     val floor = sphere(
