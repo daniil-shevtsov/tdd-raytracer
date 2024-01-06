@@ -4,6 +4,7 @@ import canvas.Canvas
 import canvas.applyToEveryPixel
 import canvas.canvas
 import canvas.color.Color
+import kotlinx.coroutines.*
 import matrix.Matrix
 import matrix.identityMatrix
 import ray.Ray
@@ -16,31 +17,43 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 
+data class Kek(val x: Int, val y: Int, val color: Color)
+
 @OptIn(ExperimentalTime::class)
 fun Camera.render(world: World): Canvas {
-    println("Starting render of canvas")
-    val (canvas, timeTaken) = measureTimedValue {
-        val pixels = ConcurrentHashMap<Pair<Int,Int>, Color>()
-        val raytracingTime = measureTime {
-            (0..hsize).forEach { x ->
-                (0..vsize).forEach { y ->
-                    val ray = rayForPixel(x = x, y = y)
-                    val color = world.colorAt(ray)
-                    pixels[x to y] = color
+    return runBlocking {
+        println("Starting render of canvas")
+        val (canvas, timeTaken) = measureTimedValue {
+            val pixels = ConcurrentHashMap<Pair<Int,Int>, Color>()
+
+            val raytracingTime = measureTime {
+                val deferredResults  = (0..hsize).map { x ->
+                    (0..vsize).map { y ->
+                        async(Dispatchers.Default) {
+                            val ray = rayForPixel(x = x, y = y)
+                            val color = world.colorAt(ray)
+                           Kek(x = x, y = y, color = color)
+                        }
+                    }
+                }.flatten()
+                val results = awaitAll(*deferredResults.toTypedArray())
+                results.forEach { kek ->
+                    pixels[kek.x to kek.y] = kek.color
                 }
             }
-        }
-        println("raytracing for $hsize x $vsize: $raytracingTime")
+            println("raytracing for $hsize x $vsize: $raytracingTime")
 
-        val canvasTime = measureTime {
-            canvas(width = hsize, height = vsize).applyToEveryPixel { x, y ->
-                pixels[x to y]!!
+            val (canvas, canvasTime) = measureTimedValue {
+                canvas(width = hsize, height = vsize).applyToEveryPixel { x, y ->
+                    pixels[x to y]!!
+                }
             }
+            println("created canvas for $hsize x $vsize: $canvasTime")
+            canvas
         }
-        println("created canvas for $hsize x $vsize: $canvasTime")
+        println("CANVAS RENDER  $hsize x $vsize: $timeTaken")
+        canvas
     }
-    println("CANVAS RENDER  $hsize x $vsize: $timeTaken")
-    return canvas
 }
 
 fun Camera.rayForPixel(x: Int, y: Int): Ray {
