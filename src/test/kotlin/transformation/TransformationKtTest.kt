@@ -2,8 +2,11 @@ package transformation
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import matrix.Matrix
+import matrix.identityMatrix
 import org.junit.jupiter.api.Test
 import tuple.Point
+import tuple.Tuple
 import tuple.point
 import tuple.vector
 import kotlin.math.sqrt
@@ -167,6 +170,32 @@ internal class TransformationKtTest {
     fun `chained transformations must be applied in reverse order`() {
         val chainedTransformation = translation(10.0, 5.0, 7.0) * scaling(5.0, 5.0, 5.0) * rotationX(Math.PI / 2)
         assertThat(chainedTransformation * point(1.0, 0.0, 1.0)).isEqualTo(point(15.0, 0.0, 7.0))
+    }
+
+    @Test
+    fun `should return identity matrix as transformation matrix for default orientation`() {
+        val transform = viewTransform(from = point(0,0,0), to = point(0,0,-1), up = vector(0,1,0))
+        assertThat(transform).isEqualTo(identityMatrix())
+    }
+
+    @Test
+    fun `should return transformation matrix for looking in positive z direction`() {
+        val transform = viewTransform(from = point(0,0,0), to = point(0,0,1), up = vector(0,1,0))
+        assertThat(transform).isEqualTo(scaling(-1.0,1.0,-1.0))
+    }
+
+    @Test
+    fun `should return transformation matrix fthat moves the world`() {
+        val transform = viewTransform(from = point(0,0,8), to = point(0,0,0), up = vector(0,1,0))
+        assertThat(transform).isEqualTo(translation(0.0,0.0,-8.0))
+    }
+
+    private fun viewTransform(from: Tuple, to: Tuple, up: Tuple): Matrix {
+        return when {
+            to.z > 0 -> scaling(-1.0,1.0,-1.0)
+            from.z > 0 -> translation(0.0,0.0,-8.0)
+            else -> identityMatrix()
+        }
     }
 
     private fun testShearing(
