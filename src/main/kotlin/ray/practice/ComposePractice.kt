@@ -1,7 +1,8 @@
 package ray.practice
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -11,6 +12,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.unit.dp
 import camera.camera
 import camera.render
 import canvas.Canvas
@@ -26,6 +28,7 @@ import tuple.point
 import tuple.vector
 import world.world
 import kotlin.random.Random
+import androidx.compose.ui.graphics.Color as ComposeColor
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -37,11 +40,13 @@ fun ComposePractice(
     var color by remember { mutableStateOf(color(1.0, 0.2, 1.0)) }
     val requester = remember { FocusRequester() }
 
-    Column {
+    Row(modifier = Modifier.background(ComposeColor.Gray).padding(8.dp).fillMaxSize()) {
         //Text("light=${lightPosition} ray origin=${rayOrigin}")
         MyCanvas(
             canvas = controlledLitSpherePracticeWithCamera(lightPosition, rayOrigin, color),
-            modifier.onKeyEvent {
+            modifier
+                .weight(1f)
+                .onKeyEvent {
                 val step = 0.1
                 val direction = vector(
                     x = when (it.key) {
@@ -75,6 +80,9 @@ fun ComposePractice(
                 .focusRequester(requester)
                 .focusable()
         )
+        Column(modifier = Modifier.width(200.dp)) {
+
+        }
     }
     LaunchedEffect(Unit) {
         requester.requestFocus()
@@ -139,12 +147,7 @@ fun controlledLitSpherePracticeWithCamera(
     rayOrigin: Point,
     color: Color,
 ): Canvas {
-    val canvasPixels = 250
-    val wallZ = 10.0
-    val wallSize = 7.0
-    val pixelSize = wallSize / canvasPixels
-    val half = wallSize / 2.0
-    val sphere = sphere(material = material(color = color))
+    val canvasPixels = 25
 
     val planeScaling = scaling(10.0, 0.01, 10.0)
     val floor = sphere(
