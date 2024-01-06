@@ -85,6 +85,7 @@ fun ComposePractice(
         Column(modifier = Modifier.width(200.dp)) {
             Slider(value = resolution, steps = 10, valueRange = 25f..250f, onValueChange = { newValue ->
                 resolution = newValue
+                requester.requestFocus()
             })
         }
     }
