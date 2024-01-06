@@ -4,6 +4,8 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import matrix.Matrix
 import matrix.identityMatrix
+import matrix.matrix
+import matrix.row
 import org.junit.jupiter.api.Test
 import tuple.Point
 import tuple.Tuple
@@ -174,28 +176,57 @@ internal class TransformationKtTest {
 
     @Test
     fun `should return identity matrix as transformation matrix for default orientation`() {
-        val transform = viewTransform(from = point(0,0,0), to = point(0,0,-1), up = vector(0,1,0))
+        val transform = viewTransform(from = point(0, 0, 0), to = point(0, 0, -1), up = vector(0, 1, 0))
         assertThat(transform).isEqualTo(identityMatrix())
     }
 
     @Test
     fun `should return transformation matrix for looking in positive z direction`() {
-        val transform = viewTransform(from = point(0,0,0), to = point(0,0,1), up = vector(0,1,0))
-        assertThat(transform).isEqualTo(scaling(-1.0,1.0,-1.0))
+        val transform = viewTransform(from = point(0, 0, 0), to = point(0, 0, 1), up = vector(0, 1, 0))
+        assertThat(transform).isEqualTo(scaling(-1.0, 1.0, -1.0))
     }
 
     @Test
-    fun `should return transformation matrix fthat moves the world`() {
-        val transform = viewTransform(from = point(0,0,8), to = point(0,0,0), up = vector(0,1,0))
-        assertThat(transform).isEqualTo(translation(0.0,0.0,-8.0))
+    fun `should return transformation matrix that moves the world`() {
+        val transform = viewTransform(from = point(0, 0, 8), to = point(0, 0, 0), up = vector(0, 1, 0))
+        assertThat(transform).isEqualTo(translation(0.0, 0.0, -8.0))
     }
 
-    private fun viewTransform(from: Tuple, to: Tuple, up: Tuple): Matrix {
-        return when {
-            to.z > 0 -> scaling(-1.0,1.0,-1.0)
-            from.z > 0 -> translation(0.0,0.0,-8.0)
-            else -> identityMatrix()
-        }
+    @Test
+    fun `should return transformation matrix for arbitrary view transformation`() {
+        val transform = viewTransform(from = point(1, 3, 2), to = point(4, -2, 8), up = vector(1, 1, 0))
+        assertThat(transform).isEqualTo(
+            matrix(
+                listOf(
+                    row(-0.50709, 0.50709, 0.67612, -2.36643),
+                    row(0.76772, 0.60609, 0.12122, -2.82843),
+                    row(-0.35857, 0.59761, -0.71714, 0.00000),
+                    row(0.00000, 0.00000, 0.00000, 1.00000),
+                )
+            )
+        )
+    }
+
+    private fun viewTransform(
+        from: Tuple,
+        to: Tuple,
+        up: Tuple,
+    ): Matrix {
+        val forward = (to - from).normalized
+        val upNormalized = up.normalized
+        val left = forward cross upNormalized
+        val trueUp = left cross forward
+        val orientation = matrix(
+            listOf(
+                row(left.x, left.y, left.z, 0.0),
+                row(trueUp.x, trueUp.y, trueUp.z, 0.0),
+                row(-forward.x, -forward.y, -forward.z, 0.0),
+                row(0.0, 0.0, 0.0, 1.0),
+            )
+        )
+        val orientationWithTranslation = orientation * translation(-from.x, -from.y, -from.z)
+
+        return orientationWithTranslation
     }
 
     private fun testShearing(
@@ -213,7 +244,6 @@ internal class TransformationKtTest {
         val point = point(2.0, 3.0, 4.0)
         assertThat(transform * point).isEqualTo(expected)
     }
-
 
 
 }
