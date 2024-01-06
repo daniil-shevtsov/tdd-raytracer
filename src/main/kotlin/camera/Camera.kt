@@ -3,6 +3,7 @@ package camera
 import canvas.Canvas
 import canvas.applyToEveryPixel
 import canvas.canvas
+import canvas.color.Color
 import matrix.Matrix
 import matrix.identityMatrix
 import ray.Ray
@@ -10,17 +11,33 @@ import ray.ray
 import tuple.point
 import world.World
 import world.colorAt
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 
 @OptIn(ExperimentalTime::class)
 fun Camera.render(world: World): Canvas {
     println("Starting render of canvas")
     val (canvas, timeTaken) = measureTimedValue {
-        canvas(width = hsize, height = vsize).applyToEveryPixel { x, y ->
-            val ray = rayForPixel(x = x, y = y)
-            world.colorAt(ray)
+        val pixels = ConcurrentHashMap<Pair<Int,Int>, Color>()
+        val raytracingTime = measureTime {
+            (0..hsize).forEach { x ->
+                (0..vsize).forEach { y ->
+                    val ray = rayForPixel(x = x, y = y)
+                    val color = world.colorAt(ray)
+                    pixels[x to y] = color
+                }
+            }
         }
+        println("raytracing for $hsize x $vsize: $raytracingTime")
+
+        val canvasTime = measureTime {
+            canvas(width = hsize, height = vsize).applyToEveryPixel { x, y ->
+                pixels[x to y]!!
+            }
+        }
+        println("created canvas for $hsize x $vsize: $canvasTime")
     }
     println("CANVAS RENDER  $hsize x $vsize: $timeTaken")
     return canvas
