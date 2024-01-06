@@ -14,7 +14,6 @@ import world.World
 import world.colorAt
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 
 data class Kek(val x: Int, val y: Int, val color: Color)
@@ -24,32 +23,25 @@ fun Camera.render(world: World): Canvas {
     return runBlocking {
         println("Starting render of canvas")
         val (canvas, timeTaken) = measureTimedValue {
-            val pixels = ConcurrentHashMap<Pair<Int,Int>, Color>()
+            val pixels = ConcurrentHashMap<Pair<Int, Int>, Color>()
 
-            val raytracingTime = measureTime {
-                val deferredResults  = (0..hsize).map { x ->
-                    (0..vsize).map { y ->
-                        async(Dispatchers.Default) {
-                            val ray = rayForPixel(x = x, y = y)
-                            val color = world.colorAt(ray)
-                           Kek(x = x, y = y, color = color)
-                        }
+            val deferredResults = (0..hsize).map { x ->
+                (0..vsize).map { y ->
+                    async(Dispatchers.Default) {
+                        val ray = rayForPixel(x = x, y = y)
+                        val color = world.colorAt(ray)
+                        Kek(x = x, y = y, color = color)
                     }
-                }.flatten()
-                val results = awaitAll(*deferredResults.toTypedArray())
-                results.forEach { kek ->
-                    pixels[kek.x to kek.y] = kek.color
                 }
+            }.flatten()
+            val results = awaitAll(*deferredResults.toTypedArray())
+            results.forEach { kek ->
+                pixels[kek.x to kek.y] = kek.color
             }
-            println("raytracing for $hsize x $vsize: $raytracingTime")
 
-            val (canvas, canvasTime) = measureTimedValue {
-                canvas(width = hsize, height = vsize).applyToEveryPixel { x, y ->
-                    pixels[x to y]!!
-                }
+            canvas(width = hsize, height = vsize).applyToEveryPixel { x, y ->
+                pixels[x to y]!!
             }
-            println("created canvas for $hsize x $vsize: $canvasTime")
-            canvas
         }
         println("CANVAS RENDER  $hsize x $vsize: $timeTaken")
         canvas
