@@ -2,6 +2,7 @@ package ray.practice
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -32,11 +33,13 @@ import kotlin.random.Random
 fun ComposePractice(
     modifier: Modifier = Modifier,
 ) {
-    var lightPosition by remember { mutableStateOf(point(-10, 10, -10)) }
-    var rayOrigin by remember { mutableStateOf(point(0.0, 0.0, -5.0)) }
+    var lightPosition by remember { mutableStateOf(point(1, 1, 0)) }
+    var rayOrigin by remember { mutableStateOf(point(1.0, 1.0, 0.0)) }
     var color by remember { mutableStateOf(color(1.0, 0.2, 1.0)) }
     val requester = remember { FocusRequester() }
+
     Column {
+        Text("light=${lightPosition} ray origin=${rayOrigin}")
         MyCanvas(
             canvas = controlledLitSpherePracticeWithCamera(lightPosition, rayOrigin, color),
             modifier.onKeyEvent {
@@ -133,9 +136,9 @@ fun controlledLitSpherePractice(
 }
 
 fun controlledLitSpherePracticeWithCamera(
-    lightPosition: Point = point(-10, 10, -10),
-    rayOrigin: Point = point(0.0, 0.0, -5.0),
-    color: Color = color(1.0, 0.2, 1.0)
+    lightPosition: Point,
+    rayOrigin: Point,
+    color: Color,
 ): Canvas {
     val canvasPixels = 100
     val wallZ = 10.0
@@ -153,7 +156,7 @@ fun controlledLitSpherePracticeWithCamera(
         vsize = canvasPixels,
         fov = Math.PI/3,
         transform = viewTransform(
-            from = point(0.0,1.5,-5.0),
+            from = rayOrigin,
             to = point(0.0,1.0,0.0),
             up = vector(0.0,1.0,0.0)
         )
