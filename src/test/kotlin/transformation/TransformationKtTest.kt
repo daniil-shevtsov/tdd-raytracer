@@ -2,13 +2,11 @@ package transformation
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import matrix.Matrix
 import matrix.identityMatrix
 import matrix.matrix
 import matrix.row
 import org.junit.jupiter.api.Test
 import tuple.Point
-import tuple.Tuple
 import tuple.point
 import tuple.vector
 import kotlin.math.sqrt
@@ -205,28 +203,6 @@ internal class TransformationKtTest {
                 )
             )
         )
-    }
-
-    private fun viewTransform(
-        from: Tuple,
-        to: Tuple,
-        up: Tuple,
-    ): Matrix {
-        val forward = (to - from).normalized
-        val upNormalized = up.normalized
-        val left = forward cross upNormalized
-        val trueUp = left cross forward
-        val orientation = matrix(
-            listOf(
-                row(left.x, left.y, left.z, 0.0),
-                row(trueUp.x, trueUp.y, trueUp.z, 0.0),
-                row(-forward.x, -forward.y, -forward.z, 0.0),
-                row(0.0, 0.0, 0.0, 1.0),
-            )
-        )
-        val orientationWithTranslation = orientation * translation(-from.x, -from.y, -from.z)
-
-        return orientationWithTranslation
     }
 
     private fun testShearing(

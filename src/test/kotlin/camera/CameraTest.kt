@@ -5,6 +5,11 @@ import assertk.assertThat
 import assertk.assertions.isCloseTo
 import assertk.assertions.isEqualTo
 import assertk.assertions.prop
+import canvas.Canvas
+import canvas.applyToEveryPixel
+import canvas.canvas
+import canvas.color.color
+import canvas.pixelAt
 import matrix.Matrix
 import matrix.identityMatrix
 import org.junit.jupiter.api.Test
@@ -12,8 +17,12 @@ import ray.Ray
 import ray.ray
 import transformation.rotationY
 import transformation.translation
+import transformation.viewTransform
 import tuple.point
 import tuple.vector
+import world.World
+import world.colorAt
+import world.defaultWorld
 import kotlin.math.sqrt
 
 class CameraTest {
@@ -43,22 +52,22 @@ class CameraTest {
 
     @Test
     fun `should construct ray through the center of the canvas`() {
-        val camera = camera(hsize = 201, vsize = 101, fov = Math.PI /2)
+        val camera = camera(hsize = 201, vsize = 101, fov = Math.PI / 2)
         val ray = camera.rayForPixel(x = 100, y = 50)
 
         assertThat(ray).all {
-            prop(Ray::origin).isEqualTo(point(0,0,0))
-            prop(Ray::direction).isEqualTo(vector(0,0,-1))
+            prop(Ray::origin).isEqualTo(point(0, 0, 0))
+            prop(Ray::direction).isEqualTo(vector(0, 0, -1))
         }
     }
 
     @Test
     fun `should construct ray through a corner of the canvas`() {
-        val camera = camera(hsize = 201, vsize = 101, fov = Math.PI /2)
+        val camera = camera(hsize = 201, vsize = 101, fov = Math.PI / 2)
         val ray = camera.rayForPixel(x = 0, y = 0)
 
         assertThat(ray).all {
-            prop(Ray::origin).isEqualTo(point(0,0,0))
+            prop(Ray::origin).isEqualTo(point(0, 0, 0))
             prop(Ray::direction).isEqualTo(vector(0.66519, 0.33259, -0.66851))
         }
     }
@@ -69,13 +78,39 @@ class CameraTest {
             hsize = 201,
             vsize = 101,
             fov = Math.PI / 2,
-            transform = rotationY(Math.PI/4) * translation(0.0,-2.0,5.0)
+            transform = rotationY(Math.PI / 4) * translation(0.0, -2.0, 5.0)
         )
         val ray = camera.rayForPixel(x = 100, y = 50)
 
         assertThat(ray).all {
-            prop(Ray::origin).isEqualTo(point(0,2,-5))
-            prop(Ray::direction).isEqualTo(vector(sqrt(2.0)/2, 0.0, -sqrt(2.0)/2))
+            prop(Ray::origin).isEqualTo(point(0, 2, -5))
+            prop(Ray::direction).isEqualTo(vector(sqrt(2.0) / 2, 0.0, -sqrt(2.0) / 2))
+        }
+    }
+
+    @Test
+    fun `should render a world with a camera`() {
+        val world = defaultWorld()
+        val camera = camera(
+            hsize = 11,
+            vsize = 11,
+            fov = Math.PI / 2,
+            transform = viewTransform(
+                from = point(0, 0, -5),
+                to = point(0, 0, 0),
+                up = vector(0, 1, 0),
+            )
+        )
+
+        val canvas = camera.render(world)
+
+        assertThat(canvas.pixelAt(x = 5, y = 5)).isEqualTo(color(0.38066, 0.47583, 0.2855))
+    }
+
+    private fun Camera.render(world: World): Canvas {
+        return canvas(width = hsize, height = vsize).applyToEveryPixel { x, y ->
+            val ray = rayForPixel(x = x, y = y)
+            world.colorAt(ray)
         }
     }
 
@@ -87,7 +122,7 @@ class CameraTest {
         val worldY = halfHeight - yOffset
 
         val pixel = transform.inversed() * point(worldX, worldY, -1.0)
-        val origin = transform.inversed() * point(0.0,0.0,0.0)
+        val origin = transform.inversed() * point(0.0, 0.0, 0.0)
         val direction = (pixel - origin).normalized
 
         return ray(origin = origin, direction = direction)
@@ -114,7 +149,7 @@ class CameraTest {
         val halfWidth: Double
         val halfHeight: Double
 
-        if(aspectRatio >= 1.0) {
+        if (aspectRatio >= 1.0) {
             halfWidth = halfView
             halfHeight = halfView / aspectRatio
         } else {

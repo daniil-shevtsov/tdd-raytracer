@@ -3,6 +3,8 @@ package transformation
 import matrix.Matrix
 import matrix.identityMatrix
 import matrix.matrix
+import matrix.row
+import tuple.Tuple
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -112,3 +114,24 @@ fun shearing(
     )
 }
 
+fun viewTransform(
+    from: Tuple,
+    to: Tuple,
+    up: Tuple,
+): Matrix {
+    val forward = (to - from).normalized
+    val upNormalized = up.normalized
+    val left = forward cross upNormalized
+    val trueUp = left cross forward
+    val orientation = matrix(
+        listOf(
+            row(left.x, left.y, left.z, 0.0),
+            row(trueUp.x, trueUp.y, trueUp.z, 0.0),
+            row(-forward.x, -forward.y, -forward.z, 0.0),
+            row(0.0, 0.0, 0.0, 1.0),
+        )
+    )
+    val orientationWithTranslation = orientation * translation(-from.x, -from.y, -from.z)
+
+    return orientationWithTranslation
+}
