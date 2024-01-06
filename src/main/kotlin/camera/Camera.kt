@@ -10,12 +10,20 @@ import ray.ray
 import tuple.point
 import world.World
 import world.colorAt
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
 
+@OptIn(ExperimentalTime::class)
 fun Camera.render(world: World): Canvas {
-    return canvas(width = hsize, height = vsize).applyToEveryPixel { x, y ->
-        val ray = rayForPixel(x = x, y = y)
-        world.colorAt(ray)
+    println("Starting render of canvas")
+    val (canvas, timeTaken) = measureTimedValue {
+        canvas(width = hsize, height = vsize).applyToEveryPixel { x, y ->
+            val ray = rayForPixel(x = x, y = y)
+            world.colorAt(ray)
+        }
     }
+    println("CANVAS RENDER  $hsize x $vsize: $timeTaken")
+    return canvas
 }
 
 fun Camera.rayForPixel(x: Int, y: Int): Ray {
