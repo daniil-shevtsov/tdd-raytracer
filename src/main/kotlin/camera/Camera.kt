@@ -58,6 +58,7 @@ fun Camera.rayForPixel(x: Int, y: Int): Ray {
     val pixel = transform.inversed() * point(worldX, worldY, -1.0)
     val origin = transform.inversed() * point(0.0, 0.0, 0.0)
     val direction = (pixel - origin).normalized
+    println("$pixelSize $xOffset $yOffset $worldX $worldY $pixel $origin $direction")
 
     return ray(origin = origin, direction = direction)
 }
@@ -90,7 +91,8 @@ fun camera(
         halfWidth = halfView * aspectRatio
         halfHeight = halfView
     }
-
+    val pixelSize = (halfWidth * 2) / hsize
+    println("kek $halfView $aspectRatio $halfWidth $halfHeight | ${halfWidth * 2} / $hsize =  $pixelSize")
     return Camera(
         hsize = hsize,
         vsize = vsize,
@@ -98,6 +100,6 @@ fun camera(
         transform = transform,
         halfWidth = halfWidth,
         halfHeight = halfHeight,
-        pixelSize = (halfWidth * 2) / hsize,
+        pixelSize = pixelSize,
     )
 }

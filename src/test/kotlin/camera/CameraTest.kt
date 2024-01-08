@@ -66,6 +66,17 @@ class CameraTest {
     }
 
     @Test
+    fun `should construct ray through a corner of the canvas real TDD`() {
+        val camera = camera(hsize =1, vsize = 1, fov = Math.toRadians(90.0))
+        val ray = camera.rayForPixel(x = 0, y = 0)
+
+        assertThat(ray).all {
+            prop(Ray::origin).isEqualTo(point(0, 0, 0))
+            prop(Ray::direction).isEqualTo(vector(0.0, 0.0, -1.0))
+        }
+    }
+
+    @Test
     fun `should construct ray when camera transformed`() {
         val camera = camera(
             hsize = 201,
