@@ -67,7 +67,7 @@ class CameraTest {
 
     @Test
     fun `should construct ray through a corner of the canvas real TDD`() {
-        val camera = camera(hsize =1, vsize = 1, fov = Math.toRadians(90.0))
+        val camera = camera(hsize =4, vsize = 4, fov = Math.toRadians(90.0))
         val ray = camera.rayForPixel(x = 0, y = 0)
 
         assertThat(ray).all {
